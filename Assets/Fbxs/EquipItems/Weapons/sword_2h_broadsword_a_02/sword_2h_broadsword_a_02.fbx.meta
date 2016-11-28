@@ -1,0 +1,85 @@
+fileFormatVersion: 2
+guid: 5c4178648f2af0445a4051cfd4c382b5
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: sword_2h_broadsword_a_02
+    100004: sword_2h_broadsword_a_02 1
+    100006: sword_2h_broadsword_a_02_bone_0
+    100008: sword_2h_broadsword_a_02_bone_1
+    100010: sword_2h_broadsword_a_02_bone_2
+    100012: sword_2h_broadsword_a_02_bone_3
+    100014: sword_2h_broadsword_a_02_bone_4
+    100016: sword_2h_broadsword_a_02_bone_5
+    100018: sword_2h_broadsword_a_02_bone_6
+    100020: sword_2h_broadsword_a_02_bone_7
+    100022: sword_2h_broadsword_a_02_bone_8
+    400000: //RootNode
+    400002: sword_2h_broadsword_a_02
+    400004: sword_2h_broadsword_a_02 1
+    400006: sword_2h_broadsword_a_02_bone_0
+    400008: sword_2h_broadsword_a_02_bone_1
+    400010: sword_2h_broadsword_a_02_bone_2
+    400012: sword_2h_broadsword_a_02_bone_3
+    400014: sword_2h_broadsword_a_02_bone_4
+    400016: sword_2h_broadsword_a_02_bone_5
+    400018: sword_2h_broadsword_a_02_bone_6
+    400020: sword_2h_broadsword_a_02_bone_7
+    400022: sword_2h_broadsword_a_02_bone_8
+    4300000: sword_2h_broadsword_a_02
+    9500000: //RootNode
+    13700000: sword_2h_broadsword_a_02
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 

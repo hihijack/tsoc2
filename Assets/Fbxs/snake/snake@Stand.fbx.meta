@@ -1,0 +1,137 @@
+fileFormatVersion: 2
+guid: 2acc863845b15954985c69f9f464fdb9
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: snake
+    100002: snake 1
+    100004: //RootNode
+    100006: snake_bone_1
+    100008: snake_bone_10
+    100010: snake_bone_11
+    100012: snake_bone_12
+    100014: snake_bone_13
+    100016: snake_bone_14
+    100018: snake_bone_15
+    100020: snake_bone_16
+    100022: snake_bone_18
+    100024: snake_bone_19
+    100026: snake_bone_2
+    100028: snake_bone_21
+    100030: snake_bone_22
+    100032: snake_bone_23
+    100034: snake_bone_24
+    100036: snake_bone_25
+    100038: snake_bone_27
+    100040: snake_bone_28
+    100042: snake_bone_29
+    100044: snake_bone_3
+    100046: snake_bone_31
+    100048: snake_bone_32
+    100050: snake_bone_33
+    100052: snake_bone_4
+    100054: snake_bone_5
+    100056: snake_bone_6
+    100058: snake_bone_7
+    100060: snake_bone_8
+    100062: snake_bone_9
+    100064: snake_bone_Breath
+    100066: snake_bone_BTH
+    100068: snake_bone_Head
+    100070: snake_bone_Name
+    100072: snake_bone_Root
+    400000: snake
+    400002: snake 1
+    400004: //RootNode
+    400006: snake_bone_1
+    400008: snake_bone_10
+    400010: snake_bone_11
+    400012: snake_bone_12
+    400014: snake_bone_13
+    400016: snake_bone_14
+    400018: snake_bone_15
+    400020: snake_bone_16
+    400022: snake_bone_18
+    400024: snake_bone_19
+    400026: snake_bone_2
+    400028: snake_bone_21
+    400030: snake_bone_22
+    400032: snake_bone_23
+    400034: snake_bone_24
+    400036: snake_bone_25
+    400038: snake_bone_27
+    400040: snake_bone_28
+    400042: snake_bone_29
+    400044: snake_bone_3
+    400046: snake_bone_31
+    400048: snake_bone_32
+    400050: snake_bone_33
+    400052: snake_bone_4
+    400054: snake_bone_5
+    400056: snake_bone_6
+    400058: snake_bone_7
+    400060: snake_bone_8
+    400062: snake_bone_9
+    400064: snake_bone_Breath
+    400066: snake_bone_BTH
+    400068: snake_bone_Head
+    400070: snake_bone_Name
+    400072: snake_bone_Root
+    4300000: snake
+    7400000: Take 001
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: snake
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 2
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 1
+  additionalBone: 0
+  userData: 

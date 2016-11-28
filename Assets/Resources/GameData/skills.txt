@@ -1,0 +1,22 @@
+﻿[
+  {
+    "id": 1,
+    "name": "致死打击",
+    "icon": "Ability_Rogue_Ambush",
+    "cd": 3,
+    "cost": 0,
+    "learnlevel": 1,
+    "engget": 2,
+    "damage": 2
+  },
+  {
+    "id": 2,
+    "name": "战斗怒吼",
+    "icon": "Warrior_talent_icon_mastercleaver",
+    "cd": 3,
+    "cost": 2,
+    "learnlevel": 1,
+    "rate": 3,
+    "dur": 3
+  }
+]

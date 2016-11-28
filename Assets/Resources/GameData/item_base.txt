@@ -1,0 +1,122 @@
+﻿[
+  {
+    "id": 1,
+    "icon": "xx",
+    "name": "毛绒帽子",
+    "type": 1,
+    "qlevel_base": 1,
+    "arm_min": 2,
+    "arm_max": 5,
+    "atk_min": 0,
+    "atk_max": 0,
+    "ias": 0
+  },
+  {
+    "id": 2,
+    "icon": "xx",
+    "name": "项链",
+    "type": 2,
+    "qlevel_base": 1,
+    "arm_min": 0,
+    "arm_max": 0,
+    "atk_min": 0,
+    "atk_max": 0,
+    "ias": 0
+  },
+  {
+    "id": 3,
+    "icon": "xx",
+    "name": "毛绒护肩",
+    "type": 3,
+    "qlevel_base": 1,
+    "arm_min": 4,
+    "arm_max": 7,
+    "atk_min": 0,
+    "atk_max": 0,
+    "ias": 0
+  },
+  {
+    "id": 4,
+    "icon": "xx",
+    "name": "毛绒护胸",
+    "type": 4,
+    "qlevel_base": 1,
+    "arm_min": 10,
+    "arm_max": 14,
+    "atk_min": 0,
+    "atk_max": 0,
+    "ias": 0
+  },
+  {
+    "id": 5,
+    "icon": "xx",
+    "name": "毛绒护腕",
+    "type": 5,
+    "qlevel_base": 1,
+    "arm_min": 3,
+    "arm_max": 6,
+    "atk_min": 0,
+    "atk_max": 0,
+    "ias": 0
+  },
+  {
+    "id": 6,
+    "icon": "xx",
+    "name": "毛绒手套",
+    "type": 6,
+    "qlevel_base": 1,
+    "arm_min": 3,
+    "arm_max": 6,
+    "atk_min": 0,
+    "atk_max": 0,
+    "ias": 0
+  },
+  {
+    "id": 7,
+    "icon": "xx",
+    "name": "毛绒裤子",
+    "type": 7,
+    "qlevel_base": 1,
+    "arm_min": 3,
+    "arm_max": 6,
+    "atk_min": 0,
+    "atk_max": 0,
+    "ias": 0
+  },
+  {
+    "id": 8,
+    "icon": "xx",
+    "name": "毛绒鞋子",
+    "type": 8,
+    "qlevel_base": 1,
+    "arm_min": 3,
+    "arm_max": 6,
+    "atk_min": 0,
+    "atk_max": 0,
+    "ias": 0
+  },
+  {
+    "id": 9,
+    "icon": "xx",
+    "name": "短剑",
+    "type": 9,
+    "qlevel_base": 1,
+    "arm_min": 0,
+    "arm_max": 0,
+    "atk_min": 2,
+    "atk_max": 7,
+    "ias": 1
+  },
+  {
+    "id": 10,
+    "icon": "xx",
+    "name": "巨剑",
+    "type": 10,
+    "qlevel_base": 1,
+    "arm_min": 0,
+    "arm_max": 0,
+    "atk_min": 6,
+    "atk_max": 15,
+    "ias": 0.5
+  }
+]

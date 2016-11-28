@@ -1,0 +1,396 @@
+fileFormatVersion: 2
+guid: c02f117f55c7194418f1f2e7b94a1ebf
+timeCreated: 1438666534
+licenseType: Pro
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: effects_0
+    21300002: effects_1
+    21300004: effects_2
+    21300006: effects_3
+    21300008: effects_4
+    21300010: effects_5
+    21300012: effects_6
+    21300014: effects_7
+    21300016: effects_8
+    21300018: effects_9
+    21300020: effects_10
+    21300022: effects_11
+    21300024: effects_12
+    21300026: effects_13
+    21300028: effects_14
+    21300030: effects_15
+    21300032: effects_16
+    21300034: effects_17
+    21300036: effects_18
+    21300038: effects_19
+    21300040: effects_20
+    21300042: effects_21
+    21300044: effects_22
+    21300046: effects_23
+    21300048: effects_24
+    21300050: effects_25
+    21300052: effects_26
+    21300054: effects_27
+    21300056: effects_28
+    21300058: effects_29
+    21300060: effects_30
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: 0
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: effects_0
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 676
+        width: 22
+        height: 5
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_1
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 676
+        width: 32
+        height: 5
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_2
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 676
+        width: 48
+        height: 5
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_3
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 676
+        width: 64
+        height: 5
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_4
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 647
+        width: 61
+        height: 3
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_5
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 647
+        width: 46
+        height: 3
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_6
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 647
+        width: 37
+        height: 3
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_7
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 550
+        width: 16
+        height: 16
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_8
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 551
+        width: 32
+        height: 32
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_9
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 550
+        width: 48
+        height: 48
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_10
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 553
+        width: 47
+        height: 47
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_11
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 464
+        width: 46
+        height: 46
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_12
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 468
+        width: 36
+        height: 36
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_13
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 365
+        width: 13
+        height: 5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_14
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 363
+        width: 29
+        height: 21
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_15
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 367
+        width: 41
+        height: 30
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_16
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 365
+        width: 45
+        height: 46
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_17
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 269
+        width: 45
+        height: 62
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_18
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 275
+        width: 23
+        height: 52
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_19
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 274
+        width: 23
+        height: 45
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_20
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 276
+        width: 22
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_21
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 275
+        width: 22
+        height: 16
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_22
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 194
+        width: 13
+        height: 5
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_23
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 194
+        width: 29
+        height: 21
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_24
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 194
+        width: 41
+        height: 30
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_25
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 194
+        width: 45
+        height: 46
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_26
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 194
+        width: 45
+        height: 62
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_27
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 115
+        width: 23
+        height: 52
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_28
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 122
+        width: 23
+        height: 45
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_29
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 147
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: effects_30
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 157
+        width: 22
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

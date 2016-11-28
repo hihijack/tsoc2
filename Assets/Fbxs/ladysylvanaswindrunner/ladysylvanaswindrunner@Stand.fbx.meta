@@ -1,0 +1,661 @@
+fileFormatVersion: 2
+guid: 9ac321e827e47c844858aa651596b1cd
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: ladysylvanaswindrunner
+    100002: ladysylvanaswindrunner 1
+    100004: //RootNode
+    100006: ladysylvanaswindrunner_bone_0
+    100008: ladysylvanaswindrunner_bone_10
+    100010: ladysylvanaswindrunner_bone_100
+    100012: ladysylvanaswindrunner_bone_101
+    100014: ladysylvanaswindrunner_bone_102
+    100016: ladysylvanaswindrunner_bone_103
+    100018: ladysylvanaswindrunner_bone_104
+    100020: ladysylvanaswindrunner_bone_105
+    100022: ladysylvanaswindrunner_bone_106
+    100024: ladysylvanaswindrunner_bone_107
+    100026: ladysylvanaswindrunner_bone_108
+    100028: ladysylvanaswindrunner_bone_109
+    100030: ladysylvanaswindrunner_bone_11
+    100032: ladysylvanaswindrunner_bone_110
+    100034: ladysylvanaswindrunner_bone_112
+    100036: ladysylvanaswindrunner_bone_113
+    100038: ladysylvanaswindrunner_bone_114
+    100040: ladysylvanaswindrunner_bone_115
+    100042: ladysylvanaswindrunner_bone_116
+    100044: ladysylvanaswindrunner_bone_12
+    100046: ladysylvanaswindrunner_bone_120
+    100048: ladysylvanaswindrunner_bone_121
+    100050: ladysylvanaswindrunner_bone_122
+    100052: ladysylvanaswindrunner_bone_123
+    100054: ladysylvanaswindrunner_bone_124
+    100056: ladysylvanaswindrunner_bone_125
+    100058: ladysylvanaswindrunner_bone_126
+    100060: ladysylvanaswindrunner_bone_127
+    100062: ladysylvanaswindrunner_bone_128
+    100064: ladysylvanaswindrunner_bone_129
+    100066: ladysylvanaswindrunner_bone_13
+    100068: ladysylvanaswindrunner_bone_130
+    100070: ladysylvanaswindrunner_bone_133
+    100072: ladysylvanaswindrunner_bone_134
+    100074: ladysylvanaswindrunner_bone_135
+    100076: ladysylvanaswindrunner_bone_136
+    100078: ladysylvanaswindrunner_bone_137
+    100080: ladysylvanaswindrunner_bone_138
+    100082: ladysylvanaswindrunner_bone_139
+    100084: ladysylvanaswindrunner_bone_14
+    100086: ladysylvanaswindrunner_bone_17
+    100088: ladysylvanaswindrunner_bone_18
+    100090: ladysylvanaswindrunner_bone_19
+    100092: ladysylvanaswindrunner_bone_23
+    100094: ladysylvanaswindrunner_bone_24
+    100096: ladysylvanaswindrunner_bone_25
+    100098: ladysylvanaswindrunner_bone_26
+    100100: ladysylvanaswindrunner_bone_28
+    100102: ladysylvanaswindrunner_bone_29
+    100104: ladysylvanaswindrunner_bone_30
+    100106: ladysylvanaswindrunner_bone_31
+    100108: ladysylvanaswindrunner_bone_32
+    100110: ladysylvanaswindrunner_bone_33
+    100112: ladysylvanaswindrunner_bone_34
+    100114: ladysylvanaswindrunner_bone_35
+    100116: ladysylvanaswindrunner_bone_36
+    100118: ladysylvanaswindrunner_bone_37
+    100120: ladysylvanaswindrunner_bone_38
+    100122: ladysylvanaswindrunner_bone_39
+    100124: ladysylvanaswindrunner_bone_4
+    100126: ladysylvanaswindrunner_bone_40
+    100128: ladysylvanaswindrunner_bone_41
+    100130: ladysylvanaswindrunner_bone_42
+    100132: ladysylvanaswindrunner_bone_43
+    100134: ladysylvanaswindrunner_bone_5
+    100136: ladysylvanaswindrunner_bone_54
+    100138: ladysylvanaswindrunner_bone_55
+    100140: ladysylvanaswindrunner_bone_56
+    100142: ladysylvanaswindrunner_bone_57
+    100144: ladysylvanaswindrunner_bone_58
+    100146: ladysylvanaswindrunner_bone_59
+    100148: ladysylvanaswindrunner_bone_6
+    100150: ladysylvanaswindrunner_bone_60
+    100152: ladysylvanaswindrunner_bone_61
+    100154: ladysylvanaswindrunner_bone_62
+    100156: ladysylvanaswindrunner_bone_63
+    100158: ladysylvanaswindrunner_bone_65
+    100160: ladysylvanaswindrunner_bone_66
+    100162: ladysylvanaswindrunner_bone_68
+    100164: ladysylvanaswindrunner_bone_69
+    100166: ladysylvanaswindrunner_bone_7
+    100168: ladysylvanaswindrunner_bone_70
+    100170: ladysylvanaswindrunner_bone_71
+    100172: ladysylvanaswindrunner_bone_72
+    100174: ladysylvanaswindrunner_bone_73
+    100176: ladysylvanaswindrunner_bone_74
+    100178: ladysylvanaswindrunner_bone_75
+    100180: ladysylvanaswindrunner_bone_76
+    100182: ladysylvanaswindrunner_bone_77
+    100184: ladysylvanaswindrunner_bone_78
+    100186: ladysylvanaswindrunner_bone_79
+    100188: ladysylvanaswindrunner_bone_8
+    100190: ladysylvanaswindrunner_bone_80
+    100192: ladysylvanaswindrunner_bone_81
+    100194: ladysylvanaswindrunner_bone_82
+    100196: ladysylvanaswindrunner_bone_83
+    100198: ladysylvanaswindrunner_bone_84
+    100200: ladysylvanaswindrunner_bone_85
+    100202: ladysylvanaswindrunner_bone_86
+    100204: ladysylvanaswindrunner_bone_87
+    100206: ladysylvanaswindrunner_bone_88
+    100208: ladysylvanaswindrunner_bone_89
+    100210: ladysylvanaswindrunner_bone_9
+    100212: ladysylvanaswindrunner_bone_90
+    100214: ladysylvanaswindrunner_bone_91
+    100216: ladysylvanaswindrunner_bone_92
+    100218: ladysylvanaswindrunner_bone_93
+    100220: ladysylvanaswindrunner_bone_94
+    100222: ladysylvanaswindrunner_bone_95
+    100224: ladysylvanaswindrunner_bone_96
+    100226: ladysylvanaswindrunner_bone_97
+    100228: ladysylvanaswindrunner_bone_98
+    100230: ladysylvanaswindrunner_bone_99
+    100232: ladysylvanaswindrunner_bone_ArmL
+    100234: ladysylvanaswindrunner_bone_ArmR
+    100236: ladysylvanaswindrunner_bone_Breath
+    100238: ladysylvanaswindrunner_bone_BTH
+    100240: ladysylvanaswindrunner_bone_CCH
+    100242: ladysylvanaswindrunner_bone_CHD
+    100244: ladysylvanaswindrunner_bone_CSL
+    100246: ladysylvanaswindrunner_bone_CSR
+    100248: ladysylvanaswindrunner_bone_Head
+    100250: ladysylvanaswindrunner_bone_Jaw
+    100252: ladysylvanaswindrunner_bone_LFingerIndex
+    100254: ladysylvanaswindrunner_bone_LFingerMiddle
+    100256: ladysylvanaswindrunner_bone_LFingerPinky
+    100258: ladysylvanaswindrunner_bone_LFingerRing
+    100260: ladysylvanaswindrunner_bone_LThumb
+    100262: ladysylvanaswindrunner_bone_Name
+    100264: ladysylvanaswindrunner_bone_NameMount
+    100266: ladysylvanaswindrunner_bone_RFingerIndex
+    100268: ladysylvanaswindrunner_bone_RFingerMiddle
+    100270: ladysylvanaswindrunner_bone_RFingerPinky
+    100272: ladysylvanaswindrunner_bone_RFingerRing
+    100274: ladysylvanaswindrunner_bone_Root
+    100276: ladysylvanaswindrunner_bone_RThumb
+    100278: ladysylvanaswindrunner_bone_ShoulderL
+    100280: ladysylvanaswindrunner_bone_ShoulderR
+    100282: ladysylvanaswindrunner_bone_SpineLow
+    100284: ladysylvanaswindrunner_bone_Waist
+    400000: ladysylvanaswindrunner
+    400002: ladysylvanaswindrunner 1
+    400004: //RootNode
+    400006: ladysylvanaswindrunner_bone_0
+    400008: ladysylvanaswindrunner_bone_10
+    400010: ladysylvanaswindrunner_bone_100
+    400012: ladysylvanaswindrunner_bone_101
+    400014: ladysylvanaswindrunner_bone_102
+    400016: ladysylvanaswindrunner_bone_103
+    400018: ladysylvanaswindrunner_bone_104
+    400020: ladysylvanaswindrunner_bone_105
+    400022: ladysylvanaswindrunner_bone_106
+    400024: ladysylvanaswindrunner_bone_107
+    400026: ladysylvanaswindrunner_bone_108
+    400028: ladysylvanaswindrunner_bone_109
+    400030: ladysylvanaswindrunner_bone_11
+    400032: ladysylvanaswindrunner_bone_110
+    400034: ladysylvanaswindrunner_bone_112
+    400036: ladysylvanaswindrunner_bone_113
+    400038: ladysylvanaswindrunner_bone_114
+    400040: ladysylvanaswindrunner_bone_115
+    400042: ladysylvanaswindrunner_bone_116
+    400044: ladysylvanaswindrunner_bone_12
+    400046: ladysylvanaswindrunner_bone_120
+    400048: ladysylvanaswindrunner_bone_121
+    400050: ladysylvanaswindrunner_bone_122
+    400052: ladysylvanaswindrunner_bone_123
+    400054: ladysylvanaswindrunner_bone_124
+    400056: ladysylvanaswindrunner_bone_125
+    400058: ladysylvanaswindrunner_bone_126
+    400060: ladysylvanaswindrunner_bone_127
+    400062: ladysylvanaswindrunner_bone_128
+    400064: ladysylvanaswindrunner_bone_129
+    400066: ladysylvanaswindrunner_bone_13
+    400068: ladysylvanaswindrunner_bone_130
+    400070: ladysylvanaswindrunner_bone_133
+    400072: ladysylvanaswindrunner_bone_134
+    400074: ladysylvanaswindrunner_bone_135
+    400076: ladysylvanaswindrunner_bone_136
+    400078: ladysylvanaswindrunner_bone_137
+    400080: ladysylvanaswindrunner_bone_138
+    400082: ladysylvanaswindrunner_bone_139
+    400084: ladysylvanaswindrunner_bone_14
+    400086: ladysylvanaswindrunner_bone_17
+    400088: ladysylvanaswindrunner_bone_18
+    400090: ladysylvanaswindrunner_bone_19
+    400092: ladysylvanaswindrunner_bone_23
+    400094: ladysylvanaswindrunner_bone_24
+    400096: ladysylvanaswindrunner_bone_25
+    400098: ladysylvanaswindrunner_bone_26
+    400100: ladysylvanaswindrunner_bone_28
+    400102: ladysylvanaswindrunner_bone_29
+    400104: ladysylvanaswindrunner_bone_30
+    400106: ladysylvanaswindrunner_bone_31
+    400108: ladysylvanaswindrunner_bone_32
+    400110: ladysylvanaswindrunner_bone_33
+    400112: ladysylvanaswindrunner_bone_34
+    400114: ladysylvanaswindrunner_bone_35
+    400116: ladysylvanaswindrunner_bone_36
+    400118: ladysylvanaswindrunner_bone_37
+    400120: ladysylvanaswindrunner_bone_38
+    400122: ladysylvanaswindrunner_bone_39
+    400124: ladysylvanaswindrunner_bone_4
+    400126: ladysylvanaswindrunner_bone_40
+    400128: ladysylvanaswindrunner_bone_41
+    400130: ladysylvanaswindrunner_bone_42
+    400132: ladysylvanaswindrunner_bone_43
+    400134: ladysylvanaswindrunner_bone_5
+    400136: ladysylvanaswindrunner_bone_54
+    400138: ladysylvanaswindrunner_bone_55
+    400140: ladysylvanaswindrunner_bone_56
+    400142: ladysylvanaswindrunner_bone_57
+    400144: ladysylvanaswindrunner_bone_58
+    400146: ladysylvanaswindrunner_bone_59
+    400148: ladysylvanaswindrunner_bone_6
+    400150: ladysylvanaswindrunner_bone_60
+    400152: ladysylvanaswindrunner_bone_61
+    400154: ladysylvanaswindrunner_bone_62
+    400156: ladysylvanaswindrunner_bone_63
+    400158: ladysylvanaswindrunner_bone_65
+    400160: ladysylvanaswindrunner_bone_66
+    400162: ladysylvanaswindrunner_bone_68
+    400164: ladysylvanaswindrunner_bone_69
+    400166: ladysylvanaswindrunner_bone_7
+    400168: ladysylvanaswindrunner_bone_70
+    400170: ladysylvanaswindrunner_bone_71
+    400172: ladysylvanaswindrunner_bone_72
+    400174: ladysylvanaswindrunner_bone_73
+    400176: ladysylvanaswindrunner_bone_74
+    400178: ladysylvanaswindrunner_bone_75
+    400180: ladysylvanaswindrunner_bone_76
+    400182: ladysylvanaswindrunner_bone_77
+    400184: ladysylvanaswindrunner_bone_78
+    400186: ladysylvanaswindrunner_bone_79
+    400188: ladysylvanaswindrunner_bone_8
+    400190: ladysylvanaswindrunner_bone_80
+    400192: ladysylvanaswindrunner_bone_81
+    400194: ladysylvanaswindrunner_bone_82
+    400196: ladysylvanaswindrunner_bone_83
+    400198: ladysylvanaswindrunner_bone_84
+    400200: ladysylvanaswindrunner_bone_85
+    400202: ladysylvanaswindrunner_bone_86
+    400204: ladysylvanaswindrunner_bone_87
+    400206: ladysylvanaswindrunner_bone_88
+    400208: ladysylvanaswindrunner_bone_89
+    400210: ladysylvanaswindrunner_bone_9
+    400212: ladysylvanaswindrunner_bone_90
+    400214: ladysylvanaswindrunner_bone_91
+    400216: ladysylvanaswindrunner_bone_92
+    400218: ladysylvanaswindrunner_bone_93
+    400220: ladysylvanaswindrunner_bone_94
+    400222: ladysylvanaswindrunner_bone_95
+    400224: ladysylvanaswindrunner_bone_96
+    400226: ladysylvanaswindrunner_bone_97
+    400228: ladysylvanaswindrunner_bone_98
+    400230: ladysylvanaswindrunner_bone_99
+    400232: ladysylvanaswindrunner_bone_ArmL
+    400234: ladysylvanaswindrunner_bone_ArmR
+    400236: ladysylvanaswindrunner_bone_Breath
+    400238: ladysylvanaswindrunner_bone_BTH
+    400240: ladysylvanaswindrunner_bone_CCH
+    400242: ladysylvanaswindrunner_bone_CHD
+    400244: ladysylvanaswindrunner_bone_CSL
+    400246: ladysylvanaswindrunner_bone_CSR
+    400248: ladysylvanaswindrunner_bone_Head
+    400250: ladysylvanaswindrunner_bone_Jaw
+    400252: ladysylvanaswindrunner_bone_LFingerIndex
+    400254: ladysylvanaswindrunner_bone_LFingerMiddle
+    400256: ladysylvanaswindrunner_bone_LFingerPinky
+    400258: ladysylvanaswindrunner_bone_LFingerRing
+    400260: ladysylvanaswindrunner_bone_LThumb
+    400262: ladysylvanaswindrunner_bone_Name
+    400264: ladysylvanaswindrunner_bone_NameMount
+    400266: ladysylvanaswindrunner_bone_RFingerIndex
+    400268: ladysylvanaswindrunner_bone_RFingerMiddle
+    400270: ladysylvanaswindrunner_bone_RFingerPinky
+    400272: ladysylvanaswindrunner_bone_RFingerRing
+    400274: ladysylvanaswindrunner_bone_Root
+    400276: ladysylvanaswindrunner_bone_RThumb
+    400278: ladysylvanaswindrunner_bone_ShoulderL
+    400280: ladysylvanaswindrunner_bone_ShoulderR
+    400282: ladysylvanaswindrunner_bone_SpineLow
+    400284: ladysylvanaswindrunner_bone_Waist
+    4300000: ladysylvanaswindrunner
+    7400000: Stand
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: ladysylvanaswindrunner
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Stand
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 86
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: ladysylvanaswindrunner
+        weight: 1
+      - path: ladysylvanaswindrunner 1
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_70
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_71
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_72
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_73
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_74
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_75
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_76
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_77
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_78
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_79
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_80
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_81
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_82
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_83
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_84
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_25
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_25/ladysylvanaswindrunner_bone_36
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_26
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_26/ladysylvanaswindrunner_bone_37
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_28
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_29
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_29/ladysylvanaswindrunner_bone_38
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_30
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_30/ladysylvanaswindrunner_bone_39
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_31
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_116
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_Breath
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_BTH
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_CHD
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_14/ladysylvanaswindrunner_bone_Head/ladysylvanaswindrunner_bone_Jaw
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_102
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_103
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_104
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_105
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_106
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_107
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_108
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_109
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_110
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_CCH
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_126
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_126/ladysylvanaswindrunner_bone_136
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_126/ladysylvanaswindrunner_bone_136/ladysylvanaswindrunner_bone_139
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_128
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_CSL
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LFingerIndex
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LFingerIndex/ladysylvanaswindrunner_bone_55
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LFingerMiddle
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LFingerMiddle/ladysylvanaswindrunner_bone_56
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LFingerPinky
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LFingerPinky/ladysylvanaswindrunner_bone_58
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LFingerRing
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LFingerRing/ladysylvanaswindrunner_bone_57
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LThumb
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_40/ladysylvanaswindrunner_bone_LThumb/ladysylvanaswindrunner_bone_54
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_41
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_120
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_123
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_32/ladysylvanaswindrunner_bone_124
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_33
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_33/ladysylvanaswindrunner_bone_122
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderL/ladysylvanaswindrunner_bone_ArmL/ladysylvanaswindrunner_bone_115
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_127
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_127/ladysylvanaswindrunner_bone_135
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_127/ladysylvanaswindrunner_bone_135/ladysylvanaswindrunner_bone_138
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_127/ladysylvanaswindrunner_bone_137
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_129
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_130
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_133
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_134
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_CSR
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RFingerIndex
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RFingerIndex/ladysylvanaswindrunner_bone_60
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RFingerMiddle
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RFingerMiddle/ladysylvanaswindrunner_bone_61
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RFingerPinky
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RFingerPinky/ladysylvanaswindrunner_bone_63
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RFingerRing
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RFingerRing/ladysylvanaswindrunner_bone_62
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RThumb
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_42/ladysylvanaswindrunner_bone_RThumb/ladysylvanaswindrunner_bone_59
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_43
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_34/ladysylvanaswindrunner_bone_125
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_35
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_35/ladysylvanaswindrunner_bone_121
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_8/ladysylvanaswindrunner_bone_ShoulderR/ladysylvanaswindrunner_bone_ArmR/ladysylvanaswindrunner_bone_114
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_93
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_94
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_95
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_96
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_97
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_98
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_4/ladysylvanaswindrunner_bone_99
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_87
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_88
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_89
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_90
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_91
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_SpineLow/ladysylvanaswindrunner_bone_92
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_5
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_5/ladysylvanaswindrunner_bone_9
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_5/ladysylvanaswindrunner_bone_9/ladysylvanaswindrunner_bone_17
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_5/ladysylvanaswindrunner_bone_9/ladysylvanaswindrunner_bone_17/ladysylvanaswindrunner_bone_23
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_5/ladysylvanaswindrunner_bone_9/ladysylvanaswindrunner_bone_17/ladysylvanaswindrunner_bone_112
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_5/ladysylvanaswindrunner_bone_10
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_5/ladysylvanaswindrunner_bone_10/ladysylvanaswindrunner_bone_100
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_6
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_6/ladysylvanaswindrunner_bone_11
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_6/ladysylvanaswindrunner_bone_11/ladysylvanaswindrunner_bone_18
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_6/ladysylvanaswindrunner_bone_11/ladysylvanaswindrunner_bone_18/ladysylvanaswindrunner_bone_24
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_6/ladysylvanaswindrunner_bone_11/ladysylvanaswindrunner_bone_18/ladysylvanaswindrunner_bone_113
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_6/ladysylvanaswindrunner_bone_12
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_6/ladysylvanaswindrunner_bone_12/ladysylvanaswindrunner_bone_101
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_7
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_7/ladysylvanaswindrunner_bone_13
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_7/ladysylvanaswindrunner_bone_13/ladysylvanaswindrunner_bone_19
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_85
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_0/ladysylvanaswindrunner_bone_Root/ladysylvanaswindrunner_bone_Waist/ladysylvanaswindrunner_bone_86
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_65
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_66
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_68
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_69
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_Name
+        weight: 1
+      - path: ladysylvanaswindrunner 1/ladysylvanaswindrunner_bone_NameMount
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .0500000007
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 1
+  additionalBone: 0
+  userData: 
