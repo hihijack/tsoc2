@@ -46,21 +46,7 @@ public class Hero : IActor
 
         set 
         {
-            EActorState stateOri = state;
             state = value;
-            if (stateOri == EActorState.Normal && state == EActorState.Move)
-            {
-                // 开始移动
-                
-            }
-            else if (stateOri == EActorState.Move && state == EActorState.Normal)
-            {
-                // 停止移动
-                
-            }
-            else if (state == EActorState.Battle)
-            {
-            }
         }
     }
 

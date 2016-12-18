@@ -1010,6 +1010,8 @@ public class GameView : MonoBehaviour {
         }
         // 清除警觉
         _MHero.ClearAlterness();
+        // 复活
+        _MHero._State = EActorState.Normal;
         // 回到城镇
         PlayerToMap(GameDatas.GetGameMapBD(GameManager.commonCPU.ReadCurHomeMap()), -1);
     }

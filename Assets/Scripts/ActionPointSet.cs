@@ -24,6 +24,9 @@ public class ActionPointSet : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        //!!!!!!!!!!!!!!!!
+        return;
+
         if (gameView.EnableInput && gameView.State == GameState.Normal && !UIManager._Instance.HasUI())
         {
             if (Input.GetMouseButton(0))
