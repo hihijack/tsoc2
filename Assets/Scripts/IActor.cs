@@ -84,7 +84,7 @@ public class IActor : MonoBehaviour {
     /// <summary>
     /// 物理攻击力
     /// </summary>
-    public int atkPhy;//来自属性及装备攻击力
+    private int atkWpon;//装备攻击力
     int valAAtkPhy = 0;//增伤A。技能Buff增伤
     float valBAtkPhy = 1f;//增伤B。技能buff增伤
     /// <summary>
@@ -92,7 +92,7 @@ public class IActor : MonoBehaviour {
     /// </summary>
     public int GetAtk()
     {
-        return Mathf.FloorToInt((atkPhy + valAAtkPhy) * valBAtkPhy);
+        return Mathf.FloorToInt((GetAtkPhy() + valAAtkPhy) * valBAtkPhy);
     }
     /// <summary>
     /// 增加攻击力
@@ -360,6 +360,24 @@ public class IActor : MonoBehaviour {
         set {
             _isSkilling = value;
         }
+    }
+
+    public int AtkWpon
+    {
+        get
+        {
+            return atkWpon;
+        }
+
+        set
+        {
+            atkWpon = value;
+        }
+    }
+
+    virtual public int GetAtkPhy()
+    {
+        return 0;
     }
 
     //protected Animation anim;

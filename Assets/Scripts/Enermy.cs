@@ -51,12 +51,17 @@ public class Enermy : IActor {
         return spriteRender;
     }
 
+    public override int GetAtkPhy()
+    {
+        return AtkWpon;
+    }
+
     public void Init(MonsterBaseData mbd)
     {
         _MonsterBD = mbd;
         this.hp = mbd.hp;
         this._HpMax = mbd.hp;
-        this.atkPhy = mbd.atkMin;
+        this.AtkWpon = mbd.atkMin;
         this.arm = mbd.arm;
         this.hit = mbd.hit;
         this.dodge = mbd.dodge;

@@ -141,6 +141,11 @@ public class Hero : IActor
         }
     }
 
+    public override int GetAtkPhy()
+    {
+        return Mathf.RoundToInt(AtkWpon * (_Strength + 100) / 100f);
+    }
+
     // 背包里的物品
     public List<EquipItem> itemsInBag = new List<EquipItem>();
 
@@ -256,7 +261,7 @@ public class Hero : IActor
         atkAnimTimeAfterBase = 0.5f;
 
         _BaseWeaponIAS = IConst.BaseIAS;
-        _DeadlyStrike = 0.05f;
+        _DeadlyStrike = IConst.BaseDS;
 
         _Strength = IConst.BASE_STR;
         agility = IConst.BASE_AGI;

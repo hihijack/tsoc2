@@ -775,16 +775,22 @@ public static class IConst
     public const int BASE_STR = 10; // 基础力量
     public const int BASE_AGI = 10; // 基础敏捷
     public const int BASE_INT = 10; // 基础智力
-    public const int BASE_STA = 10; // 基础体能
+    public const int BASE_STA = 15; // 基础体能
     public const int MP_PER_INT = 10;   // 每点智力增加的魔法上限
     public const int TL_PER_STA = 10;   // 每点体能增加的体力上限
-    public const int HP_PER_STA = 10;   // 每点体能增加的生命值上限
-    public const int ATK_PHY_PER_STR = 2;  // 每点力量提供的物理攻击力
+    public const int HP_PER_STA = 1;   // 每点体能增加的生命值上限
+    public const int ATK_PHY_PER_STR = 1;  // 每点力量提供的百分百武器伤害
     public const int ATK_MAG_PER_INT = 2; // 每点智力提供的魔法攻击力
     public const int HIT_PER_AGI = 2;     // 每点敏捷提供的命中
     public const int DODGE_PER_AGI = 2;    // 每点敏捷提供的躲闪
     public const float IAS_PERCENT_PER_AGI = 1f;  // 每点敏捷提供的攻击速度百分比
     public const float BaseIAS = 0.1f; // 基础攻击速度
+    public const int EXP_A = 50;    // 经验函数A
+    public const int EXP_B = -50; // 经验函数B
+    public const int EXP_MON_BASE = 40; // 怪提供的经验
+    public const int EXP_MON_K = 10;
+    public const int LOST_GOLD_LEVEL = 300; // 死亡损失金钱
+    public static readonly float BaseDS = 0.05f; //基础致命一击几率
 
     public const string KEY_HASALLOT_STR = "strallot";     // 已分配的力量点
     public const string KEY_HASALLOT_AGI = "agiallot";     // 已分配的敏捷点
@@ -802,12 +808,6 @@ public static class IConst
     public const string KEY_GOLD = "gold";  // 金币数
 
     public const string KEY_ITEM_USED = "itemused";
-
-    public const int EXP_A = 50;    // 经验函数A
-    public const int EXP_B = -50; // 经验函数B
-    public const int EXP_MON_BASE = 40; // 怪提供的经验
-    public const int EXP_MON_K = 10;
-    public const int LOST_GOLD_LEVEL = 300; // 死亡损失金钱
 }
 
 /// <summary>

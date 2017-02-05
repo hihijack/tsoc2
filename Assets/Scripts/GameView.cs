@@ -474,8 +474,6 @@ public class GameView : MonoBehaviour {
       
        _MHero.InitBaseProp();
        CalHeroPropertyByPropertyAllot();
-       // 基础属性转化为直接属性
-       BasePropToDirectProp();
 
        //AddAEquipItemToBag(_MHero, GenerateAEquipItem(1, EEquipItemQLevel.Normal));
        //AddAEquipItemToBag(_MHero, GenerateAEquipItem(7, EEquipItemQLevel.Normal));
@@ -511,8 +509,11 @@ public class GameView : MonoBehaviour {
        // 装备带来的属性
        CalHeroPropByEquipItem();
 
+       // 基础属性转化为直接属性
+       BasePropToDirectProp();
+
         // 设置状态为100%
-       _MHero.hp = _MHero._HpMax;
+        _MHero.hp = _MHero._HpMax;
        _MHero._Mp = 0;
        _MHero.tl = _MHero.tlMax;
 
@@ -1930,7 +1931,7 @@ public class GameView : MonoBehaviour {
     {
         // 基础装备属性，如护甲，攻击力
         _MHero.arm += eiHasEque.baseData.arm;
-        _MHero.atkPhy += eiHasEque.baseData.atk;
+        _MHero.AtkWpon += eiHasEque.baseData.atk;
         if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand || eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
         {
             // 武器速度计算
@@ -1946,7 +1947,6 @@ public class GameView : MonoBehaviour {
                 case EEquipItemProperty.Str:
                     {
                         _MHero._Strength += eiw.val;
-                        StrToDriectProp(eiw.val, true);
                     }
                     
                     break;
@@ -2043,7 +2043,7 @@ public class GameView : MonoBehaviour {
     {
         // 基础装备属性，如护甲，攻击力
         _MHero.arm -= eiHasEque.baseData.arm;
-        _MHero.atkPhy -= eiHasEque.baseData.atk;
+        _MHero.AtkWpon -= eiHasEque.baseData.atk;
         if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand || eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
         {
             // 武器速度计算
@@ -2059,7 +2059,6 @@ public class GameView : MonoBehaviour {
                 case EEquipItemProperty.Str:
                     {
                         _MHero._Strength -= eiw.val;
-                        StrToDriectProp(eiw.val, false);
                     }
 
                     break;
@@ -2153,27 +2152,9 @@ public class GameView : MonoBehaviour {
     /// </summary>
     void BasePropToDirectProp()
     {
-        StrToDriectProp(_MHero._Strength, true);
         AgiToDirectProp(_MHero.agility, true);
         IntToDirectProp(_MHero.intell, true);
         StaToDirectProp(_MHero.stamina, true);
-    }
-
-    /// <summary>
-    /// 将力量转化为玩家的直接属性
-    /// </summary>
-    /// <param name="str"></param>
-    public void StrToDriectProp(int str, bool add)
-    {
-        if (add)
-        {
-            _MHero.atkPhy = _MHero.atkPhy + str * (IConst.ATK_PHY_PER_STR);
-        }
-        else
-        {
-            _MHero.atkPhy = _MHero.atkPhy - str * (IConst.ATK_PHY_PER_STR);
-        }
-        
     }
 
     /// <summary>

@@ -117,7 +117,6 @@ public class UIHeroInfo : MonoBehaviour {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
         gameView._MHero._Strength++;
-        gameView.StrToDriectProp(1, true);
         gameView._PropHasAlltoToStr++;
         RefreshStrAndProp();
     }
