@@ -4,17 +4,31 @@ using System.Collections.Generic;
 using Mono.Data.Sqlite;
 using System.Text;
 using SimpleJSON;
+using System;
 
-public enum GameState
+public enum GameRoundLogicState
 {
-    Normal,
-    Battle,
-    TarcticsSkilling,   // 战术执行选择目标中
-    DisableControll     // 禁止所有控制
+    PlayerRoundStart,//玩家回合开始 
+    Normal,//玩家输入阶段
+    HeroAction,//玩家角色行为阶段。移动等
+    WorldEventAction,//世界事件阶段
+    NPCAction,
+    Battle
+}
+
+/// <summary>
+/// 玩家输入状态
+/// </summary>
+public enum EPlayInputState
+{
+    Nomal,
+    ChooseTarget //选择目标
 }
 
 public class GameView : MonoBehaviour {
+    public static GameView _Inst;
     public GameObject g_GobjMapRoot;
+
     public CameraControl cameraControl;
 
     public GameMapBaseData gGameMapOri; // 当前地图信息
@@ -22,6 +36,7 @@ public class GameView : MonoBehaviour {
     //public ActionPointSet acpSet;
 
     public Camera cameraMain;
+
     public Camera cameraUI;
 
     //Hero hero;
@@ -31,15 +46,21 @@ public class GameView : MonoBehaviour {
         get { return GameManager.hero; }
     }
 
-    GameState state;
+    GameRoundLogicState state;
 
-    public GameState State
+    public GameRoundLogicState _RoundLogicState
     {
         get { return state; }
-        set { state = value; Debug.Log("ToState：" + state); }
+        set { state = value; Debug.Log("ToState：" + state + "," + Time.frameCount); }
     }
 
+    EPlayInputState gInputState = EPlayInputState.Nomal;
+
     ISkill gSkillTractic; // 当前战术技能
+
+    EquipItem gItemToUse = null;//当前要使用的道具 
+
+    MapGrid gCurSelectMg = null;//当前选择的目标格子
 
     bool enableInput = true;
 
@@ -85,7 +106,7 @@ public class GameView : MonoBehaviour {
     }
 
     int propHasAllotToInt = 0;
-    public int _PropHasAllotToInt
+    public int _PropHasAllotToTen
     {
         get
         {
@@ -114,13 +135,14 @@ public class GameView : MonoBehaviour {
 
     MapGrid mgInterActive = null; //当前点击交互格子 
 
-
-    List<Enermy> listEnermysInAlterness = new List<Enermy>(); // 处于警觉状态中的敌人
-
     int enermysCount = 0; // 当前地图敌人总数
     int enermyKilled = 0; // 已击杀敌人数量
 
     int curRound = 0; // 当前回合。进入地图清0，每行走一格+1
+
+    List<Enermy> _ListEnermys = new List<Enermy>();
+
+    public List<MapGrid> gListMGs = new List<MapGrid>();
 
     public int _CurRound
     {
@@ -128,18 +150,33 @@ public class GameView : MonoBehaviour {
         set 
         { 
             curRound = value;
-            if (UIManager._Instance.uiMain != null)
+            if (UIManager.Inst.uiMain != null)
             {
-                UIManager._Instance.uiMain.ShowRound(curRound);
+                UIManager.Inst.uiMain.ShowRound(curRound);
             }
             EventsMgr.GetInstance().TriigerEvent(eEventsKey.RoundChange, curRound);
         }
     }
 
-
     bool hasKillCurBoss = false;
 
-    PlayerMoveCon playerMoveCon;
+    PlayerMoveCtl playerMoveCtl;
+    PlayerInputCtl playerInputCtl;
+
+    public void AddToListEnermy(Enermy enermy)
+    {
+        _ListEnermys.Add(enermy);
+    }
+
+    public void ClearListEnermy()
+    {
+        _ListEnermys.Clear();
+    }
+
+    public void RemoveFormListEnermy(Enermy enermy)
+    {
+        _ListEnermys.Remove(enermy);
+    }
 
     void Awake()
     {
@@ -166,7 +203,7 @@ public class GameView : MonoBehaviour {
 
     IEnumerator CoInit()
     {
-
+        _Inst = this;
         GameManager.gameView = this;
 
         InitCommonCPU();
@@ -174,9 +211,9 @@ public class GameView : MonoBehaviour {
         GameManager.commonCPU.InitSprites();
 
        
-        UIManager._Instance.InitUI(this);
+        UIManager.Inst.InitUI(this);
 
-        State = GameState.Normal;
+        _RoundLogicState = GameRoundLogicState.Normal;
 
         EventsMgr.GetInstance().Init();
 
@@ -193,8 +230,10 @@ public class GameView : MonoBehaviour {
 
         PlayerToMap(GameDatas.GetGameMapBD(GameManager.commonCPU.ReadCurHomeMap()), -1);
 
-        playerMoveCon = new PlayerMoveCon(_MHero);
+        playerMoveCtl = new PlayerMoveCtl(_MHero);
 
+        //输入控制器
+        playerInputCtl = new PlayerInputCtl(this);
         yield return 0;
     }
 
@@ -211,6 +250,11 @@ public class GameView : MonoBehaviour {
     /// </summary>
     void InitMonsters()
     {
+
+        return;//######
+
+        ClearListEnermy();
+
         int monCount = gGameMapOri.monsterCount;
         for (int i = 0; i < monCount; i++)
         {
@@ -280,7 +324,7 @@ public class GameView : MonoBehaviour {
         int maxId = gGameMapOri.width * gGameMapOri.height - 1;
         while (true)
         {
-            int ranMGid = Random.Range(minId, maxId + 1);
+            int ranMGid = UnityEngine.Random.Range(minId, maxId + 1);
             MapGrid mgRan = GetMapGridById(ranMGid);
             if (mgRan.Type == EGridType.None && mgRan.GetItemGobj() == null)
             {
@@ -310,7 +354,7 @@ public class GameView : MonoBehaviour {
 
     void ShowUI_Main()
     {
-        UIManager._Instance.GeneralShowUIMain(IPath.UI + "ui_main");
+        UIManager.Inst.GeneralShowUIMain(IPath.UI + "ui_main");
     }
 
     /// <summary>
@@ -320,6 +364,7 @@ public class GameView : MonoBehaviour {
     {
         if (g_GobjMapRoot != null)
         {
+            _ListEnermys.Clear();
             DestroyObject(g_GobjMapRoot);
             yield return 0;
         }
@@ -332,54 +377,139 @@ public class GameView : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
+        if (_RoundLogicState == GameRoundLogicState.Normal && InputState == EPlayInputState.Nomal)
+        {
+            UpdateNormalInput();
+        }
+        else if (_RoundLogicState == GameRoundLogicState.Battle)
+        {
+            UpdateBattleInput();
+        }
+    }
+
+    /// <summary>
+    /// 战斗状态输入
+    /// </summary>
+    private void UpdateBattleInput()
+    {
+        if (Input.GetButtonDown("Stop"))
+        {
+
+            _MHero.BsManager.ActionStop();
+        }
+        else if (Input.GetButton("Attack"))
+        {
+            //攻击
+            _MHero.BsManager.ActionAtk();
+        }
+
+        if (Input.GetButton("PowerAttack"))
+        {
+            //蓄力攻击
+            _MHero.BsManager.ActionPoweringStart();
+        }
+        else if (Input.GetButtonUp("PowerAttack"))
+        {
+            //蓄力结束
+            _MHero.BsManager.ActionPoweringOver();
+        }
+
+        if (Input.GetButton("Def"))
+        {
+            _MHero.BsManager.ActionDef();
+        }
+        if (Input.GetButtonUp("Def"))
+        {
+            _MHero.BsManager.ActionStopDef();
+        }
+
+        if (Input.GetButtonDown("Skill1"))
+        {
+            ISkill skill = _MHero.GetSkillByIndex(1);
+            if (skill != null)
+            {
+                _MHero.BsManager.ActionSkill(skill);
+            }
+        }
+        else if (Input.GetButtonDown("Skill2"))
+        {
+            ISkill skill = _MHero.GetSkillByIndex(2);
+            if (skill != null)
+            {
+                _MHero.BsManager.ActionSkill(skill);
+            }
+        }
+        else if (Input.GetButtonDown("Skill3"))
+        {
+            ISkill skill = _MHero.GetSkillByIndex(3);
+            if (skill != null)
+            {
+                _MHero.BsManager.ActionSkill(skill);
+            }
+        }
+        else if (Input.GetButtonDown("Skill4"))
+        {
+            ISkill skill = _MHero.GetSkillByIndex(4);
+            if (skill != null)
+            {
+                _MHero.BsManager.ActionSkill(skill);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 普通状态输入更新
+    /// </summary>
+    private void UpdateNormalInput()
+    {
         if (Input.GetAxisRaw("Vertical") >= 1)
         {
-            if (playerMoveCon != null)
+            if (playerMoveCtl != null)
             {
-                playerMoveCon.OnKeyArrow(EDirection.Up);
+                playerMoveCtl.OnKeyArrow(EDirection.Up);
             }
         }
         else if (Input.GetAxisRaw("Vertical") <= -1)
         {
-            if (playerMoveCon != null)
+            if (playerMoveCtl != null)
             {
-                playerMoveCon.OnKeyArrow(EDirection.Down);
+                playerMoveCtl.OnKeyArrow(EDirection.Down);
             }
         }
         else if (Input.GetAxisRaw("Horizontal") >= 1)
         {
-            if (playerMoveCon != null)
+            if (playerMoveCtl != null)
             {
-                playerMoveCon.OnKeyArrow(EDirection.Right);
+                playerMoveCtl.OnKeyArrow(EDirection.Right);
             }
         }
         else if (Input.GetAxisRaw("Horizontal") <= -1)
         {
-            if (playerMoveCon != null)
+            if (playerMoveCtl != null)
             {
-                playerMoveCon.OnKeyArrow(EDirection.Left);
+                playerMoveCtl.OnKeyArrow(EDirection.Left);
             }
         }
 
         // 打开人物属性界面
         if (Input.GetButtonDown("HeroInfo"))
         {
-            UIManager._Instance.ToggleUI_HeroInfo();
+            UIManager.Inst.ToggleUI_HeroInfo();
         }
 
         if (Input.GetButtonDown("Bag"))
         {
-            UIManager._Instance.ToggleUI_Bag();
+            UIManager.Inst.ToggleUI_Bag();
         }
 
         if (Input.GetButtonDown("Skill"))
         {
-            UIManager._Instance.ToggleUI_Skill();
+            UIManager.Inst.ToggleUI_Skill();
         }
 
         if (Input.GetButtonDown("Log"))
         {
-            UIManager._Instance.ToggleUIMission();
+            UIManager.Inst.ToggleUIMission();
         }
 
         if (Input.GetKeyDown(KeyCode.F1))
@@ -392,11 +522,6 @@ public class GameView : MonoBehaviour {
             // 保存
             GameManager.commonCPU.SaveEquipItems();
         }
-
-        //if (Input.GetKeyDown(KeyCode.T))
-        //{
-        //    AddAEquipItemToBag(_MHero, GenerateAEquipItem(1, EEquipItemQLevel.Legend));
-        //}
     }
 
     public int _ExpCurLevel
@@ -410,7 +535,7 @@ public class GameView : MonoBehaviour {
         {
             _MHero.expCurLevel = value;
             // 当前等级需要经验
-            UIManager._Instance.RefreshHeroExp(value, GetNeedExpInCurLevel());
+            UIManager.Inst.RefreshHeroExp(value, GetNeedExpInCurLevel());
             _MHero.SaveExuCurLevel();
         }
     }
@@ -460,10 +585,10 @@ public class GameView : MonoBehaviour {
        //gobjPlayer.transform.position = GetGridPos(gridid);
        //_MHero.SetPlayerDirection(EDirection.Down);
        //cameraControl.target = gobjPlayer;      
+       _MHero.Init();
        _MHero.skillIdsTractics = new int[] {3};
        _MHero.InitTacticsSkill();
        _MHero.InitWeapon();
-
        _Level = _MHero.GetSavedLvel();
        _ExpCurLevel = _MHero.GetSavedExpCurLevel();
 
@@ -486,8 +611,8 @@ public class GameView : MonoBehaviour {
         // 读取保存的装备
        GameManager.commonCPU.ReadEquipItem();
 
-       // 创建几个物品给英雄
-      
+        // 创建几个物品给英雄
+        AddAEquipItemToBag(Hero._Inst, GenerateAEquipItem(95, EEquipItemQLevel.Normal));
 
        if (_MHero.itemsHasEquip.Count == 0 && _MHero.itemsInBag.Count == 0)
        {
@@ -513,9 +638,9 @@ public class GameView : MonoBehaviour {
        BasePropToDirectProp();
 
         // 设置状态为100%
-        _MHero.hp = _MHero._HpMax;
-       _MHero._Mp = 0;
-       _MHero.tl = _MHero.tlMax;
+        _MHero._Prop.Hp = _MHero._Prop.HpMax;
+        _MHero._Prop.Mp = 0;
+        _MHero.mpMax = 30;
 
        _ProNeedAllot = ReadHeroProNeedAllot();
        ReadSavedGold();
@@ -555,6 +680,12 @@ public class GameView : MonoBehaviour {
        return ias;
     }
 
+    internal void AddAEnermyToBattle(Enermy enermy)
+    {
+        throw new NotImplementedException();
+    }
+
+
     /// <summary>
     /// 获取战斗中所有人
     /// </summary>
@@ -586,13 +717,13 @@ public class GameView : MonoBehaviour {
 
     public IEnumerator CoOnEnterBattle(List<Enermy> enermys) 
     {
-        State = GameState.Battle;
+        _RoundLogicState = GameRoundLogicState.Battle;
         _MHero._State = EActorState.Battle;
         cameraControl.State = ECameraState.Battle;
-
+        _MHero.BsManager.Start();
         yield return 0;
 
-        UIManager._Instance.uiMain.ShowUIBattle(true);
+        UIManager.Inst.uiMain.ShowUIBattle(true);
 
         GameObject gobjBattleOri = GameObject.FindGameObjectWithTag("Battle");
 
@@ -606,35 +737,44 @@ public class GameView : MonoBehaviour {
             Enermy enermy = enermys[i];
             enermy.uiIndex = i;
         }
-        UIManager._Instance.uiMain.InitTargetUI(enermys);
+        UIManager.Inst.uiMain.InitTargetUI(enermys);
 
         for (int i = 0; i < enermyCount; i++)
         {
             GameObject gobjPosEnermy = Tools.GetGameObjectInChildByPathSimple(gobjBattleOri, enermyCount + "/enermy" + i);
             Enermy enermy = enermys[i];
-            enermy._State = EActorState.Battle;
-            enermy.transform.position = gobjPosEnermy.transform.position;
-            enermy.transform.localEulerAngles = gobjPosEnermy.transform.localEulerAngles;
-            
-            enermy.OnEnterBattle();
-
-
-            // 设置UI位置
-            GameObject gobjUIEnermyItem = UIManager._Instance.uiMain.dicModelViews[enermy.GetInstanceID()] as GameObject;
-            Tools.SetUIPosBy3DGameObj(gobjUIEnermyItem, gobjPosEnermy.transform.position + new Vector3(0f, 0.6f, 0f), cameraMain, cameraUI);
-
-            // 开始攻击第一个
-            if (i == 0)
+            if (enermy != null)
             {
-                //g_Target = enermy;
-                enermyToAttack = enermy;
+                enermy._State = EActorState.Battle;
+                enermy.transform.position = gobjPosEnermy.transform.position;
+                enermy.transform.localEulerAngles = gobjPosEnermy.transform.localEulerAngles;
+                if (enermy._flagSpeedCtl != null)
+                {
+                    enermy._flagSpeedCtl.SetVisible(false);
+                }
+                enermy.OnEnterBattle();
+
+
+                // 设置UI位置
+                GameObject gobjUIEnermyItem = UIManager.Inst.uiMain.dicModelViews[enermy.GetInstanceID()] as GameObject;
+                Tools.SetUIPosBy3DGameObj(gobjUIEnermyItem, gobjPosEnermy.transform.position + new Vector3(0f, 0.6f, 0f), cameraMain, cameraUI);
+
+                // 开始攻击第一个
+                if (i == 0)
+                {
+                    //g_Target = enermy;
+                    enermyToAttack = enermy;
+                }
+                enermy.curBattleTarget = _MHero;
+                enermy.StartBattleAI();
             }
-            enermy.curTarget = _MHero;
-            enermy.StartAttack();
         }
-        
-        _MHero.SetAttackTarget(enermyToAttack);
-        _MHero.StartAttack();
+
+        if (enermyToAttack != null)
+        {
+            _MHero.SetAttackTarget(enermyToAttack);
+        }
+        //_MHero.StartAttack();
     }
 
     public int GetLostGoldOnDie() 
@@ -713,7 +853,7 @@ public class GameView : MonoBehaviour {
     public void OnTriggerItem_NPC(ItemNPC npc)
     {
         // 显示交互选择界面
-        UINPCMutual unm = UIManager._Instance.ShowUINPCMutual();
+        UINPCMutual unm = UIManager.Inst.ShowUINPCMutual();
         unm.Init(npc);
     }
 
@@ -726,7 +866,7 @@ public class GameView : MonoBehaviour {
         // 取台词
         string name = npc.npcData.name;
         string words = npc.GetWords(_MHero._CurMainMission.id);
-        UIManager._Instance.ShowNPCWords(name, words);
+        UIManager.Inst.ShowNPCWords(name, words);
         // 任务检查
         if (_MHero._CurMainMission != null && _MHero._CurMainMission.targetType == EMissionType.InterActive
             && _MHero._CurMainMission.targetId == npc.npcData.id)
@@ -734,9 +874,304 @@ public class GameView : MonoBehaviour {
             CompleteAMission(_MHero._CurMainMission);
         }
     }
+    //==================================================================================================
+    #region 回合逻辑
+    /// <summary>
+    /// 玩家等待一回合
+    /// </summary>
+    internal void RoundLogicWaitARound()
+    {
+        if (_RoundLogicState == GameRoundLogicState.Normal)
+        {
+            PlayerActionEnd();
+        }
+    }
 
-	#region 当激活一个npc
-	#endregion
+    public void PlayerActionEnd()
+    {
+        StartCoroutine(GameView._Inst.RoundLogicPlayerActionEventCo());
+    }
+
+    /// <summary>
+    /// 玩家行动事件逻辑
+    /// </summary>
+    /// <returns></returns>
+    internal IEnumerator RoundLogicPlayerActionEventCo()
+    {
+        yield return StartCoroutine(RoundLogicWorldEventCo());
+        //玩家回合结束，开始NPC回合
+        RoundLogicNPCAction();
+    }
+
+    /// <summary>
+    /// 单独一个AI动作事件逻辑。AI行动后触发事件
+    /// </summary>
+    /// <returns></returns>
+    internal IEnumerator CoAIActEvent(Enermy e)
+    {
+        WorldEventForANPC(e);
+        yield return 0;
+        //yield return StartCoroutine(RoundLogicWorldEventCo());
+    }
+
+    /// <summary>
+    /// 当玩家回合结束。回合结束事件
+    /// </summary>
+    internal void OnHeroRoundEnd()
+    {
+        GameManager.gameView._RoundLogicState = GameRoundLogicState.WorldEventAction;
+        //TODO 玩家回合结束事件
+        RoundLogicNPCAction();
+    }
+
+    /// <summary>
+    /// 玩家回合开始逻辑：Buff，技能触发
+    /// </summary>
+    private void RoundLogicPlayerRoundStart()
+    {
+        gRoundCount++;
+        _RoundLogicState = GameRoundLogicState.PlayerRoundStart;
+        
+        //TODO buff，技能触发
+        RoundLogicPlayerInput();
+    }
+    
+    public void RoundLogicOnInitMap()
+    {
+        gRoundCount = 0;
+        //草丛逻辑
+        for (int i = 0; i < _ListEnermys.Count; i++)
+        {
+            Enermy e = _ListEnermys[i];
+            MapGrid mgE = e.GetCurMapGrid();
+            if (mgE.Surface == EMGSurface.Grass)
+            {
+                Buff_Hiding buffHiding = Tools.GetOrAddCom<Buff_Hiding>(e.gameObject);
+                buffHiding.Init(e);
+                buffHiding.StartEffect();
+            }
+        }
+
+        RoundLogicPlayerRoundStart();
+    }
+
+    /// <summary>
+    /// 玩家输入逻辑
+    /// </summary>
+    private void RoundLogicPlayerInput()
+    {
+        _RoundLogicState = GameRoundLogicState.Normal;
+        //切换地图判断
+        Hero._Inst.CheckChangeMap();
+    }
+
+    /// <summary>
+    /// 事件流程逻辑
+    /// </summary>
+    internal IEnumerator RoundLogicWorldEventCo()
+    {
+        _RoundLogicState = GameRoundLogicState.WorldEventAction;
+
+        for (int mgIndex = 0; mgIndex < gListMGs.Count; mgIndex++)
+        {
+            MapGrid mg = gListMGs[mgIndex];
+            //火势蔓延
+            //非该回合燃烧
+            if (mg.Surface == EMGSurface.Fireing && mg.burnRoundIndex != gRoundCount)
+            {
+                //周围格子着火
+                List<MapGrid> mgsNear = mg.GetNearGrids();
+                for (int indexMgNear = 0; indexMgNear < mgsNear.Count; indexMgNear++)
+                {
+                    MapGrid mgNear = mgsNear[indexMgNear];
+                    if (mgNear != null && mgNear.CanBurn())
+                    {
+                        mgNear.burnRoundIndex = gRoundCount;
+                        mgNear.Burn();
+                    }
+                }
+            }
+        }
+
+        //TODO 检测每块地形，地图道具，执行逻辑
+        for (int i = 0; i < _ListEnermys.Count; i++)
+        {
+            Enermy e = _ListEnermys[i];
+            WorldEventForANPC(e);
+        }
+
+        //玩家在火中受伤
+        if (Hero._Inst.GetCurMapGrid().Surface == EMGSurface.Fireing)
+        {
+            DamageTarget(Hero._Inst, 100, EDamageType.Fire);
+        }
+
+        //逻辑结束
+        yield return 0;
+    }
+
+    void WorldEventForANPC(Enermy e)
+    {
+        MapGrid mgE = e.GetCurMapGrid();
+
+        //在草丛内隐匿
+        if (mgE.Surface == EMGSurface.Grass)
+        {
+            Buff_Hiding buffHiding = Tools.GetOrAddCom<Buff_Hiding>(e.gameObject);
+            buffHiding.Init(e);
+            buffHiding.StartEffect();
+        }
+        else
+        {
+            Buff_Hiding buffHidin = e.GetBuff<Buff_Hiding>();
+            if (buffHidin != null)
+            {
+                buffHidin.Remove();
+            }
+        }
+
+        //火中受伤害
+        if (mgE.Surface == EMGSurface.Fireing)
+        {
+            DamageTarget(e, 100, EDamageType.Fire);
+        }
+    }
+
+    /// <summary>
+    /// 对目标造成伤害。伤害源是世界事件
+    /// </summary>
+    /// <param name="e"></param>
+    private void DamageTarget(IActor target, int damage, EDamageType damageType)
+    {
+        //坚韧
+        damage = Mathf.CeilToInt(damage * (1 - target._Prop.DamReduce));
+
+        target.OnHurted(damage, damageType, null, false);
+
+        int oriTargetHP = target._Prop.Hp;
+
+        target._Prop.Hp -= damage;
+        if (target._Prop.Hp <= 0)
+        {
+            target._Prop.Hp = 0;
+            target._State = EActorState.Dead;
+            target.OnDead();
+            if (target.isHero)
+            {
+                GameManager.gameView.OnHeroDie();
+            }
+            else
+            {
+                GameManager.gameView.OnEnermyDie(target as Enermy);
+                
+            }
+        }
+        else
+        {
+            target.OnHPChange(oriTargetHP, target._Prop.Hp);
+        }
+
+        if (!target.isHero)
+        {
+            //UIManager.Inst.uiMain.RefreshTargetHP(target as Enermy);
+            //UIManager.Inst.ShowDamageTxt(damage, damageType);
+        }
+        else
+        {
+            UIManager.Inst.uiMain.RefreshHeroHP();
+            UIManager.Inst.ShowHurtedTxt(damage, damageType);
+        }
+    }
+
+    /// <summary>
+    /// 开始NPC行为逻辑
+    /// </summary>
+    private void RoundLogicNPCAction()
+    {
+        _RoundLogicState = GameRoundLogicState.NPCAction;
+        for (int i = 0; i < _ListEnermys.Count; i++)
+        {
+            Enermy e = _ListEnermys[i];
+            if (e != null && e._State != EActorState.Dead)
+            {
+                e.enableAction = true;
+            }
+        }
+        StartCoroutine(CoRoundLoginNPCActions());
+    }
+
+    private IEnumerator CoRoundLoginNPCActions()
+    {
+        // 视野检测
+
+        for (int i = 0; i < _ListEnermys.Count; i++)
+        {
+            Enermy e = _ListEnermys[i];
+            if (e != null && e._State != EActorState.Dead)
+            {
+                yield return StartCoroutine(e.CoAIAction());
+                yield return StartCoroutine(CoAIActEvent(e));
+            }
+        }
+
+        //怪物回合结束
+        StartRoundLogicBattle();
+    }
+
+    /// <summary>
+    /// 开始战斗逻辑
+    /// </summary>
+    internal void StartRoundLogicBattle()
+    {
+        Hero._Inst.ClearBattleTargets();
+
+        List<MapGrid> mgsNearHero = Hero._Inst.GetCurMapGrid().GetNearGrids(true);
+        for (int i = 0; i < mgsNearHero.Count; i++)
+        {
+            MapGrid mgNearHero = mgsNearHero[i];
+            Enermy e = mgNearHero.GetItem<Enermy>();
+            if (e != null && (e._AIState == EAIState.Battle || e._AIState == EAIState.FindTarget))
+            {
+                MapGrid mgEnermy = e.GetCurMapGrid();
+                int dis = MapGrid.GetDis(Hero._Inst.GetCurMapGrid(), mgEnermy);
+                if (dis == 2)
+                {
+                    //隐匿状态不被动加入战斗
+                    if (!e.HasBuff<Buff_Hiding>())
+                    {
+                        List<MapGrid> mgNearTemp = mgEnermy.GetNearGrids();
+                        for (int j = 0; j < mgNearTemp.Count; j++)
+                        {
+                            MapGrid mgTemp = mgNearTemp[j];
+                            Enermy eTemp = mgTemp.GetItem<Enermy>();
+                            if (eTemp != null && eTemp._AIState == EAIState.Battle)
+                            {
+                                Hero._Inst.AddAEnermyToBattle(e);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Hero._Inst.AddAEnermyToBattle(e);
+                }
+                
+            }
+        }
+
+        if (Hero._Inst.HasEnermyToBattle())
+        {
+            StartCoroutine(CoOnEnterBattle(Hero._Inst.GetBattleTargets()));
+        }
+        else
+        {
+            RoundLogicPlayerRoundStart();
+        }
+    }
+    #endregion
+
+    #region 当激活一个npc
+    #endregion
     /// <summary>
     /// 当激活一个npc（神坛）
     /// </summary>
@@ -789,7 +1224,7 @@ public class GameView : MonoBehaviour {
             itc.InitItems();
         }
         // 显示界面
-        UIManager._Instance.ShowUIItemDrops(itc.listEquipItems);
+        UIManager.Inst.ShowUIItemDrops(itc.listEquipItems);
     }
 
     public MapGrid GetMapGridById(int id)
@@ -921,7 +1356,7 @@ public class GameView : MonoBehaviour {
         if (nextTarget != null)
         {
             _MHero.SetAttackTarget(nextTarget);
-            UIManager._Instance.uiMain.SetTarget(nextTarget);
+            UIManager.Inst.uiMain.SetTarget(nextTarget);
         }
         else
         {
@@ -938,39 +1373,43 @@ public class GameView : MonoBehaviour {
     IEnumerator ExitBattleDelay(float delay) 
     {
         yield return new WaitForSeconds(delay);
-        ExitBattle();
+        OnExitBattle();
     }
 
     /// <summary>
     /// 离开战斗
     /// </summary>
-    public void ExitBattle()
+    public void OnExitBattle()
     {
-        State = GameState.Normal;
+        _RoundLogicState = GameRoundLogicState.Normal;
         if (_MHero._State != EActorState.Dead)
         {
             _MHero._State = EActorState.Normal;
+            _MHero._Prop.Mp = 0;
+            UIManager.Inst.uiMain.RefreshHeroMP();
             _MHero.transform.position = _MHero.GetCurMapGrid().transform.position;
             _MHero.CheckChangeMap();
             OnRoundEnd();
         }
-        UIManager._Instance.uiMain.ShowUIBattle(false);
-        UIManager._Instance.uiMain.ShowTargetUI(false);
+
+        _MHero.BsManager.Clear();
+
+        UIManager.Inst.uiMain.ShowUIBattle(false);
+        UIManager.Inst.uiMain.ShowTargetUI(false);
         cameraControl.State = ECameraState.Normal;
 
         if (hasKillCurBoss)
         {
             // 击杀试炼塔boss
             OnFinishATrial();
-            UIManager._Instance.GeneralTip("挑战完成", Color.yellow);
+            UIManager.Inst.GeneralTip("挑战完成", Color.yellow);
             hasKillCurBoss = false;
         }
         else if (gGameMapOri.tier > 0 && GetEnermyCountInCurMap() == 0)
         {
             OnKillAllEnemy();
-           
         }
-        
+
 
     }
 
@@ -979,7 +1418,7 @@ public class GameView : MonoBehaviour {
     /// </summary>
     void OnKillAllEnemy() 
     {
-        UIManager._Instance.GeneralTip("邪恶凝聚，一个强大的怪物出现了", Color.red);
+        UIManager.Inst.GeneralTip("邪恶凝聚，一个强大的怪物出现了", Color.red);
         MapGrid mg = FindStartAndToHomeGrid();
         MonsterBaseData mon = GameDatas.GetMonsterBaseData(gGameMapOri.bossId);
         Enermy enermyBoss = CreateAEnermy(mg, mon);
@@ -1002,12 +1441,12 @@ public class GameView : MonoBehaviour {
 
     public void OnComfirmDie() 
     {
-        UIManager._Instance.RemoveHeroDieUI();
+        UIManager.Inst.RemoveHeroDieUI();
 
         // 退出战斗
-        if (State == GameState.Battle)
+        if (_RoundLogicState == GameRoundLogicState.Battle)
         {
-            ExitBattle();
+            OnExitBattle();
         }
         // 清除警觉
         _MHero.ClearAlterness();
@@ -1022,7 +1461,7 @@ public class GameView : MonoBehaviour {
     /// </summary>
     public void OnHeroDie()
     {
-        UIManager._Instance.ShowHeroDieUI();
+        UIManager.Inst.ShowHeroDieUI();
     }
 
     /// <summary>
@@ -1085,10 +1524,9 @@ public class GameView : MonoBehaviour {
     public void OnLevelUP()
     {
         // 恢复至百分百状态
-        _MHero.hp = _MHero._HpMax;
-        _MHero._Mp = _MHero.mpMax;
-        _MHero.tl = _MHero.tlMax;
-        UIManager._Instance.RefreshMainUIHeroStateInfo();
+        _MHero._Prop.Hp = _MHero._Prop.HpMax;
+        //_MHero._Mp = _MHero.mpMax;
+        UIManager.Inst.RefreshMainUIHeroStateInfo();
         // 获得5属性点
         _ProNeedAllot += 5;
         // 获得一点技能点
@@ -1150,7 +1588,7 @@ public class GameView : MonoBehaviour {
         }
         else if (qlevel == EEquipItemQLevel.Magic)
         {
-            int wordsCount = Random.Range(IConst.EQUIPITEM_MAGIC_WORDS_MINCOUNT, IConst.EQUIPITEM_MAGIC_WORDS_MAXCOUNT);
+            int wordsCount = UnityEngine.Random.Range(IConst.EQUIPITEM_MAGIC_WORDS_MINCOUNT, IConst.EQUIPITEM_MAGIC_WORDS_MAXCOUNT);
             int wordLevlMin = GetMinWordLevel(eibd.qLevel);
             int wordLevelMax = GetMaxWordLevel(eibd.qLevel);
             List<EquipItemWordsBaseData> wordBDs = GameDatas.GetEIWordsBetweenLevel(wordLevlMin, wordLevelMax, wordsCount, (int)ei.baseData.type);
@@ -1162,7 +1600,7 @@ public class GameView : MonoBehaviour {
         }
         else if (qlevel == EEquipItemQLevel.Uncommon)
         {
-            int wordsCount = Random.Range(IConst.EUIIPITEM_UNNORMAL_WORDS_MINCOUNT, IConst.EUIIPITEM_UNNORMAL_WORDS_MAXCOUNT);
+            int wordsCount = UnityEngine.Random.Range(IConst.EUIIPITEM_UNNORMAL_WORDS_MINCOUNT, IConst.EUIIPITEM_UNNORMAL_WORDS_MAXCOUNT);
             int wordLevelMin = GetMinWordLevel(eibd.qLevel);
             int wordLevelMax = GetMaxWordLevel(eibd.qLevel);
             List<EquipItemWordsBaseData> wordBDs = GameDatas.GetEIWordsBetweenLevel(wordLevelMin, wordLevelMax, wordsCount, (int)ei.baseData.type);
@@ -1206,7 +1644,7 @@ public class GameView : MonoBehaviour {
     {
         EquipItemWord eiw = new EquipItemWord();
         eiw.wordBaseData = bd;
-        eiw.val = Random.Range(bd.valMin, bd.valMax);
+        eiw.val = UnityEngine.Random.Range(bd.valMin, bd.valMax);
         return eiw;
     }
 
@@ -1258,15 +1696,15 @@ public class GameView : MonoBehaviour {
             case EEquipItemType.Necklace:
                 partToEquip = EEquipPart.Necklace;
                 break;
-            case EEquipItemType.Shoulder:
-                partToEquip = EEquipPart.Shoulder;
-                break;
+            //case EEquipItemType.Shoulder:
+            //    partToEquip = EEquipPart.Shoulder;
+            //    break;
             case EEquipItemType.Breastplate:
                 partToEquip = EEquipPart.Breastplate;
                 break;
-            case EEquipItemType.Cuff:
-                partToEquip = EEquipPart.Cuff;
-                break;
+            //case EEquipItemType.Cuff:
+            //    partToEquip = EEquipPart.Cuff;
+            //    break;
             case EEquipItemType.Glove:
                 partToEquip = EEquipPart.Glove;
                 break;
@@ -1654,7 +2092,18 @@ public class GameView : MonoBehaviour {
             }
             desc.Append("武器速度:" +  ei.baseData.ias.ToString("f1") + "次/秒\n");
         }
-
+        //基础格挡率
+        if (ei.baseData.parry > 0)
+        {
+            desc.Append("格挡:" + ei.baseData.parry + "%\n");
+        }
+        //重量
+        desc.Append("重量:" + ei.baseData.weight + "\n");
+        //移动速度
+        if (ei.baseData.movespeed > 0)
+        {
+            desc.Append("速度:" + ei.baseData.movespeed);
+        }
         // 显示魔法属性
         string strProp = "";
         for (int i = 0; i < ei.words.Count; i++)
@@ -1723,24 +2172,14 @@ public class GameView : MonoBehaviour {
                     r = true;
                 }
                 break;
-            case EEquipItemType.Shoulder:
-                if (part == EEquipPart.Shoulder)
-                {
-                    r = true;
-                }
-                break;
+
             case EEquipItemType.Breastplate:
                 if (part == EEquipPart.Breastplate)
                 {
                     r = true;
                 }
                 break;
-            case EEquipItemType.Cuff:
-                if (part == EEquipPart.Cuff)
-                {
-                    r = true;
-                }
-                break;
+
             case EEquipItemType.Glove:
                 if (part == EEquipPart.Glove)
                 {
@@ -1877,6 +2316,9 @@ public class GameView : MonoBehaviour {
     }
 
     int g_propNeedAllot = 0;
+
+    private int gRoundCount;//当前地图回合计数
+
     /// <summary>
     ///  未分配属性点
     /// </summary>
@@ -1893,6 +2335,37 @@ public class GameView : MonoBehaviour {
         }
     }
 
+    public EPlayInputState InputState
+    {
+        get
+        {
+            return gInputState;
+        }
+
+        set
+        {
+            gInputState = value;
+            if (gInputState == EPlayInputState.ChooseTarget)
+            {
+                if (gItemToUse != null)
+                {
+                    //显示UI
+                    UIManager.Inst.GeneralTip("选择目标", Color.yellow);
+                    UIManager.Inst.uiMain.gUIChooseTarget.SetVisible(true);
+                    //显示可选择的格子
+                    string data = gItemToUse.baseData.data;
+                    JSONNode jdData = JSONNode.Parse(data);
+                    int range = jdData["range"].AsInt;
+                    List<MapGrid> mgs = Hero._Inst.GetCurMapGrid().GetMGsInRange(range);
+                    foreach (MapGrid itemMG in mgs)
+                    {
+                        itemMG.ChooseState = EChoosedState.Choosable;
+                    }
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// 计算英雄属性: 属性点分配
     /// </summary>
@@ -1902,13 +2375,13 @@ public class GameView : MonoBehaviour {
         // 属性点带来的基础属性
         int strAllot = _PropHasAlltoToStr;
         int agiAllot =_PropHasAlltoToAgi;
-        int intAllot = _PropHasAllotToInt;
+        int intAllot = _PropHasAllotToTen;
         int staAllot = _PropHasAllotToSta;
 
-        _MHero._Strength += strAllot;
-        _MHero.agility += agiAllot;
-        _MHero.intell += intAllot;
-        _MHero.stamina += staAllot;
+        _MHero._Prop.Strength += strAllot;
+        _MHero._Prop.Agility += agiAllot;
+        _MHero._Prop.Tenacity += intAllot;
+        _MHero._Prop.Stamina += staAllot;
     }
 
     /// <summary>
@@ -1930,13 +2403,37 @@ public class GameView : MonoBehaviour {
     void AddEuqipItemPrpToHero(EquipItem eiHasEque)
     {
         // 基础装备属性，如护甲，攻击力
-        _MHero.arm += eiHasEque.baseData.arm;
-        _MHero.AtkWpon += eiHasEque.baseData.atk;
+        _MHero._Prop.arm += eiHasEque.baseData.arm;
+
+        if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand)
+        {
+            if (eiHasEque._Part == EEquipPart.Hand1)
+            {
+                Hero._Inst._Prop.AtkBaseA = eiHasEque.baseData.atk;
+            }
+            else if (eiHasEque._Part == EEquipPart.Hand2)
+            {
+                Hero._Inst._Prop.AtkBaseB = eiHasEque.baseData.atk;
+            }
+        }
+        else if (eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
+        {
+            Hero._Inst._Prop.AtkBaseA = eiHasEque.baseData.atk;
+            Hero._Inst._Prop.AtkBaseB = 0;
+        }
+
         if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand || eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
         {
             // 武器速度计算
-            _MHero._BaseWeaponIAS = GetWeaponIAS();
+            _MHero._Prop.BaseWeaponIAS = GetWeaponIAS();
         }
+
+        //重量
+        Hero._Inst._Prop.LoadBase += eiHasEque.baseData.weight;
+        // 移动速度
+        Hero._Inst._Prop.MoveSpeedBase += eiHasEque.baseData.movespeed;
+        // 基础格挡率
+        Hero._Inst._Prop.parryDamPerBase += (eiHasEque.baseData.parry * 0.01f);
         // 魔法属性
         for (int wordIndex = 0; wordIndex < eiHasEque.words.Count; wordIndex++)
         {
@@ -1946,93 +2443,85 @@ public class GameView : MonoBehaviour {
             {
                 case EEquipItemProperty.Str:
                     {
-                        _MHero._Strength += eiw.val;
+                        _MHero._Prop.Strength += eiw.val;
                     }
                     
                     break;
                 case EEquipItemProperty.Agi:
                     {
-                        _MHero.agility += eiw.val;
-                        AgiToDirectProp(eiw.val, true);
+                        _MHero._Prop.Agility += eiw.val;
                     }
                     break;
-                case EEquipItemProperty.Int:
+                case EEquipItemProperty.Ten:
                     {
-                        _MHero.intell += eiw.val;
-                        IntToDirectProp(eiw.val, true);
+                        _MHero._Prop.Tenacity += eiw.val;
                     }
-                   
                     break;
                 case EEquipItemProperty.Sta:
                     {
-                        _MHero.stamina += eiw.val;
-                        StaToDirectProp(eiw.val, true);
+                        _MHero._Prop.Stamina += eiw.val;
                     }
-                    
-                    break;
-                case EEquipItemProperty.MaxLife:
-                    _MHero._HpMax += eiw.val;
-                    break;
-                case EEquipItemProperty.TL:
-                    _MHero.tlMax += eiw.val;
-                    break;
-                case EEquipItemProperty.MaxMp:
-                    _MHero.mpMax += eiw.val;
                     break;
                 case EEquipItemProperty.Arm:
-                    _MHero.arm += eiw.val;
+                    _MHero._Prop.arm += eiw.val;
                     break;
                 case EEquipItemProperty.IAS:
-                    _MHero._IAS *= (1 + eiw.val / 100f);
+                    _MHero._Prop.BaseWeaponIAS *= (1 + eiw.val / 100f);
                     break;
                 case EEquipItemProperty.ResFire:
-                    _MHero.resFire += eiw.val;
+                    _MHero._Prop.resFire += eiw.val;
                     break;
                 case EEquipItemProperty.ResThunder:
-                    _MHero.resThunder += eiw.val;
+                    _MHero._Prop.resThunder += eiw.val;
                     break;
                 case EEquipItemProperty.ResPoison:
-                    _MHero.resPoision += eiw.val;
+                    _MHero._Prop.resPoision += eiw.val;
                     break;
                 case EEquipItemProperty.ResFrozen:
-                    _MHero.resForzen += eiw.val;
+                    _MHero._Prop.resForzen += eiw.val;
                     break;
                 case EEquipItemProperty.CriticalStrike:
-                    _MHero._DeadlyStrike *= (1 + eiw.val / 100f);
-                    break;
-                case EEquipItemProperty.Hit:
-                    _MHero.hit += eiw.val;
-                    break;
-                case EEquipItemProperty.Dodge:
-                    _MHero.dodge += eiw.val;
-                    break;
-                case EEquipItemProperty.Parry:
-                    _MHero.parry += (eiw.val / 100f);
+                    _MHero._Prop.DeadlyStrike *= (1 + eiw.val / 100f);
                     break;
                 case EEquipItemProperty.ParryDamage:
-                    _MHero.parryDamage += eiw.val;
+                    _MHero._Prop.parryDmbPerParamB *= (1 + eiw.val * 0.01f);
                     break;
                 case EEquipItemProperty.FireDamage:
-                    _MHero.atkFireParamAdd += eiw.val;
+                    _MHero._Prop.atkFireParamAdd += eiw.val;
                     break;
                 case EEquipItemProperty.ThunderDamage:
-                    _MHero.atkThunderParamAdd += eiw.val;
+                    _MHero._Prop.atkThunderParamAdd += eiw.val;
                     break;
                 case EEquipItemProperty.PoisonDamage:
-                    _MHero.atkPoisonParamAdd += eiw.val;
+                    _MHero._Prop.atkPoisonParamAdd += eiw.val;
                     break;
                 case EEquipItemProperty.ForzenDamage:
-                    _MHero.atkIceParamAdd += eiw.val;
+                    _MHero._Prop.atkIceParamAdd += eiw.val;
+                    break;
+                case EEquipItemProperty.AddDamagePercent:
+                    Hero._Inst._Prop.AtkParmaA += eiw.val;
+                    break;
+                case EEquipItemProperty.Weight:
+                    Hero._Inst._Prop.LoadBase += eiw.val;
+                    break;
+                case EEquipItemProperty.MoveSpeed:
+                    Hero._Inst._Prop.MoveSpeedBase += eiw.val;
                     break;
                 case EEquipItemProperty.AddDamage:
-                    _MHero.AtkIncrease(eiw.val);
+                    Hero._Inst._Prop.AtkParmaB += eiw.val;
+                    break;
+                case EEquipItemProperty.ArmPercent:
+                    Hero._Inst._Prop.DefIncrease(1 + eiw.val * 0.01f);
+                    break;
+                case EEquipItemProperty.PowerSpeed:
+                    Hero._Inst._Prop.PowerSpeedIncrease(1 + eiw.val * 0.01f);
                     break;
                 default:
                     break;
             }
         }
-        UIManager._Instance.RefreshHeroInfo();
-        UIManager._Instance.RefreshMainUIHeroStateInfo();
+        UIManager.Inst.RefreshHeroInfo();
+        UIManager.Inst.RefreshMainUIHeroStateInfo();
     }
 
     /// <summary>
@@ -2042,13 +2531,37 @@ public class GameView : MonoBehaviour {
     void RemoveEquipItemPropFromHero(EquipItem eiHasEque)
     {
         // 基础装备属性，如护甲，攻击力
-        _MHero.arm -= eiHasEque.baseData.arm;
-        _MHero.AtkWpon -= eiHasEque.baseData.atk;
+        _MHero._Prop.arm -= eiHasEque.baseData.arm;
+
+        if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand)
+        {
+            if (eiHasEque._Part == EEquipPart.Hand1)
+            {
+                Hero._Inst._Prop.AtkBaseA = 0;
+            }
+            else if (eiHasEque._Part == EEquipPart.Hand2)
+            {
+                Hero._Inst._Prop.AtkBaseB = 0;
+            }
+        }
+        else if (eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
+        {
+            Hero._Inst._Prop.AtkBaseA = 0;
+            Hero._Inst._Prop.AtkBaseB = 0;
+        }
+
         if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand || eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
         {
             // 武器速度计算
-            _MHero._BaseWeaponIAS = GetWeaponIAS();
+            _MHero._Prop.BaseWeaponIAS = GetWeaponIAS();
         }
+
+        //重量
+        Hero._Inst._Prop.LoadBase -= eiHasEque.baseData.weight;
+        // 移动速度
+        Hero._Inst._Prop.MoveSpeedBase -= eiHasEque.baseData.movespeed;
+        // 基础格挡率
+        Hero._Inst._Prop.parryDamPerBase -= (eiHasEque.baseData.parry * 0.01f);
         // 魔法属性
         for (int wordIndex = 0; wordIndex < eiHasEque.words.Count; wordIndex++)
         {
@@ -2058,93 +2571,86 @@ public class GameView : MonoBehaviour {
             {
                 case EEquipItemProperty.Str:
                     {
-                        _MHero._Strength -= eiw.val;
+                        _MHero._Prop.Strength -= eiw.val;
                     }
 
                     break;
                 case EEquipItemProperty.Agi:
                     {
-                        _MHero.agility -= eiw.val;
-                        AgiToDirectProp(eiw.val, false);
+                        _MHero._Prop.Agility -= eiw.val;
                     }
                     break;
-                case EEquipItemProperty.Int:
+                case EEquipItemProperty.Ten:
                     {
-                        _MHero.intell -= eiw.val;
-                        IntToDirectProp(eiw.val, false);
+                        _MHero._Prop.Tenacity -= eiw.val;
                     }
 
                     break;
                 case EEquipItemProperty.Sta:
                     {
-                        _MHero.stamina -= eiw.val;
-                        StaToDirectProp(eiw.val, false);
+                        _MHero._Prop.Stamina -= eiw.val;
                     }
-
-                    break;
-                case EEquipItemProperty.MaxLife:
-                    _MHero._HpMax -= eiw.val;
-                    break;
-                case EEquipItemProperty.TL:
-                    _MHero.tlMax -= eiw.val;
-                    break;
-                case EEquipItemProperty.MaxMp:
-                    _MHero.mpMax -= eiw.val;
                     break;
                 case EEquipItemProperty.Arm:
-                    _MHero.arm -= eiw.val;
+                    _MHero._Prop.arm -= eiw.val;
                     break;
                 case EEquipItemProperty.IAS:
-                    _MHero._IAS /= (1 + eiw.val / 100f);
+                    _MHero._Prop.BaseWeaponIAS /= (1 + eiw.val / 100f);
                     break;
                 case EEquipItemProperty.ResFire:
-                    _MHero.resFire -= eiw.val;
+                    _MHero._Prop.resFire -= eiw.val;
                     break;
                 case EEquipItemProperty.ResThunder:
-                    _MHero.resThunder -= eiw.val;
+                    _MHero._Prop.resThunder -= eiw.val;
                     break;
                 case EEquipItemProperty.ResPoison:
-                    _MHero.resPoision -= eiw.val;
+                    _MHero._Prop.resPoision -= eiw.val;
                     break;
                 case EEquipItemProperty.ResFrozen:
-                    _MHero.resForzen -= eiw.val;
+                    _MHero._Prop.resForzen -= eiw.val;
                     break;
                 case EEquipItemProperty.CriticalStrike:
-                    _MHero._DeadlyStrike /= (1 + eiw.val / 100f);
-                    break;
-                case EEquipItemProperty.Hit:
-                    _MHero.hit -= eiw.val;
-                    break;
-                case EEquipItemProperty.Dodge:
-                    _MHero.dodge -= eiw.val;
-                    break;
-                case EEquipItemProperty.Parry:
-                    _MHero.parry -= (eiw.val / 100f);
+                    _MHero._Prop.DeadlyStrike /= (1 + eiw.val / 100f);
                     break;
                 case EEquipItemProperty.ParryDamage:
-                    _MHero.parryDamage -= eiw.val;
+                    _MHero._Prop.parryDmbPerParamB /= (1 + eiw.val * 0.01f);
                     break;
                 case EEquipItemProperty.FireDamage:
-                    _MHero.atkFireParamAdd -= eiw.val;
+                    _MHero._Prop.atkFireParamAdd -= eiw.val;
                     break;
                 case EEquipItemProperty.ThunderDamage:
-                    _MHero.atkThunderParamAdd -= eiw.val;
+                    _MHero._Prop.atkThunderParamAdd -= eiw.val;
                     break;
                 case EEquipItemProperty.PoisonDamage:
-                    _MHero.atkPoisonParamAdd -= eiw.val;
+                    _MHero._Prop.atkPoisonParamAdd -= eiw.val;
                     break;
                 case EEquipItemProperty.ForzenDamage:
-                    _MHero.atkIceParamAdd -= eiw.val;
+                    _MHero._Prop.atkIceParamAdd -= eiw.val;
+                    break;
+                case EEquipItemProperty.AddDamagePercent:
+                    Hero._Inst._Prop.AtkParmaA -= eiw.val;
+                    break;
+                case EEquipItemProperty.Weight:
+                    Hero._Inst._Prop.LoadBase -= eiw.val;
+                    break;
+                case EEquipItemProperty.MoveSpeed:
+                    Hero._Inst._Prop.MoveSpeedBase -= eiw.val;
                     break;
                 case EEquipItemProperty.AddDamage:
-                    _MHero.AtkIncrease(-1 * eiw.val);
+                    Hero._Inst._Prop.AtkParmaB -= eiw.val;
+                    break;
+                case EEquipItemProperty.ArmPercent:
+                    Hero._Inst._Prop.DefIncrease(1 / (1 + eiw.val * 0.01f));
+                    break;
+                case EEquipItemProperty.PowerSpeed:
+                    Hero._Inst._Prop.PowerSpeedIncrease(1 / (1 + eiw.val * 0.01f));
                     break;
                 default:
                     break;
             }
         }
-        UIManager._Instance.RefreshHeroInfo();
-        UIManager._Instance.RefreshMainUIHeroStateInfo();
+        UIManager.Inst.RefreshHeroInfo();
+        UIManager.Inst.RefreshMainUIHeroStateInfo();
     }
 
     /// <summary>
@@ -2152,68 +2658,70 @@ public class GameView : MonoBehaviour {
     /// </summary>
     void BasePropToDirectProp()
     {
-        AgiToDirectProp(_MHero.agility, true);
-        IntToDirectProp(_MHero.intell, true);
-        StaToDirectProp(_MHero.stamina, true);
+        //StaToDirectProp(_MHero._PropertyHandler._Stamina, true);
+        //AgiToDirectProp(_MHero._Agility, true);
+        //IntToDirectProp(_MHero._Prop._Tenacity, true);
     }
 
     /// <summary>
     /// 敏捷转化为玩家的直接属性
     /// </summary>
     /// <param name="agi"></param>
+    [Obsolete()]
     public void AgiToDirectProp(int agi, bool add)
     {
+        return;
         int hitVal = agi * IConst.HIT_PER_AGI;
         int dodgeVal = agi * IConst.DODGE_PER_AGI;
         float iaspersent = agi * IConst.IAS_PERCENT_PER_AGI;
         if (add)
         {
-            _MHero.hit += hitVal;
-            _MHero.dodge += dodgeVal;
-            _MHero._IAS *= (1 + iaspersent / 100f);
+            //_MHero.moveSpeed += dodgeVal;
+            //_MHero._IAS *= (1 + iaspersent / 100f);
         }
         else
         {
-            _MHero.hit -= hitVal;
-            _MHero.dodge -= dodgeVal;
-            _MHero._IAS /= (1 + iaspersent / 100f);
+            //_MHero.moveSpeed -= dodgeVal;
+            //_MHero._IAS /= (1 + iaspersent / 100f);
         }
     }
 
+    [Obsolete()]
     public void IntToDirectProp(int intVal, bool add)
     {
+        return;
         int atkMagVal = intVal * IConst.ATK_MAG_PER_INT;
         int mp = intVal * IConst.MP_PER_INT;
         if (add)
         {
-            _MHero.mpMax += mp;
+            //_MHero.mpMax += mp;
             _MHero.atkMag += atkMagVal;
         }
         else
         {
-            _MHero.mpMax -= mp;
+            //_MHero.mpMax -= mp;
             _MHero.atkMag -= atkMagVal;
         }
        
     }
 
-    public void StaToDirectProp(int sta, bool add) 
-    {
-        int hp = sta * IConst.HP_PER_STA;
-        int tl = sta * IConst.TL_PER_STA;
+    //public void StaToDirectProp(int sta, bool add) 
+    //{
+    //    int hp = sta * IConst.HP_PER_STA;
+    //    int tl = sta * IConst.TL_PER_STA;
 
-        if (add)
-        {
-            _MHero._HpMax += hp;
-            _MHero.tlMax += tl;
-        }
-        else
-        {
-            _MHero._HpMax -= hp;
-            _MHero.tlMax -= tl;
-        }
+    //    if (add)
+    //    {
+    //        _MHero._PropertyHandler._HpMax += hp;
+    //        _MHero.tlMax += tl;
+    //    }
+    //    else
+    //    {
+    //        _MHero._PropertyHandler._HpMax -= hp;
+    //        _MHero.tlMax -= tl;
+    //    }
         
-    }
+    //}
     #endregion
     #region 宝箱
     public void OnCloseUIDrops(UIDropItems udi)
@@ -2380,7 +2888,7 @@ public class GameView : MonoBehaviour {
 
     void OnTap(TapGesture gesture)
     {
-        if (EnableInput && (State == GameState.Normal || State == GameState.TarcticsSkilling) && !UIManager._Instance.HasUI())
+        if (EnableInput && (_RoundLogicState == GameRoundLogicState.Normal) && !UIManager.Inst.HasUI())
         {
             Ray ray = cameraControl.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
             int layer = LayerMask.NameToLayer("MapGrid");
@@ -2395,64 +2903,142 @@ public class GameView : MonoBehaviour {
     void OnTapAMapGrid(MapGrid mg)
     {
         // 战术技能选择目标
-        if (State == GameState.TarcticsSkilling)
+        //if (State == GameRoundLogicState.TarcticsSkilling)
+        //{
+        //    if (mg.GetItem<Enermy>() != null)
+        //    {
+        //        // 点击一个敌人
+        //        // 距离检测
+        //        bool success = true;
+        //        if (gSkillTractic.range > 0)
+        //        {
+        //            int dis = MapGrid.GetDis(_MHero.GetCurMapGrid(), mg);
+        //            if (dis > gSkillTractic.range)
+        //            {
+        //                success = false;
+        //            }
+        //        }
+        //        if (success)
+        //        {
+
+        //            IActor target = mg.GetItem<Enermy>();
+        //            gSkillTractic.SetCaster(_MHero);
+        //            gSkillTractic.SetTarget(target);
+        //            StartCoroutine(gSkillTractic.Act());
+        //            // 恢复至默认图标
+        //            GameObject gobjBtnSpell = UIManager._Instance.uiMain.GetGobjOfASpell(gSkillTractic);
+        //            UISprite skillIcon = gobjBtnSpell.GetComponent<UISprite>();
+        //            skillIcon.spriteName = gSkillTractic.GetBaseData().iconName;
+        //        }
+        //        else
+        //        {
+        //            UIManager._Instance.GeneralTip("距离太远", Color.red);
+        //        }
+        //    }
+        //}
+        //else 
+        if (_RoundLogicState == GameRoundLogicState.Normal)
         {
-            if (mg.GetItem<Enermy>() != null)
+            if (InputState == EPlayInputState.Nomal)
             {
-                // 点击一个敌人
-                // 距离检测
-                bool success = true;
-                if (gSkillTractic.range > 0)
+                if (mg.GetItem<Enermy>() != null)
                 {
-                    int dis = MapGrid.GetDis(_MHero.GetCurMapGrid(), mg);
-                    if (dis > gSkillTractic.range)
+                    // 点击一个敌人
+                    OnTouchAEnermyInNormal(mg.GetItem<Enermy>());
+                }
+                else if (mg.GetItem<ItemTreasureChest>() != null)
+                {
+                    if (mg.IsNear(_MHero.GetCurMapGrid()))
                     {
-                        success = false;
+                        mgInterActive = mg;
+                        ItemTreasureChest itc = mg.GetItem<ItemTreasureChest>();
+                        OnTriggerItem_TreasureChest(itc);
+                    }
+                    else
+                    {
+                        UIManager.Inst.GeneralTip("距离太远", Color.white);
                     }
                 }
-                if (success)
+                else if (mg.GetItem<ItemNPC>() != null)
                 {
+                    if (mg.IsNear(_MHero.GetCurMapGrid()))
+                    {
+                        mgInterActive = mg;
+                        ItemNPC itemNPC = mg.GetItem<ItemNPC>();
+                        OnTriggerItem_NPC(itemNPC);
+                    }
+                    else
+                    {
+                        UIManager.Inst.GeneralTip("距离太远", Color.white);
+                    }
+                }
+            }
+            else if (InputState == EPlayInputState.ChooseTarget)
+            {
+                if (gCurSelectMg != null)
+                {
+                    gCurSelectMg.ChooseState = EChoosedState.Choosable;
+                }
+                gCurSelectMg = mg;
+                gCurSelectMg.ChooseState = EChoosedState.Choosed;
+            }
 
-                    IActor target = mg.GetItem<Enermy>();
-                    gSkillTractic.SetCaster(_MHero);
-                    gSkillTractic.SetTarget(target);
-                    StartCoroutine(gSkillTractic.Act());
-                    // 恢复至默认图标
-                    GameObject gobjBtnSpell = UIManager._Instance.uiMain.GetGobjOfASpell(gSkillTractic);
-                    UISprite skillIcon = gobjBtnSpell.GetComponent<UISprite>();
-                    skillIcon.spriteName = gSkillTractic.GetBaseData().iconName;
-                }
-                else
-                {
-                    UIManager._Instance.GeneralTip("距离太远", Color.red);
-                }
-            }
         }
-        else if (State == GameState.Normal)
+    }
+
+    /// <summary>
+    /// 取消选择目标
+    /// </summary>
+    internal void OnCancelUseItem()
+    {
+        GameView._Inst.InputState = EPlayInputState.Nomal;
+        foreach (MapGrid itemMG in gListMGs)
         {
-            if (mg.GetItem<Enermy>() != null)
+            itemMG.ChooseState = EChoosedState.UnChooseable;
+        }
+    }
+
+    /// <summary>
+    /// 确认对目标使用道具
+    /// </summary>
+    internal void OnComfirmUseItemToTarget()
+    {
+        //恢复状态
+        GameView._Inst.InputState = EPlayInputState.Nomal;
+        foreach (MapGrid itemMG in gListMGs)
+        {
+            itemMG.ChooseState = EChoosedState.UnChooseable;
+        }
+
+        if (gCurSelectMg != null && gItemToUse != null)
+        {
+            if (gItemToUse.baseData.type == EEquipItemType.Torch)
             {
-                // 点击一个敌人
-                OnTouchAEnermyInNormal(mg.GetItem<Enermy>());
+                //使用火把
+                UseItemTorch(gCurSelectMg, gItemToUse);
             }
-            else if (mg.GetItem<ItemTreasureChest>() != null)
-            {
-                if (mg.IsNear(_MHero.GetCurMapGrid()))
-                {
-                    mgInterActive = mg;
-                    ItemTreasureChest itc = mg.GetItem<ItemTreasureChest>();
-                    OnTriggerItem_TreasureChest(itc);
-                }
-            }
-            else if (mg.GetItem<ItemNPC>() != null)
-            {
-                if (mg.IsNear(_MHero.GetCurMapGrid()))
-                {
-                    mgInterActive = mg;
-                    ItemNPC itemNPC = mg.GetItem<ItemNPC>();
-                    OnTriggerItem_NPC(itemNPC);
-                }
-            }
+
+            // 移除数量
+            RedeceEiCount(gItemToUse);
+            //使用结束
+            gItemToUse = null;
+        }
+
+        //回合结束
+        PlayerActionEnd();
+    }
+
+    /// <summary>
+    /// 使用道具 - 火把
+    /// </summary>
+    /// <param name="gCurSelectMg"></param>
+    /// <param name="gItemToUse"></param>
+    private void UseItemTorch(MapGrid curSelectMg, EquipItem itemToUse)
+    {
+        if (curSelectMg.CanBurn())
+        {
+            curSelectMg.burnRoundIndex = gRoundCount;
+            curSelectMg.Burn();
         }
     }
 
@@ -2461,7 +3047,11 @@ public class GameView : MonoBehaviour {
     /// </summary>
     void OnTouchAEnermyInNormal(Enermy enermy) 
     {
-        UIManager._Instance.ShowUIEnermyInfo(enermy);
+        //隐身的敌人不可点击
+        if (!enermy.HasBuff<Buff_Hiding>())
+        {
+            UIManager.Inst.ShowUIEnermyInfo(enermy);
+        }
     }
 
     /// <summary>
@@ -2469,12 +3059,12 @@ public class GameView : MonoBehaviour {
     /// </summary>
     public void StartSkillTractics(ISkill skill)
     {
-        State = GameState.TarcticsSkilling;
+        //State = GameRoundLogicState.TarcticsSkilling;
         gSkillTractic = skill;
         if (skill.GetBaseData().targetType != ESkillTargetType.None)
         {
-            UIManager._Instance.GeneralTip("选择一个目标", Color.yellow);
-            GameObject gobjBtnSpell = UIManager._Instance.uiMain.GetGobjOfASpell(skill);
+            UIManager.Inst.GeneralTip("选择一个目标", Color.yellow);
+            GameObject gobjBtnSpell = UIManager.Inst.uiMain.GetGobjOfASpell(skill);
             UISprite skillIcon = gobjBtnSpell.GetComponent<UISprite>();
             skillIcon.spriteName = "btn_cancel";
         }
@@ -2489,9 +3079,9 @@ public class GameView : MonoBehaviour {
     /// </summary>
     public void CancelSkillTractics()
     {
-        State = GameState.Normal;
-        UIManager._Instance.GeneralTip("取消战术技能", Color.yellow);
-        GameObject gobjBtnSpell = UIManager._Instance.uiMain.GetGobjOfASpell(gSkillTractic);
+        _RoundLogicState = GameRoundLogicState.Normal;
+        UIManager.Inst.GeneralTip("取消战术技能", Color.yellow);
+        GameObject gobjBtnSpell = UIManager.Inst.uiMain.GetGobjOfASpell(gSkillTractic);
         UISprite skillIcon = gobjBtnSpell.GetComponent<UISprite>();
         skillIcon.spriteName = gSkillTractic.GetBaseData().iconName;
     }
@@ -2507,13 +3097,13 @@ public class GameView : MonoBehaviour {
         if (mission.parent == 0)
         {
             // 是父任务
-            UIManager._Instance.ShowFloatTip("开始:" + mission.targetDesc);
+            UIManager.Inst.ShowFloatTip("开始:" + mission.targetDesc);
             // 找到第一个子任务
             MissionBD nextMission = GameDatas.GetNextMission(mission);
             if (nextMission != null)
             {
                 _MHero._CurMainMission = nextMission;
-                UIManager._Instance.ShowFloatTip(nextMission.targetDesc);
+                UIManager.Inst.ShowFloatTip(nextMission.targetDesc);
             }
             else
             {
@@ -2525,7 +3115,7 @@ public class GameView : MonoBehaviour {
         {
             // 开始一个子任务
             _MHero._CurMainMission = mission;
-            UIManager._Instance.ShowFloatTip(mission.targetDesc);
+            UIManager.Inst.ShowFloatTip(mission.targetDesc);
         }
     }
 
@@ -2540,7 +3130,7 @@ public class GameView : MonoBehaviour {
             return;
         }
         //MissionBD mission = GameResources.GetMissionBD(missionId);
-        UIManager._Instance.ShowFloatTip("完成:" + mission.targetDesc);
+        UIManager.Inst.ShowFloatTip("完成:" + mission.targetDesc);
         // 获得奖励
         string strReward = mission.reward;
         if (!string.IsNullOrEmpty(strReward))
@@ -2552,18 +3142,18 @@ public class GameView : MonoBehaviour {
                 if (ei.baseData.id == 11) //金币
                 {
                     GetGold(ei.count);
-                    UIManager._Instance.AddASmallTip("获得金币" + ei.count);
+                    UIManager.Inst.AddASmallTip("获得金币" + ei.count);
                 }
                 else
                 {
                     if (AddAEquipItemToBag(_MHero, ei))
                     {
-                        UIManager._Instance.AddASmallTip(GetEIName(ei) + "加入背包");
+                        UIManager.Inst.AddASmallTip(GetEIName(ei) + "加入背包");
                         GameManager.commonCPU.SaveEquipItems();
                     }
                     else
                     {
-                        UIManager._Instance.GeneralTip("背包已满", Color.red);
+                        UIManager.Inst.GeneralTip("背包已满", Color.red);
                     }
                 }
             }
@@ -2595,7 +3185,7 @@ public class GameView : MonoBehaviour {
             return;
         }
 
-        UIManager._Instance.uiMain.ShowMapName(mapTarget.name);
+        UIManager.Inst.uiMain.ShowMapName(mapTarget.name);
 
         _CurRound = 0;
 
@@ -2610,9 +3200,11 @@ public class GameView : MonoBehaviour {
 
     IEnumerator CoChangeMap(GameMapBaseData gameMapTarget, int targetMapGridId) 
     {
+        gListMGs.Clear();
+
         gGameMapOri = gameMapTarget;
-        //GameObject gobjTemp = new GameObject();
-        //_MHero.transform.parent = gobjTemp.transform;
+        GameObject gobjTemp = new GameObject();
+        _MHero.transform.parent = gobjTemp.transform;
         yield return StartCoroutine(CoLoadMap(gameMapTarget));
 
         MapGrid mgTarget = null;
@@ -2630,7 +3222,7 @@ public class GameView : MonoBehaviour {
         }
 
         _MHero.SetMapGrid(mgTarget);
-
+        DestroyObject(gobjTemp);
         cameraControl.target = _MHero.gameObject;
 
         if (!gGameMapOri.isHome)
@@ -2643,7 +3235,7 @@ public class GameView : MonoBehaviour {
             // 如果进入了一个城镇，则保存
             GameManager.commonCPU.SaveCurHomeMap(gGameMapOri.id);
             // 在城镇中恢复生命
-            _MHero.RecoverHp(_MHero._HpMax - _MHero.hp);
+            _MHero.RecoverHp(_MHero._Prop.HpMax - _MHero._Prop.Hp);
         }
 
         // 任务检查
@@ -2652,12 +3244,17 @@ public class GameView : MonoBehaviour {
         {
             CompleteAMission(_MHero._CurMainMission);
         }
+
+        yield return 0;
+
+        GameView._Inst.RoundLogicOnInitMap();
     }
     #endregion
 
     #region 道具使用
     public bool OnStartUseItem(EquipItem ei) 
     {
+        gItemToUse = ei;
         if (ei.baseData.type == EEquipItemType.HPPotion)
         {
             // 弱效治疗药水
@@ -2669,6 +3266,8 @@ public class GameView : MonoBehaviour {
             
             // 移除数量
             RedeceEiCount(ei);
+            //使用结束
+            gItemToUse = null;
         }
 
         else if (ei.baseData.type == EEquipItemType.ResPoiPotion)
@@ -2695,7 +3294,16 @@ public class GameView : MonoBehaviour {
             bapNew.StartEffect();
             // 移除数量
             RedeceEiCount(ei);
+            //使用结束
+            gItemToUse = null;
         }
+        else if (ei.baseData.type == EEquipItemType.Torch)
+        {
+            //火把
+            //需要选择目标
+            InputState = EPlayInputState.ChooseTarget;
+        }
+        
         return true;
     }
 
@@ -2707,7 +3315,7 @@ public class GameView : MonoBehaviour {
         ei.count--;
         if (ei.count <= 0)
         {
-            UIManager._Instance.uiMain.ClearItemUsed(ei);
+            UIManager.Inst.uiMain.ClearItemUsed(ei);
             // 移除物品
             _MHero.itemsInBag.Remove(ei);
         }

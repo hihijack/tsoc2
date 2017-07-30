@@ -105,14 +105,14 @@ public class Sneer : ISkill {
 
             if (success)
             {
-                GameManager.gameView.State = GameState.DisableControll;
+                //GameManager.gameView._RoundLogicState = GameRoundLogicState.DisableControll;
                 caster.IsSkilling = false;
                 StartCoroutine(target.CoMoveByGrids(path, false));
                 //caster.PlayAnim("Stand");
             }
             else
             {
-                UIManager._Instance.GeneralTip("找不到行进路径", Color.red);
+                UIManager.Inst.GeneralTip("找不到行进路径", Color.red);
             }
         }
     }

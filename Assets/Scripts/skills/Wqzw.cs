@@ -24,12 +24,12 @@ public class Wqzw : ISkill {
 
     public override void StartEff()
     {
-        GameManager.hero._IAS *= (1 + iasAdd);
+        //GameManager.hero._IAS *= (1 + iasAdd);
     }
 
     public override void RemoveEff()
     {
-        GameManager.hero._IAS /= (1 + iasAdd);
+        //GameManager.hero._IAS /= (1 + iasAdd);
     }
 
     public override void OnLevelChange()

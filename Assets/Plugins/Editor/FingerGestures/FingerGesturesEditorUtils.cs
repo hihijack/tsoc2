@@ -27,8 +27,8 @@ public static class FingerGesturesEditorUtils
 
         if( path == "" )
             path = "Assets";
-        else if( Path.GetExtension( path ) != "" )
-            path = path.Replace( Path.GetFileName( path ), "" );
+        //else if( Path.GetExtension( path ) != "" )
+        //    path = path.Replace( Path.GetFileName( path ), "" );
 
         return CreateAsset<T>( path, "New " + typeof( T ).ToString() );
     }

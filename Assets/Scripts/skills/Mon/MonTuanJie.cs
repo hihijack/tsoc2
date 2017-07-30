@@ -25,13 +25,13 @@ public class MonTuanJie : IMonSkill {
         base.OnEnterBattle();
         Enermy eCur = GetCurEnermy();
         List<Enermy> allyEnermys = eCur.GetAlliesInBattle();
-        eCur.AtkIncrease(1 + percentAtk * allyEnermys.Count);
-        eCur.DefIncrease(1 + percentDef * allyEnermys.Count);
+        eCur._Prop.AtkParmaC *= (1 + percentAtk * allyEnermys.Count);
+        eCur._Prop.DefIncrease(1 + percentDef * allyEnermys.Count);
         GameManager.commonCPU.CreateEffect("eff_emojijie", eCur.GetPos(), Color.white, -1f);
         foreach (Enermy itemEnermy in allyEnermys)
         {
-            itemEnermy.AtkIncrease(1 + percentAtk * allyEnermys.Count);
-            itemEnermy.DefIncrease(1 + percentDef * allyEnermys.Count);
+            itemEnermy._Prop.AtkParmaC *= (1 + percentAtk * allyEnermys.Count);
+            itemEnermy._Prop.DefIncrease(1 + percentDef * allyEnermys.Count);
             GameManager.commonCPU.CreateEffect("eff_emojijie", itemEnermy.GetPos(), Color.white, -1f);
         }
     }

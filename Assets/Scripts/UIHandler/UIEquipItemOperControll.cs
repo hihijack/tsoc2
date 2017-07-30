@@ -20,7 +20,7 @@ public class UIEquipItemOperControll : MonoBehaviour
 
     void OnPress(bool pressed)
     {
-        UIManager._Instance.OnBtnPress(btn,pressed);
+        UIManager.Inst.OnBtnPress(btn,pressed);
         if (!pressed)
         {
             OnDrop();
@@ -72,13 +72,13 @@ public class UIEquipItemOperControll : MonoBehaviour
 
     void OnToSellGrid() 
     {
-        UISellGrid usg = UIManager._Instance.GetUITrade().sellGrid;
+        UISellGrid usg = UIManager.Inst.GetUITrade().sellGrid;
         usg.ShowInfo(true, gameView.GetEIDataInBtnGobj(mGobjDraggedItem));
     }
 
     void OnLeaveSellGrid() 
     {
-        UISellGrid usg = UIManager._Instance.GetUITrade().sellGrid;
+        UISellGrid usg = UIManager.Inst.GetUITrade().sellGrid;
         usg.ShowInfo(false, null);
     }
 
@@ -189,7 +189,7 @@ public class UIEquipItemOperControll : MonoBehaviour
                 EquipItem ei = gameView.GetEIDataInBtnGobj(mGobjDraggedItem);
                 
                 // UI背包移除
-                UIManager._Instance.GetUIBag().RemoveAEquipItem(ei);
+                UIManager.Inst.GetUIBag().RemoveAEquipItem(ei);
                 // UI人物外观更新
                 GameManager.gameView.UpdateOnChangeEquip(ei, false);
                 // 添加金钱
@@ -209,11 +209,11 @@ public class UIEquipItemOperControll : MonoBehaviour
                 // 摧毁
                 EquipItem ei = gameView.GetEIDataInBtnGobj(mGobjDraggedItem);
                 // UI背包移除
-                UIManager._Instance.GetUIBag().RemoveAEquipItem(ei);
+                UIManager.Inst.GetUIBag().RemoveAEquipItem(ei);
                 // 移除装备数据
                 GameManager.gameView.RemoveEquipItem(ei);
                 // 移除配置
-                UIManager._Instance.uiMain.ClearItemUsed(ei);
+                UIManager.Inst.uiMain.ClearItemUsed(ei);
                 // 保存装备信息
                 GameManager.commonCPU.SaveEquipItems();
 
@@ -257,12 +257,12 @@ public class UIEquipItemOperControll : MonoBehaviour
         curSprite.alpha = 1f;
         mGobjDraggedItem = null;
 
-        UIManager._Instance.RecoverBagGridDisable();
+        UIManager.Inst.RecoverBagGridDisable();
     }
 
     void OnDrag(Vector2 delta)
     {
-        UIManager._Instance.HideEquipItemInfo();
+        UIManager.Inst.HideEquipItemInfo();
         mGobjDraggedItem = gameObject;
         curSprite.alpha = 0.5f;
         UICursor.Set(curSprite.atlas, curSprite.spriteName);

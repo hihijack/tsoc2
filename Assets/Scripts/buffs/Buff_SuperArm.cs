@@ -31,9 +31,9 @@ public class Buff_SuperArm : IBaseBuff{
 	{
         if (target._State != EActorState.Dead)
         {
-            armAdd = (int)(percent * target.arm);
-            target.arm += armAdd;
-            UIManager._Instance.uiMain.AddABuffToTarget(target, this);
+            armAdd = (int)(percent * target._Prop.arm);
+            target._Prop.arm += armAdd;
+            UIManager.Inst.uiMain.AddABuffToTarget(target, this);
         }
 	}
 
@@ -41,8 +41,8 @@ public class Buff_SuperArm : IBaseBuff{
     {
         if (target._State != EActorState.Dead)
         {
-            target.arm -= armAdd;
-            UIManager._Instance.uiMain.RemoveABuff(target, this);
+            target._Prop.arm -= armAdd;
+            UIManager.Inst.uiMain.RemoveABuff(target, this);
         }
         DestroyObject(this);
 	}

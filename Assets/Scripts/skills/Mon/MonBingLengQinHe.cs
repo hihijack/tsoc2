@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 /// <summary>
 /// 冰冷亲和：受到冰冷攻击恢复生命
 /// </summary>

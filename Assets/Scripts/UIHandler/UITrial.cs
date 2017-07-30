@@ -24,13 +24,13 @@ public class UITrial : MonoBehaviour
 
     void BtnClick_OnClose() 
     {
-        UIManager._Instance.CloseUITrial();
+        UIManager.Inst.CloseUITrial();
     }
 
     void BtnClick_GoTo() 
     {
         int curCelect = uiNumerSelect.GetCurNumber();
         GameManager.gameView.GoToTrial(curCelect);
-        UIManager._Instance.CloseUITrial();
+        UIManager.Inst.CloseUITrial();
     }
 }

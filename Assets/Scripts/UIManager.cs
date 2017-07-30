@@ -27,7 +27,7 @@ public class UIManager: MonoBehaviour {
 
     private static UIManager instance;
 
-    public static UIManager _Instance
+    public static UIManager Inst
     {
         get 
         {
@@ -329,7 +329,7 @@ public class UIManager: MonoBehaviour {
         int rXTo = Random.Range(-100, -247);
         int rYTo = Random.Range(-305, -200);
         tp.to = new Vector3(rXTo, rYTo, 0f);
-        tp.Play();
+        tp.PlayForward();
     }
 
     public void ShowDamageTxt(int damage, EDamageType damageType, int parryDamage = 0) 
@@ -371,7 +371,7 @@ public class UIManager: MonoBehaviour {
         int rXTo = Random.Range(199, 340);
         int rYTo = Random.Range(198, 253);
         tp.to = new Vector3(rXTo, rYTo, 0f);
-        tp.Play();
+        tp.PlayForward();
        
     }
 
@@ -658,7 +658,6 @@ public class UIManager: MonoBehaviour {
             DestroyObject(gobjDieUI);
         }
     }
-
 
     GameObject gobjUINPCMutual;
     /// <summary>

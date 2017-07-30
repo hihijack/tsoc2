@@ -27,7 +27,7 @@ public class ActionPointSet : MonoBehaviour {
         //!!!!!!!!!!!!!!!!
         return;
 
-        if (gameView.EnableInput && gameView.State == GameState.Normal && !UIManager._Instance.HasUI())
+        if (gameView.EnableInput && gameView._RoundLogicState == GameRoundLogicState.Normal && !UIManager.Inst.HasUI())
         {
             if (Input.GetMouseButton(0))
             {

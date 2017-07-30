@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Text;
 
+[CanEditMultipleObjects]
 [CustomEditor(typeof(MapGrid))]
 public class MapGridEditor : Editor
 {
@@ -45,9 +46,11 @@ public class MapGridEditor : Editor
             mg.toMapTargetGrid = EditorGUILayout.IntField("目标格子", mg.toMapTargetGrid);
 		}
 
+        mg._surface = (EMGSurface)EditorGUILayout.EnumPopup("地表类型", mg._surface);
+
         mg.enableCreateAMon = EditorGUILayout.Toggle("允许刷怪", mg.enableCreateAMon);
 
-		if(EditorGUI.EndChangeCheck())
+        if (EditorGUI.EndChangeCheck())
 		{
             if (mg.Type == EGridType.Block)
             {

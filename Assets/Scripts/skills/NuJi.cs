@@ -49,10 +49,10 @@ public class NuJi : ISkill {
 
     public override IEnumerator Act()
     {
-        if (!InCD && target != null && CheckCost())
+        if (CheckCast())
         {
             StartCD();
-            caster.IsSkilling = true;
+            StartCost();
 
             // 施法前摇
             yield return new WaitForSeconds(GetBaseData().casttime);
@@ -60,15 +60,24 @@ public class NuJi : ISkill {
             // 特效
             GameManager.commonCPU.CreateEffect("eff_hand_two_1", target.transform.position, Color.red, -1f);
 
-            int damage = (int)(caster.GetAtk() * damageRate);
+            int damage = (int)(caster._Prop.Atk * damageRate);
             caster.DamageTarget(damage, target);
-            caster.AddEng(engGet);
-            UIManager._Instance.uiMain.RefreshHeroMP();
+            caster._Prop.Mp += engGet;
+            UIManager.Inst.uiMain.RefreshHeroMP();
 
             // 施法后摇
             yield return new WaitForSeconds(0.5f);
-            
-            caster.IsSkilling = false;
+
+            GameManager.gameView._MHero.BsManager.ActionSkillEnd(this);
         }
+        else
+        {
+            GameManager.gameView._MHero.BsManager.ActionSkillEnd(this);
+        }
+    }
+
+    public override bool CheckCast()
+    {
+        return !InCD && target != null && CheckCost();
     }
 }

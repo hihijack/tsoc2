@@ -15,6 +15,13 @@ public enum EGridType
     StartAndToHome, // 试炼塔开始及返回城镇
 }
 
+public enum EChoosedState
+{
+    UnChooseable,//不可选择
+    Choosable,//可选择
+    Choosed//已选择
+}
+
 /// <summary>
 /// 格子上物体类型
 /// </summary>
@@ -61,7 +68,7 @@ public class MonsterBaseData
 
     public int arm; // 护甲
     public int hit; //命中
-    public int dodge; // 躲闪
+    public int moveSpeed; // 移动速度
     public int resfire; // 火抗
     public int reslighting; //电抗
     public int respoison; //毒抗
@@ -72,6 +79,12 @@ public class MonsterBaseData
     public string skills;   // 技能列表
 
     public bool isBoss; // 是否是boss
+
+    public int view;//视野
+
+    public int atkrange;//攻击范围
+
+    public string proj;//远程攻击投射物模型
 
 	public MonsterBaseData(JSONNode data)
 	{
@@ -95,24 +108,23 @@ public class MonsterBaseData
         this.atkMax = (int)sdr["atk_max"];
         this.hp = (int)sdr["hp"];
         this.level = (int)sdr["level"];
-
         this.atkTimeBefore = float.Parse(sdr["atktimebefore"].ToString());
         //this.atkTimeInterval = float.Parse(sdr["atktimeinterval"].ToString());
         this.atkTimeAfter = float.Parse(sdr["atktimeafter"].ToString());
         this.ias = float.Parse(sdr["ias"].ToString());
         this.drops = sdr["drops"].ToString();
-
         this.arm = (int)sdr["arm"];
         this.hit = (int)sdr["hit"];
-        this.dodge = (int)sdr["dodge"];
+        this.moveSpeed = (int)sdr["move_speed"];
         this.resfire = (int)sdr["resfire"];
         this.reslighting = (int)sdr["reslighting"];
         this.respoison = (int)sdr["respoison"];
         this.resfrozen = (int)sdr["resfrozen"];
-
         this.skills = sdr["skills"].ToString();
-
         this.isBoss = (bool)sdr["boss"];
+        view = (int)sdr["view"];
+        atkrange = (int)sdr["atkrange"];
+        proj = sdr["proj"].ToString();
     }
 }
 
@@ -125,6 +137,19 @@ public enum ENPCActionType
     Forge = 4,   // 锻造
     Trial = 5,     // 试炼塔
     Active = 6      // 激活
+}
+
+/// <summary>
+/// 地表状态
+/// </summary>
+public enum EMGSurface
+{
+    Normal,
+    Grass,//草丛
+    FireOil,//火油
+    FireOilOnGrass,//淋上火油的草丛
+    Water,//水
+    Fireing //正在燃烧
 }
 
 public enum ENPCType
@@ -168,19 +193,20 @@ public class NPCBaseData
 public enum EEquipItemType
 {
     Helm = 1,   // 头盔
-    Necklace = 2,   // 项链
-    Shoulder = 3,   // 肩膀
-    Breastplate = 4,// 胸甲
-    Cuff = 5,       // 护腕
-    Glove = 6,      // 手套
-    Pants = 7,      // 裤子
-    Shoe = 8,       // 鞋子
-    WeaponOneHand = 9,  // 单手武器
-    WeaponTwoHand = 10, // 双手武器
-    Shield = 11,         // 盾
+    Necklace = 9,   // 项链
+    //Shoulder = 3,   // 肩膀
+    Breastplate = 2,// 胸甲
+    //Cuff = 5,       // 护腕
+    Glove = 5,      // 手套
+    Pants = 3,      // 裤子
+    Shoe = 4,       // 鞋子
+    WeaponOneHand = 6,  // 单手武器
+    WeaponTwoHand = 7, // 双手武器
+    Shield = 8,         // 盾
     Gold = 20,          // 金钱
     HPPotion = 21,        // 治疗药水
-    ResPoiPotion = 22         // 毒抗药水
+    ResPoiPotion = 22,         // 毒抗药水
+    Torch = 23
 }
 
 /// <summary>
@@ -190,15 +216,13 @@ public enum EEquipPart
 {
     None = 0,   // 无
     Helm = 1,   // 头盔
-    Necklace = 2,   // 项链
-    Shoulder = 3,   // 肩膀
-    Breastplate = 4,// 胸甲
-    Cuff = 5,       // 护腕
-    Glove = 6,      // 手套
-    Pants = 7,      // 裤子
-    Shoe = 8,       // 鞋子
-    Hand1 = 9,  // 主手
-    Hand2 = 10, // 副手
+    Breastplate = 2,// 胸甲
+    Pants = 3,      // 裤子
+    Shoe = 4,       // 鞋子
+    Glove = 5,      // 手套
+    Necklace = 9,   // 项链
+    Hand1 = 6,  // 主手
+    Hand2 = 7, // 副手
     BaseBody = 11, // 身体
     BaseEar = 12    // 耳朵
 }
@@ -220,15 +244,11 @@ public struct NodeSprite
             case EEquipPart.Helm:
                 this.layer = 2;
                 break;
-            case EEquipPart.Shoulder:
-                this.layer = 2;
-                break;
+
             case EEquipPart.Breastplate:
                 this.layer = 2;
                 break;
-            case EEquipPart.Cuff:
-                this.layer = 2;
-                break;
+
             case EEquipPart.Glove:
                 this.layer = 2;
                 break;
@@ -281,6 +301,9 @@ public class EquipItemBaseData
     public int arm;
     public int atk;
     public float ias;
+    public int parry;//除以100
+    public int weight;
+    public int movespeed;
     public string model;
     public string color;
     public int price;
@@ -299,6 +322,9 @@ public class EquipItemBaseData
         this.arm = (int)sdr["arm"];
         this.atk = (int)sdr["atk"];
         this.ias = float.Parse(sdr["ias"].ToString());
+        parry = (int)sdr["parry"];
+        weight = (int)sdr["weight"];
+        movespeed = (int)sdr["movespeed"];
         this.model = sdr["model"].ToString();
         this.color = sdr["color"].ToString();
         this.price = (int)sdr["price"];
@@ -348,11 +374,8 @@ public enum EEquipItemProperty
 {
     Str = 1,    // 力量
     Agi = 2,    // 敏捷
-    Int = 3,    // 精神力
+    Ten = 3,    // 坚韧
     Sta = 4,    // 体能
-    MaxLife = 5,    // 最大生命值
-    TL = 6,         // 体力
-    MaxMp = 7,      // 最大魔法值
     Arm = 8,         // 护甲
     IAS = 9,        // 攻速
     ResFire = 10,   // 火抗
@@ -360,15 +383,18 @@ public enum EEquipItemProperty
     ResPoison = 12,     // 毒抗
     ResFrozen = 13,     // 冰抗
     CriticalStrike = 14,    // 致命一击
-    Hit = 15,           // 命中
-    Dodge = 16,         // 躲闪
-    Parry = 17,         // 格挡
     ParryDamage = 18,     // 格挡伤害
     FireDamage = 19,      // 火焰伤害
     ThunderDamage = 20,   // 闪电伤害
     PoisonDamage = 21,             // 毒素伤害
     ForzenDamage = 22,            // 冰冷伤害
-    AddDamage = 23          // 增强伤害
+    AddDamagePercent = 23,   //伤害增强百分比
+    Weight = 24,
+    MoveSpeed = 25,
+    AddDamage = 26,          // 增强伤害
+    ArmPercent = 27, //护甲强化
+    PowerDmg = 28,  // 蓄力伤害
+    PowerSpeed = 29 // 蓄力速度
 }
 
 /// <summary>
@@ -523,6 +549,7 @@ public class ComparSkillBDByLevel : IComparer<SkillBD>
     }
 }
 
+
 /// <summary>
 /// 怪物技能基础数据
 /// </summary>
@@ -532,6 +559,9 @@ public class MonSkillBD
     public string name;
     public string icon;
     public string desc;
+    public string anim;//动画
+    public float timeBefore;//前摇时间。开始动画后多久添加特效
+    public string eff;//特效
     public JSONNode jdData;
 
     public MonSkillBD(SqliteDataReader sdr) 
@@ -540,6 +570,9 @@ public class MonSkillBD
         name = sdr["name"].ToString();
         icon = sdr["icon"].ToString();
         desc = sdr["desc"].ToString();
+        anim = sdr["anim"].ToString();
+        timeBefore = float.Parse(sdr["time_before"].ToString());
+        eff = sdr["eff"].ToString();
         jdData = JSONNode.Parse(sdr["data"].ToString());
     }
 
@@ -632,7 +665,83 @@ public class EquipItemWord
 
     public string ToString()
     {
-        return GameTools.Prop2Desc(wordBaseData.propertyType) + "+" + val;
+        string desc = "";
+        switch (wordBaseData.propertyType)
+        {
+            case EEquipItemProperty.Str:
+                desc = string.Format("力量+{0}", val);
+                break;
+            case EEquipItemProperty.Agi:
+                desc = string.Format("敏捷+{0}", val);
+                break;
+            case EEquipItemProperty.Ten:
+                desc = string.Format("坚韧+{0}", val);
+                break;
+            case EEquipItemProperty.Sta:
+                desc = string.Format("体能+{0}", val);
+                break;
+            case EEquipItemProperty.Arm:
+                desc = string.Format("护甲+{0}", val);
+                break;
+            case EEquipItemProperty.IAS:
+                desc = string.Format("提升{0}%攻速", val);
+                break;
+            case EEquipItemProperty.ResFire:
+                desc = string.Format("抗火+{0}", val);
+                break;
+            case EEquipItemProperty.ResThunder:
+                desc = string.Format("抗闪电+{0}", val);
+                break;
+            case EEquipItemProperty.ResPoison:
+                desc = string.Format("抗毒+{0}", val);
+                break;
+            case EEquipItemProperty.ResFrozen:
+                desc = string.Format("抗寒+{0}", val);
+                break;
+            case EEquipItemProperty.CriticalStrike:
+                desc = string.Format("致命一击几率提升{0}%", val);
+                break;
+            case EEquipItemProperty.ParryDamage:
+                desc = string.Format("格挡强化{0}%", val);
+                break;
+            case EEquipItemProperty.FireDamage:
+                desc = string.Format("火焰伤害+", val);
+                break;
+            case EEquipItemProperty.ThunderDamage:
+                desc = string.Format("闪电伤害+", val);
+                break;
+            case EEquipItemProperty.PoisonDamage:
+                desc = string.Format("毒素伤害+", val);
+                break;
+            case EEquipItemProperty.ForzenDamage:
+                desc = string.Format("冰冷伤害+", val);
+                break;
+            case EEquipItemProperty.AddDamagePercent:
+                desc = string.Format("伤害强化{0}%", val);
+                break;
+            case EEquipItemProperty.Weight:
+                desc = string.Format("重量+{0}", val);
+                break;
+            case EEquipItemProperty.MoveSpeed:
+                desc = string.Format("移动速度+{0}", val);
+                break;
+            case EEquipItemProperty.AddDamage:
+                desc = string.Format("伤害+{0}", val);
+                break;
+            case EEquipItemProperty.ArmPercent:
+                desc = string.Format("护甲强化{0}%", val);
+                break;
+            case EEquipItemProperty.PowerDmg:
+                desc = string.Format("蓄力伤害强化{0}%", val);
+                break;
+            case EEquipItemProperty.PowerSpeed:
+                desc = string.Format("蓄力速度提升{0}%", val);
+                break;
+            default:
+                break;
+        }
+        return desc;
+        //return GameTools.Prop2Desc(wordBaseData.propertyType) + "+" + val;
     }
 }
 
@@ -774,12 +883,15 @@ public static class IConst
     public const int EUIIPITEM_UNNORMAL_WORDS_MAXCOUNT = 7; // 稀有品质物品词缀最多个数；
     public const int BASE_STR = 10; // 基础力量
     public const int BASE_AGI = 10; // 基础敏捷
-    public const int BASE_INT = 10; // 基础智力
-    public const int BASE_STA = 15; // 基础体能
-    public const int MP_PER_INT = 10;   // 每点智力增加的魔法上限
+    public const int BASE_TEN = 10; // 基础坚韧
+    public const int BASE_STA = 10; // 基础体能
+    public const int BASE_MOVESPEED = 5;// 基础移动速度
+    public const float BASE_POWERSPEED = 1.5f;//基础蓄力速度
+    public const int MP_PER_INT = 2;   // 每点智力增加的魔法上限
     public const int TL_PER_STA = 10;   // 每点体能增加的体力上限
-    public const int HP_PER_STA = 1;   // 每点体能增加的生命值上限
-    public const int ATK_PHY_PER_STR = 1;  // 每点力量提供的百分百武器伤害
+    public const int HP_PER_STA = 5;   // 每点体能增加的生命值上限
+    public const float DAMREDUCE_PER_TEN = 0.01f;//每点坚韧减少百分百伤害
+    public const float ATK_PHY_PER_STR = 0.01f;  // 每点力量提供的百分百武器伤害
     public const int ATK_MAG_PER_INT = 2; // 每点智力提供的魔法攻击力
     public const int HIT_PER_AGI = 2;     // 每点敏捷提供的命中
     public const int DODGE_PER_AGI = 2;    // 每点敏捷提供的躲闪
@@ -791,6 +903,10 @@ public static class IConst
     public const int EXP_MON_K = 10;
     public const int LOST_GOLD_LEVEL = 300; // 死亡损失金钱
     public static readonly float BaseDS = 0.05f; //基础致命一击几率
+
+    public const float Power1DamPer = 4f;//一段蓄力伤害
+    public const float Power2DamPer = 8f;//二段蓄力伤害
+    public const float Power3DamPer = 16f;//三段蓄力伤害
 
     public const string KEY_HASALLOT_STR = "strallot";     // 已分配的力量点
     public const string KEY_HASALLOT_AGI = "agiallot";     // 已分配的敏捷点
@@ -808,6 +924,7 @@ public static class IConst
     public const string KEY_GOLD = "gold";  // 金币数
 
     public const string KEY_ITEM_USED = "itemused";
+
 }
 
 /// <summary>

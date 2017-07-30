@@ -10,6 +10,8 @@ public class UITweenProgbar : UITweener{
 
     UIProgressBar uiProgbar;
 
+    public bool enableAct = false;
+
     void Awake()
     {
         uiProgbar = GetComponent<UIProgressBar>();
@@ -19,7 +21,10 @@ public class UITweenProgbar : UITweener{
 
     protected override void OnUpdate(float factor, bool isFinished)
     {
-        value = Mathf.Lerp(from, to, factor);
+        if (enableAct)
+        {
+            value = Mathf.Lerp(from, to, factor);
+        }
     }
 
     static public UITweenProgbar Begin(GameObject go, float duration, float toVal)

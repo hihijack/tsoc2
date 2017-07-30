@@ -18,13 +18,13 @@
         if (target._State != EActorState.Dead)
         {
             // 提升防御，抗性
-            target.DefIncrease(percent);
-            target.ResFireIncrease(percent);
-            target.ResForzenIncrease(percent);
-            target.ResPosisionIncrease(percent);
-            target.ResThunderIncrease(percent);
+            target._Prop.DefIncrease(percent);
+            target._Prop.ResFireIncrease(percent);
+            target._Prop.ResForzenIncrease(percent);
+            target._Prop.ResPosisionIncrease(percent);
+            target._Prop.ResThunderIncrease(percent);
 
-            UIManager._Instance.uiMain.AddABuffToTarget(target, this);
+            UIManager.Inst.uiMain.AddABuffToTarget(target, this);
         }
     }
 
@@ -39,12 +39,12 @@
         base.OnRemove();
         if (target._State != EActorState.Dead)
         {
-            target.DefIncrease(1 / percent);
-            target.ResFireIncrease(1 / percent);
-            target.ResForzenIncrease(1 / percent);
-            target.ResPosisionIncrease(1 / percent);
-            target.ResThunderIncrease(1 / percent);
-            UIManager._Instance.uiMain.RemoveABuff(target, this);
+            target._Prop.DefIncrease(1 / percent);
+            target._Prop.ResFireIncrease(1 / percent);
+            target._Prop.ResForzenIncrease(1 / percent);
+            target._Prop.ResPosisionIncrease(1 / percent);
+            target._Prop.ResThunderIncrease(1 / percent);
+            UIManager.Inst.uiMain.RemoveABuff(target, this);
         }
         DestroyObject(this);
     }

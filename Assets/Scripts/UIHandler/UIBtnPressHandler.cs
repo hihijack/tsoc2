@@ -14,6 +14,6 @@ public class UIBtnPressHandler : MonoBehaviour {
 
     void OnPress(bool pressed)
     {
-        UIManager._Instance.OnBtnPress(btn, pressed);
+        UIManager.Inst.OnBtnPress(btn, pressed);
     }
 }

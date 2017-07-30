@@ -41,7 +41,7 @@ public class ItemUesdGrid : MonoBehaviour {
 
     void BtnClick_UseItem() 
     {
-        if (UIManager._Instance.HasUI())
+        if (UIManager.Inst.HasUI())
         {
             return;
         }

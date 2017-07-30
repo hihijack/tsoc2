@@ -56,17 +56,17 @@ public class UITrade : MonoBehaviour {
                 // 刷新背包物品
                 if (canPile)
                 {
-                    UIManager._Instance.GetUIBag().RefreshEquipItemCount(eiInbag);
+                    UIManager.Inst.GetUIBag().RefreshEquipItemCount(eiInbag);
                 }
                 else
                 {
-                    UIManager._Instance.GetUIBag().AddAEquipItemToAGrid(ei);
+                    UIManager.Inst.GetUIBag().AddAEquipItemToAGrid(ei);
                 }
                 
                 // 刷新配置
                 if (eiInbag != null)
                 {
-                    UIManager._Instance.uiMain.RefreshItemUsed(eiInbag);
+                    UIManager.Inst.uiMain.RefreshItemUsed(eiInbag);
                 }
                 
 
@@ -80,19 +80,19 @@ public class UITrade : MonoBehaviour {
             }
             else
             {
-                UIManager._Instance.GeneralTip("背包已满", Color.red);
+                UIManager.Inst.GeneralTip("背包已满", Color.red);
             }
         }
         else
         {
             // 金钱不足
-            UIManager._Instance.GeneralTip("金钱不足", Color.red);
+            UIManager.Inst.GeneralTip("金钱不足", Color.red);
         }
     }
 
     void BtnClick_Close() 
     {
-        UIManager._Instance.CloseUITrade();
-        UIManager._Instance.ToggleUI_Bag();
+        UIManager.Inst.CloseUITrade();
+        UIManager.Inst.ToggleUI_Bag();
     }
 }

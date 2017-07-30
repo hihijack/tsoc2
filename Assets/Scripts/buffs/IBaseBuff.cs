@@ -62,4 +62,10 @@ public class IBaseBuff : MonoBehaviour {
             DoPerSecond();
         }
     }
+
+    public void Remove()
+    {
+        OnRemove();
+        DestroyObject(this);
+    }
 }

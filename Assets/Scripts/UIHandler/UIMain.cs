@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class UIMain : MonoBehaviour {
 
@@ -39,9 +40,13 @@ public class UIMain : MonoBehaviour {
     public GameObject gobjSkillTractics;
     public GameObject gobjGridItemUsed;
 
+    public UIBattle uiBattle;
+
     public UIProgressBar progAtk;
 
     AtkBar atkBar;
+
+    public UIChooseTarget gUIChooseTarget;
 
     public AtkBar _AtkBar
     {
@@ -61,10 +66,13 @@ public class UIMain : MonoBehaviour {
     public UIButton btnBag;
     public UIButton btnMission;
     public UIButton btnSkill;
+    public UIButton btnWait;
 
     public UILabel txtMapName;
 
     public UILabel txtCurRound;
+
+    public GameObject energyPoints;
 
     public void Init(GameView gameView)
     {
@@ -76,6 +84,7 @@ public class UIMain : MonoBehaviour {
         SetUIBattleSkillsVisble(false);
         targetMask.SetActive(false);
 
+        gUIChooseTarget.SetVisible(false);
         //InitUISkillTracics();
 
         InitItemUsed();
@@ -85,6 +94,7 @@ public class UIMain : MonoBehaviour {
         btnBag.onClick.Add(new EventDelegate(OnBtn_Bag));
         btnMission.onClick.Add(new EventDelegate(OnBtn_Mission));
         btnSkill.onClick.Add(new EventDelegate(OnBtn_ShowSkill));
+        btnWait.onClick.Add(new EventDelegate(OnBtn_Wait));
     }
 
     public void SetUIBtnsShow(bool isshow) 
@@ -97,7 +107,15 @@ public class UIMain : MonoBehaviour {
     /// </summary>
     void OnBtn_ShowSkill() 
     {
-        UIManager._Instance.ToggleUI_Skill();
+        UIManager.Inst.ToggleUI_Skill();
+    }
+
+    /// <summary>
+    /// 按钮 - 等待
+    /// </summary>
+    private void OnBtn_Wait()
+    {
+        GameView._Inst.RoundLogicWaitARound();
     }
 
     /// <summary>
@@ -105,7 +123,7 @@ public class UIMain : MonoBehaviour {
     /// </summary>
     void OnBtn_Mission() 
     {
-        UIManager._Instance.ToggleUIMission();
+        UIManager.Inst.ToggleUIMission();
     }
 
     /// <summary>
@@ -113,7 +131,7 @@ public class UIMain : MonoBehaviour {
     /// </summary>
     void OnBtn_Bag() 
     {
-        UIManager._Instance.ToggleUI_Bag();
+        UIManager.Inst.ToggleUI_Bag();
     }
 
     /// <summary>
@@ -121,7 +139,7 @@ public class UIMain : MonoBehaviour {
     /// </summary>
     void OnBtn_Character() 
     {
-        UIManager._Instance.ToggleUI_HeroInfo();
+        UIManager.Inst.ToggleUI_HeroInfo();
     }
 
     /// <summary>
@@ -216,17 +234,10 @@ public class UIMain : MonoBehaviour {
     void Btn_SkillTractics()
     {
         ISkill skill = UIButton.current.data as ISkill;
-        if (gameView.State == GameState.Normal)
+        if (gameView._RoundLogicState == GameRoundLogicState.Normal)
         {
             gameView.StartSkillTractics(skill);
         }
-        else if(gameView.State == GameState.TarcticsSkilling)
-        {
-            // 如果正在选择目标，则取消战术使用
-            gameView.CancelSkillTractics();
-        }
-        
-
     }
 
     void SetUIBattleSkillsVisble(bool visble)
@@ -250,8 +261,8 @@ public class UIMain : MonoBehaviour {
     public void RefreshHeroHP()
     {
         // hp
-        int curHp = gameView._MHero.hp;
-        int maxHp = gameView._MHero._HpMax;
+        int curHp = gameView._MHero._Prop.Hp;
+        int maxHp = gameView._MHero._Prop.HpMax;
         float hpVal = (float)curHp / maxHp;
         heroHP.value = hpVal;
         txtHeroHp.text = curHp + "/" + maxHp;
@@ -270,17 +281,36 @@ public class UIMain : MonoBehaviour {
     public void RefreshHeroMP()
     {
         // 魔法值
-        int curMP = gameView._MHero._Mp;
+        int curMP = gameView._MHero._Prop.Mp;
         int maxMP = gameView._MHero.mpMax;
         float mpVal = (float)curMP / maxMP;
         heroMP.value = mpVal;
         txtHeroMP.text = curMP + "/" + maxMP;
+
+        RefreshHeroEnergy();
+    }
+
+    public void RefreshHeroEnergy()
+    {
+        //能力点
+        for (int i = 0; i < 5; i++)
+        {
+            UISprite icon = Tools.GetComponentInChildByPath<UISprite>(energyPoints, i.ToString());
+            if (i < gameView._MHero._Prop.EnergyPoint)
+            {
+                icon.alpha = 1f;
+            }
+            else
+            {
+                icon.alpha = 0f;
+            }
+        }
     }
 
     public void RefreshTargetHP(Enermy target)
     {
-        targetHPs[target.uiIndex].value = (float)target.hp / target._HpMax;
-        txtTargetHPs[target.uiIndex].text = target.hp + "/" + target._HpMax;
+        targetHPs[target.uiIndex].value = (float)target._Prop.Hp / target._Prop.HpMax;
+        txtTargetHPs[target.uiIndex].text = target._Prop.Hp + "/" + target._Prop.HpMax;
     }
 
     // TODO ShowTargetUI
@@ -307,12 +337,12 @@ public class UIMain : MonoBehaviour {
                     spriteSkill.spriteName = "btn_bg";
                     RemoveBind(gobjSkill.GetInstanceID());
                 }
-                ISkill[] skills = gameView._MHero.GetComponents<ISkill>();
+                ISkill[] skills = gameView._MHero.mSkills;
                 int index = 0;
                 for (int i = 0; i < skills.Length; i++)
                 {
                     ISkill skill = skills[i];
-                    if (skill.GetBaseData().type == ESkillType.Battle)
+                    if (skill != null && skill.GetBaseData().type == ESkillType.Battle)
                     {
                         GameObject gobjSkill = Tools.GetGameObjectInChildByPathSimple(gobjGridSkills, "spell" + index);
                         index++;

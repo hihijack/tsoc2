@@ -20,7 +20,7 @@ public class MonHanBingZhiLi : IMonSkill
         base.OnHurt(damager, damage, damageType, isDS);
         if (damageType == EDamageType.Forzen)
         {
-            _ECur.AtkIncrease(val);
+            _ECur._Prop.AtkParmaD += val;
         }
     }
 }

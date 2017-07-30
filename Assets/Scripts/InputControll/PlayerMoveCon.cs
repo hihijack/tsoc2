@@ -2,10 +2,10 @@
 /// <summary>
 /// 玩家移动控制
 /// </summary>
-class PlayerMoveCon
+class PlayerMoveCtl
 {
     Hero hero;
-    public PlayerMoveCon(Hero hero)
+    public PlayerMoveCtl(Hero hero)
     {
         this.hero = hero;
     }
@@ -15,7 +15,7 @@ class PlayerMoveCon
     /// </summary>
     public void OnKeyArrow(EDirection dir)
     {
-        if (hero._State == EActorState.Normal && !UIManager._Instance.HasUI())
+        if (hero._State == EActorState.Normal && !UIManager.Inst.HasUI())
         {
             MapGrid mgNext = hero.GetCurMapGrid().GetNextGrid(dir);
             if (mgNext != null)

@@ -32,7 +32,7 @@ public class AltarDef : AltarBase {
 			bad.Init (GameManager.hero, val, dur);
 			bad.StartEffect ();
 			
-			UIManager._Instance.GeneralTip("你的防御硬如钢铁",Color.green);
+			UIManager.Inst.GeneralTip("你的防御硬如钢铁",Color.green);
 			// 使用后立即销毁
 			DestroyObject(gameObject);
 		}

@@ -55,21 +55,27 @@ public class MapGridHelperEditor : Editor {
                 itemId = mg._ToMapId;
             }
 
+            string desc = "";
             if (mg.Type != EGridType.None)
             {
                 if (itemId > 0)
                 {
-                    Handles.Label(child.position, mg.g_Id + "\n" + mg.Type + "\n" + itemId);
+                    desc = mg.g_Id + "\n" + mg.Type + "\n" + itemId;
                 }
                 else
                 {
-                    Handles.Label(child.position, mg.g_Id + "\n" + mg.Type);
+                    desc = mg.g_Id + "\n" + mg.Type;
                 }
             }
             else
             {
-                Handles.Label(child.position, mg.g_Id.ToString());
+                desc = mg.g_Id.ToString();
             }
-		}
+            if (mg.Surface != EMGSurface.Normal)
+            {
+                desc = desc + "\n" + mg.Surface;
+            }
+            Handles.Label(child.position, desc);
+        }
 	}
 }

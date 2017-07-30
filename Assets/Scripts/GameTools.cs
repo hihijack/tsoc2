@@ -14,20 +14,11 @@ public static class GameTools{
             case EEquipItemProperty.Agi:
                 desc = "敏捷";
                 break;
-            case EEquipItemProperty.Int:
+            case EEquipItemProperty.Ten:
                 desc = "精神力";
                 break;
             case EEquipItemProperty.Sta:
                 desc = "体能";
-                break;
-            case EEquipItemProperty.MaxLife:
-                desc = "生命值";
-                break;
-            case EEquipItemProperty.TL:
-                desc = "体力";
-                break;
-            case EEquipItemProperty.MaxMp:
-                desc = "魔法值";
                 break;
             case EEquipItemProperty.Arm:
                 desc = "护甲";
@@ -50,17 +41,8 @@ public static class GameTools{
             case EEquipItemProperty.CriticalStrike:
                 desc = "致命一击";
                 break;
-            case EEquipItemProperty.Hit:
-                desc = "命中";
-                break;
-            case EEquipItemProperty.Dodge:
-                desc = "躲闪";
-                break;
-            case EEquipItemProperty.Parry:
-                desc = "格挡";
-                break;
             case EEquipItemProperty.ParryDamage:
-                desc = "格挡伤害";
+                desc = "格挡强化";
                 break;
             case EEquipItemProperty.FireDamage:
                 desc = "火焰伤害";
@@ -74,8 +56,26 @@ public static class GameTools{
             case EEquipItemProperty.ForzenDamage:
                 desc = "冰冷伤害";
                 break;
+            case EEquipItemProperty.AddDamagePercent:
+                desc = "伤害强化";
+                break;
+            case EEquipItemProperty.Weight:
+                desc = "重量";
+                break;
+            case EEquipItemProperty.MoveSpeed:
+                desc = "移动速度";
+                break;
             case EEquipItemProperty.AddDamage:
-                desc = "增强伤害";
+                desc = "伤害";
+                break;
+            case EEquipItemProperty.ArmPercent:
+                desc = "护甲强化";
+                break;
+            case EEquipItemProperty.PowerDmg:
+                desc = "蓄力伤害";
+                break;
+            case EEquipItemProperty.PowerSpeed:
+                desc = "蓄力速度";
                 break;
             default:
                 break;

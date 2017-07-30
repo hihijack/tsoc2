@@ -21,8 +21,8 @@
     {
         if (target._State != EActorState.Dead)
         {
-            target.resPoision += addval;
-            UIManager._Instance.uiMain.AddABuffToTarget(target, this);
+            target._Prop.resPoision += addval;
+            UIManager.Inst.uiMain.AddABuffToTarget(target, this);
         }
     }
 
@@ -31,8 +31,8 @@
         base.OnRemove();
         if (target._State != EActorState.Dead)
         {
-            target.resPoision -= addval;
-            UIManager._Instance.uiMain.RemoveABuff(target, this);
+            target._Prop.resPoision -= addval;
+            UIManager.Inst.uiMain.RemoveABuff(target, this);
         }
         DestroyObject(this);
     }

@@ -2,119 +2,43 @@
 using System.Collections;
 using System.Reflection;
 using System.Collections.Generic;
+using System;
 
 public class Hero : IActor
 {
-
+    public static Hero _Inst;
+    #region 成员属性
     public string nickname;
-
     public int[] arrItemUesd = new int[3]; // 使用的道具id
-
-	public float speed = 10.0f;
-
+    public float speed = 10.0f;
     List<Enermy> targetEnermys = new List<Enermy>(4);
-
-    public List<Enermy> GetTargetsInBattle()
-    {
-        return targetEnermys;
-    }
-
+    public ISkill[] mSkills = new ISkill[4];
     /// <summary>
     /// 处于警觉中的敌人
     /// </summary>
     List<Enermy> enermysInAlterness = new List<Enermy>(4);
-    
-    public void RemoveFormAlterness(Enermy enermy) 
-    {
-        if (enermysInAlterness.Contains(enermy))
-        {
-            enermysInAlterness.Remove(enermy);
-        }
-    }
 
-    public void ClearAlterness() 
-    {
-        enermysInAlterness.Clear();
-    }
-
-    public override EActorState _State
-    {
-        get
-        {
-            return state;
-        }
-
-        set 
-        {
-            state = value;
-        }
-    }
-
-	private Vector2 moveDir = Vector2.zero;
-	
-	int axisH = 0;
-	int axisV = 0;
-	int btnA = 0;
-	int btnB = 0;
-	
-	private int g_Clock_Times = 0;
-	
-	Transform tf;
-	
-	CharacterController cc;
-	
-	
-	public int expCur;
-	public int expMax;
-	public int cash;
-	public int score;
+    public int expCur;
+    public int expMax;
+    public int cash;
+    public int score;
 
     private MissionBD curMainMission;    // 当前主线任务
-
-    public MissionBD _CurMainMission
-    {
-        get { return curMainMission; }
-        set 
-        {
-            curMainMission = value;
-            if (curMainMission != null)
-            {
-                GameManager.commonCPU.SaveMissionStep();
-            }
-            else
-            {
-                Debug.LogError("curMainMission is NULL");
-            }
-       }
-    }
     public List<int> curMissionIds = new List<int>(5);    // 当前支线任务id
 
-	public Enermy curTarget; // 当前攻击目标
-	 
-	// 人物属性
-	
+    public Enermy curTarget; // 当前攻击目标
 
-    private int strength; // 力量
-    public int _Strength
-    {
-        get { return strength; }
-        set { strength = value; }
-    }
-    public int agility; // 敏捷
-    public int intell;  // 精神力
-    public int stamina; // 体能
-
-
+    // 人物属性
     public int[] skillids;
     public int[] skillLvs;
 
-	public int[] skillIdsTractics;
+    public int[] skillIdsTractics;
     public ISkill[] skillsTractics;
 
-	public bool isInBattleState = false;
-	
-	// buff start
-	// buff end
+    public bool isInBattleState = false;
+
+    // buff start
+    // buff end
 
     public GameObject g_GobjWeaponRootHand1;
     public GameObject g_GobjWeaponRootHand2;
@@ -127,6 +51,264 @@ public class Hero : IActor
 
     // 已装备的装备
     public List<EquipItem> itemsHasEquip = new List<EquipItem>();
+    public int expCurLevel; // 当今等级经验
+
+    private int gold; // 金币
+    int bestTrial;
+    /// <summary>
+    /// 未分配技能点
+    /// </summary>
+    int g_SkillNeedAllot = 0;
+    Avtoar2D avroar2D;
+    // 背包里的物品
+    public List<EquipItem> itemsInBag = new List<EquipItem>();
+    #endregion
+
+    #region GeterAndSeter
+
+    public override EActorState _State
+    {
+        get
+        {
+            return state;
+        }
+
+        set
+        {
+            state = value;
+        }
+    }
+
+
+    public MissionBD _CurMainMission
+    {
+        get { return curMainMission; }
+        set
+        {
+            curMainMission = value;
+            if (curMainMission != null)
+            {
+                GameManager.commonCPU.SaveMissionStep();
+            }
+            else
+            {
+                Debug.LogError("curMainMission is NULL");
+            }
+        }
+    }
+
+
+    public int _Gold
+    {
+        get { return gold; }
+        set
+        {
+            gold = value;
+            if (gold < 0)
+            {
+                gold = 0;
+            }
+            PlayerPrefs.SetInt(IConst.KEY_GOLD, gold);
+            UIManager.Inst.RefreshHeroBagGold();
+        }
+    }
+
+
+
+    public int _BestTrial
+    {
+        get { return bestTrial; }
+        set
+        {
+            bestTrial = value;
+            PlayerPrefs.SetInt(IConst.KEY_BEST_TRIAL, bestTrial);
+        }
+    }
+
+    public int _SkillNeedAllot
+    {
+        get { return g_SkillNeedAllot; }
+        set { g_SkillNeedAllot = value; GameManager.commonCPU.SaveSP(); }
+    }
+
+    public Avtoar2D _Avroar2D
+    {
+        get
+        {
+            if (avroar2D == null)
+            {
+                avroar2D = Tools.GetComponentInChildByPath<Avtoar2D>(gameObject, "model");
+            }
+            return avroar2D;
+        }
+    }
+
+    public ManagerBattleState BsManager
+    {
+        get
+        {
+            return bsManager;
+        }
+
+        set
+        {
+            bsManager = value;
+        }
+    }
+    #endregion
+
+    public List<Enermy> GetTargetsInBattle()
+    {
+        return targetEnermys;
+    }
+    public ISkill GetSkillByIndex(int skillIndex)
+    {
+        ISkill skill = null;
+        skill = mSkills[skillIndex - 1];
+        return skill;
+    }
+
+    #region 战斗状态逻辑
+    internal void OnBSStartSkill(ISkill skill)
+    {
+        if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+        {
+            return;
+        }
+       
+        StartCoroutine(skill.Act());
+        UIManager.Inst.uiMain.uiBattle.ToSkill(skill);
+    }
+
+    internal void OnBSStartUnControl(float dur)
+    {
+        if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+        {
+            return;
+        }
+        UIManager.Inst.uiMain.uiBattle.ToUnControl(dur);
+    }
+
+    internal void OnBSUpdateUnControl(float dur)
+    {
+        UIManager.Inst.uiMain.uiBattle.UpdateUnControlTime(dur);
+    }
+
+    /// <summary>
+    /// 开始蓄力
+    /// </summary>
+    internal void OnBSStartPowering()
+    {
+        if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+        {
+            return;
+        }
+        UIManager.Inst.uiMain.uiBattle.ToPowering();
+    }
+
+    /// <summary>
+    /// 蓄力更新
+    /// </summary>
+    internal void OnBSUpdatePowering()
+    {
+        _PowerVal += _Prop.PowerSpeed * Time.deltaTime;
+        UIManager.Inst.uiMain.uiBattle.UpdatePowerVal(_PowerVal);
+    }
+
+    /// <summary>
+    /// 进入普通状态
+    /// </summary>
+    internal void OnBSStartNormal()
+    {
+        UIManager.Inst.uiMain.uiBattle.ToNormalState();
+        _PowerVal = 0f;
+    }
+
+    internal void OnBSStartDef()
+    {
+        if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+        {
+            return;
+        }
+        UIManager.Inst.uiMain.uiBattle.ShowDef(true);
+    }
+
+    internal void OnBSEndDef()
+    {
+        if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+        {
+            return;
+        }
+        UIManager.Inst.uiMain.uiBattle.ShowDef(false);
+    }
+    /// <summary>
+    /// 后摇
+    /// </summary>
+    internal void OnBSStartAtkAfter()
+    {
+        if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+        {
+            return;
+        }
+        UIManager.Inst.uiMain.uiBattle.ToAfterPoint(AtkAnimTimeAfter);
+    }
+
+    /// <summary>
+    /// 后摇
+    /// </summary>
+    internal void OnBSStartAtkBefore()
+    {
+        if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+        {
+            return;
+        }
+        UIManager.Inst.uiMain.uiBattle.ToAtkPoint(AtkAnimTimeBefore);
+        OnStartAAttack(curTarget);
+    }
+
+    internal void OnBSStartHit()
+    {
+        if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle || curTarget == null)
+        {
+            return;
+        }
+        // 攻击特效
+        GameManager.commonCPU.CreateEffect(GetAtkEffName(), curTarget.transform.position, Color.white, -1f);
+
+        if (CheckHitTarget(curTarget))
+        {
+            int atk = _Prop.Atk;
+            // 攻击伤害
+            OnAttackHit(curTarget, atk);
+            curTarget.OnAttackedHit(this, atk);
+            DamageTarget(atk, curTarget);
+            DamageTarget(_Prop.AtkFire, curTarget, EDamageType.Fire);
+            DamageTarget(_Prop.AtkThunder, curTarget, EDamageType.Lighting);
+            DamageTarget(_Prop.AtkPoison, curTarget, EDamageType.Poison);
+            DamageTarget(_Prop.AtkIce, curTarget, EDamageType.Forzen);
+        }
+        else
+        {
+            // 攻击被躲闪
+            UIManager.Inst.ShowTargetBattleStateInfo("闪避");
+            OnAttackLost(curTarget);
+            curTarget.OnAttackedLost(this);
+        }
+    }
+    #endregion
+
+    public void RemoveFormAlterness(Enermy enermy) 
+    {
+        if (enermysInAlterness.Contains(enermy))
+        {
+            enermysInAlterness.Remove(enermy);
+        }
+    }
+
+    public void ClearAlterness() 
+    {
+        enermysInAlterness.Clear();
+    }
 
     public void AddToItemsHasEquip(EquipItem ei) 
     {
@@ -141,13 +323,10 @@ public class Hero : IActor
         }
     }
 
-    public override int GetAtkPhy()
-    {
-        return Mathf.RoundToInt(AtkWpon * (_Strength + 100) / 100f);
-    }
-
-    // 背包里的物品
-    public List<EquipItem> itemsInBag = new List<EquipItem>();
+    //public override int GetAtkPhy()
+    //{
+    //    return Mathf.RoundToInt(AtkWpon * (_Strength + 100) / 100f);
+    //}
 
     public void AddToItemsInBag(EquipItem ei) 
     {
@@ -162,73 +341,26 @@ public class Hero : IActor
         }
     }
 
-    public int expCurLevel; // 当今等级经验
+    private ManagerBattleState bsManager;
 
-    private int gold; // 金币
-
-    public int _Gold
-    {
-        get { return gold; }
-        set 
-        {
-            gold = value;
-            if (gold < 0)
-            {
-                gold = 0;
-            }
-            PlayerPrefs.SetInt(IConst.KEY_GOLD, gold);
-            UIManager._Instance.RefreshHeroBagGold();
-        }
-    }
-
-    int bestTrial;
-
-    public int _BestTrial
-    {
-        get { return bestTrial; }
-        set 
-        { 
-            bestTrial = value;
-            PlayerPrefs.SetInt(IConst.KEY_BEST_TRIAL, bestTrial);
-        }
-    }
-
-    /// <summary>
-    /// 未分配技能点
-    /// </summary>
-    int g_SkillNeedAllot = 0;
-
-    public int _SkillNeedAllot
-    {
-        get { return g_SkillNeedAllot; }
-        set { g_SkillNeedAllot = value; GameManager.commonCPU.SaveSP(); }
-    }
-
-
-    Avtoar2D avroar2D;
-
-    public Avtoar2D _Avroar2D
-    {
-        get 
-        {
-            if (avroar2D == null)
-            {
-                avroar2D = Tools.GetComponentInChildByPath<Avtoar2D>(gameObject, "model");
-            }
-            return avroar2D; 
-        }
-    }
-
-
-	void Start(){
+    void Start(){
 		base.Start();
 		isHero = true;
-		tf = transform;
 	}
 	
 	void Update(){
-		
+        if (_State == EActorState.Battle)
+        {
+            BsManager.Update();
+        }
 	}
+
+    public void Init()
+    {
+        _Inst = this;
+        BsManager = new ManagerBattleState(this);
+        _Prop = new PropertyHero(this);
+    }
 
     public override void SetDir(EDirection dir) 
     {
@@ -260,28 +392,19 @@ public class Hero : IActor
         atkAnimTimeBeforeBase = 0.5f;
         atkAnimTimeAfterBase = 0.5f;
 
-        _BaseWeaponIAS = IConst.BaseIAS;
-        _DeadlyStrike = IConst.BaseDS;
-
-        _Strength = IConst.BASE_STR;
-        agility = IConst.BASE_AGI;
-        intell = IConst.BASE_INT;
-        stamina = IConst.BASE_STA;
+        _Prop.BaseWeaponIAS = IConst.BaseIAS;
+        _Prop.DeadlyStrike = IConst.BaseDS;
+        _Prop.Strength = IConst.BASE_STR;
+        _Prop.Agility = IConst.BASE_AGI;
+        _Prop.Tenacity = IConst.BASE_TEN;
+        _Prop.Stamina = IConst.BASE_STA;
+        _Prop.PowerSpeed = IConst.BASE_POWERSPEED;
+        _Prop.MoveSpeedBase = IConst.BASE_MOVESPEED;
     }
 
     public void InitWeapon()
     {
     
-    }
-
-    public void InitSkill()
-    {
-        for (int i = 0; i < skillids.Length; i++)
-        {
-            int skillid = skillids[i];
-            int level = skillLvs[i];
-            SetBattleSkillLevel(skillid, level);
-        }
     }
 
     /// <summary>
@@ -297,6 +420,10 @@ public class Hero : IActor
         }
     }
 
+    /// <summary>
+    /// 直接将玩家放到某个位置。
+    /// </summary>
+    /// <param name="mg"></param>
     public void SetMapGrid(MapGrid mg)
     {
         MapGrid mgCur = GetCurMapGrid();
@@ -306,27 +433,12 @@ public class Hero : IActor
         }
         _CurGridid = mg.g_Id;
         transform.position = mg.GetPos();
-        OnIntoAGrid(mg);
+        transform.parent = mg.transform;
     }
 
-	#region FSM
-	public void DoUpdateHeroAttack ()
-	{
-        //if(btnA > 0 && SkillA != null){
-        //    SkillA.SetCaster(this);
-        //    SkillA.SetTarget(curTarget);
-        //    StartCoroutine(SkillA.Act());
-        //}
-        //else if(btnB > 0 && SkillB != null){
-        //    SkillB.SetCaster(this);
-        //    SkillB.SetTarget(curTarget);
-        //    StartCoroutine(SkillB.Act());
-        //}
-	}
-	#endregion
-	
-	#region Game Mehtods
-	public ISkill CreateSkillById(int skillId, int level)
+    #region Game Mehtods
+
+    public ISkill CreateSkillById(int skillId, int level)
     {
 		ISkill r = null;
 		switch (skillId) {
@@ -406,6 +518,14 @@ public class Hero : IActor
                 // 新配技能
                 ISkill skillNew = CreateSkillById(skillId, level);
                 skillNew.StartEff();
+                for (int i = 0; i < mSkills.Length; i++)
+                {
+                    if (mSkills[i] == null)
+                    {
+                        mSkills[i] = skillNew;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -520,11 +640,6 @@ public class Hero : IActor
         //transform.eulerAngles = new Vector3(0f, angy, 0f);
     }
 
-    public void StartAttack()
-    {
-        StartCoroutine(CoStartAttackCurTarget());
-    }
-
     void PlayAnimAttack()
     {
         
@@ -538,7 +653,7 @@ public class Hero : IActor
 	// 不停自动攻击目标，直到目标死亡
 	IEnumerator CoStartAttackCurTarget(){
 		while(curTarget._State != EActorState.Dead){
-            if (GameManager.gameView.State != GameState.Battle)
+            if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
             {
                 break;
             }
@@ -548,17 +663,17 @@ public class Hero : IActor
 			}
             PlayAnimAttack();
 
-            UIManager._Instance.uiMain._AtkBar.ReStart();
+            UIManager.Inst.uiMain._AtkBar.ReStart();
             
             OnStartAAttack(curTarget);
 			// 攻击前摇
             yield return 1;
-            UIManager._Instance.uiMain._AtkBar.ToAtkPoint(atkAnimTimeBefore);
-            yield return new WaitForSeconds(atkAnimTimeBefore);
+            UIManager.Inst.uiMain._AtkBar.ToAtkPoint(AtkAnimTimeBefore);
+            yield return new WaitForSeconds(AtkAnimTimeBefore);
 
-            if (GameManager.gameView.State != GameState.Battle)
+            if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
             {
-                UIManager._Instance.uiMain._AtkBar.ReStart();
+                UIManager.Inst.uiMain._AtkBar.ReStart();
                 break;
             }
 
@@ -568,7 +683,7 @@ public class Hero : IActor
 			}
 			
 			if(_State == EActorState.Dead){
-                UIManager._Instance.uiMain._AtkBar.ReStart();
+                UIManager.Inst.uiMain._AtkBar.ReStart();
 				break;
 			}
 
@@ -577,31 +692,31 @@ public class Hero : IActor
 
             if (CheckHitTarget(curTarget))
             {
-                int atk = GetAtk();
+                int atk = _Prop.Atk;
                 // 攻击伤害
                 OnAttackHit(curTarget, atk);
                 curTarget.OnAttackedHit(this, atk);
                 DamageTarget(atk, curTarget);
-                DamageTarget(_AtkFire, curTarget, EDamageType.Fire);
-                DamageTarget(_AtkThunder, curTarget, EDamageType.Lighting);
-                DamageTarget(_AtkPoison, curTarget, EDamageType.Poison);
-                DamageTarget(_AtkIce, curTarget, EDamageType.Forzen);
+                DamageTarget(_Prop.AtkFire, curTarget, EDamageType.Fire);
+                DamageTarget(_Prop.AtkThunder, curTarget, EDamageType.Lighting);
+                DamageTarget(_Prop.AtkPoison, curTarget, EDamageType.Poison);
+                DamageTarget(_Prop.AtkIce, curTarget, EDamageType.Forzen);
             }
             else
             {
                 // 攻击被躲闪
-                UIManager._Instance.ShowTargetBattleStateInfo("闪避");
+                UIManager.Inst.ShowTargetBattleStateInfo("闪避");
                 OnAttackLost(curTarget);
                 curTarget.OnAttackedLost(this);
             }
 		
 			// 攻击后摇
             yield return 1;
-            UIManager._Instance.uiMain._AtkBar.ToAfterPoint(atkAnimTimeAfter);
-			yield return new WaitForSeconds(atkAnimTimeAfter);
-            if (GameManager.gameView.State != GameState.Battle)
+            UIManager.Inst.uiMain._AtkBar.ToAfterPoint(AtkAnimTimeAfter);
+			yield return new WaitForSeconds(AtkAnimTimeAfter);
+            if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
             {
-                UIManager._Instance.uiMain._AtkBar.ReStart();
+                UIManager.Inst.uiMain._AtkBar.ReStart();
                 break;
             }
 
@@ -613,8 +728,8 @@ public class Hero : IActor
             PlayAnimReady();
 			// 攻击间隔
             yield return 1;
-            UIManager._Instance.uiMain._AtkBar.ToEnd(atkTimeInterval);
-			yield return new WaitForSeconds(atkTimeInterval);
+            UIManager.Inst.uiMain._AtkBar.ToEnd(AtkTimeInterval);
+			yield return new WaitForSeconds(AtkTimeInterval);
 		}
 	}
 
@@ -686,12 +801,12 @@ public class Hero : IActor
     }
 
 	public void RecoverHp(int hp){
-		this.hp += hp;
-        if (this.hp > _HpMax)
+		this._Prop.Hp += hp;
+        if (_Prop.Hp > _Prop.HpMax)
         {
-            this.hp = _HpMax;
+            _Prop.Hp = _Prop.HpMax;
 		}
-		UIManager._Instance.uiMain.RefreshHeroHP();
+		UIManager.Inst.uiMain.RefreshHeroHP();
         GameManager.gameView.UIShowHeal(hp);
 	}
 	
@@ -700,11 +815,11 @@ public class Hero : IActor
     /// </summary>
     /// <param name="engReduce"></param>
 	public void ReduceEng(int engReduce){
-		_Mp -= engReduce;
-		if(_Mp < 0){
-			_Mp = 0;
+        _Prop.Mp -= engReduce;
+		if(_Prop.Mp < 0){
+            _Prop.Mp = 0;
 		}
-        UIManager._Instance.uiMain.RefreshHeroMP();
+        UIManager.Inst.uiMain.RefreshHeroMP();
         //GameManager.gameView.UpdateUIHeroEng(this);
 	}
 
@@ -734,101 +849,105 @@ public class Hero : IActor
     {
         // 警觉敌人跟随
         // 如果目标格子不在所有警觉敌人攻击范围
-        for (int i = 0; i < enermysInAlterness.Count; i++)
-        {
-            Enermy enermy = enermysInAlterness[i];
-            MapGrid mgEnermy = enermy.GetCurMapGrid();
-            bool isToBattle = false;
-            if (mgTo.IsNear(mgEnermy))
-            {
-                isToBattle = true;
-            }
+        //for (int i = 0; i < enermysInAlterness.Count; i++)
+        //{
+        //    Enermy enermy = enermysInAlterness[i];
+        //    MapGrid mgEnermy = enermy.GetCurMapGrid();
+        //    bool isToBattle = false;
+        //    if (mgTo.IsNear(mgEnermy))
+        //    {
+        //        isToBattle = true;
+        //    }
 
-            if (!isToBattle)
-            {
-                // 获取目标格子
-                MapGrid mgEnermyTo = null;
-                List<MapGrid> mgs = mgTo.GetCornerGrids();
-                for (int j = 0; j < mgs.Count; j++)
-                {
-                    MapGrid mgCorner = mgs[j];
-                    if (mgCorner.IsNear(mgEnermy))
-                    {
-                        mgEnermyTo = mgCorner;
-                        break;
-                    }
-                }
+        //    if (!isToBattle)
+        //    {
+        //        // 获取目标格子
+        //        MapGrid mgEnermyTo = null;
+        //        List<MapGrid> mgs = mgTo.GetCornerGrids();
+        //        for (int j = 0; j < mgs.Count; j++)
+        //        {
+        //            MapGrid mgCorner = mgs[j];
+        //            if (mgCorner.IsNear(mgEnermy))
+        //            {
+        //                mgEnermyTo = mgCorner;
+        //                break;
+        //            }
+        //        }
 
-                // 如果目标格子可以行走
-                if (mgEnermyTo.GetItemGobj() == null)
-                {
-                    enermy.MoveToAGrid(mgEnermyTo);
-                }
-            }
-        }
+        //        // 如果目标格子可以行走
+        //        if (mgEnermyTo.GetItemGobj() == null)
+        //        {
+        //            enermy.MoveToAGrid(mgEnermyTo);
+        //        }
+        //    }
+        //}
     }
 
     public override void OnIntoAGrid(MapGrid grid)
     {
-        List<MapGrid> mgsCorner = grid.GetCornerGrids();
-        //警觉脱离检测
-        List<Enermy> enermysToRemove = new List<Enermy>();
-        for (int i = 0; i < enermysInAlterness.Count; i++)
-        {
-            Enermy enermy = enermysInAlterness[i];
-            // 如果敌人不在4个角，则脱离警觉
-            bool inCorner = false;
-            for (int j = 0; j < mgsCorner.Count; j++)
-            {
-                MapGrid mgTemp = mgsCorner[j];
-                if (enermy._CurGridid == mgTemp.g_Id)
-                {
-                    inCorner = true;
-                    break;
-                }
-            }
-            if (!inCorner || enermy._State != EActorState.Normal)
-            {
-                enermysToRemove.Add(enermy);
-            }
-        }
-        for (int i = 0; i < enermysToRemove.Count; i++)
-        {
-            Enermy enermyRemove = enermysToRemove[i];
-            RemoveFormAlterness(enermyRemove);
-            UIManager._Instance.ShowFloatTip(enermyRemove._MonsterBD.name + "不再注意你");
-        }
+        //GameManager.gameView._RoundLogicState = GameRoundLogicState.WorldEventAction;
 
-        // 敌人警觉检查
-        
-        for (int i = 0; i < mgsCorner.Count; i++)
-        {
-            MapGrid mg = mgsCorner[i];
-            Enermy enermy = mg.GetItem<Enermy>();
-            if (enermy != null)
-            {
-                if (!enermysInAlterness.Contains(enermy))
-                {
-                    enermysInAlterness.Add(enermy);
-                    UIManager._Instance.ShowFloatTip(enermy._MonsterBD.name + "注意到你了");
-                    // 停止行走
-                    _State = EActorState.Normal;
-                }
-            }
-        }
+        //TODO 玩家进入格子事件
 
-        // 设置战斗敌人
-        SetTargetEnermys(grid);
+        //List<MapGrid> mgsCorner = grid.GetCornerGrids();
+        ////警觉脱离检测
+        //List<Enermy> enermysToRemove = new List<Enermy>();
+        //for (int i = 0; i < enermysInAlterness.Count; i++)
+        //{
+        //    Enermy enermy = enermysInAlterness[i];
+        //    // 如果敌人不在4个角，则脱离警觉
+        //    bool inCorner = false;
+        //    for (int j = 0; j < mgsCorner.Count; j++)
+        //    {
+        //        MapGrid mgTemp = mgsCorner[j];
+        //        if (enermy._CurGridid == mgTemp.g_Id)
+        //        {
+        //            inCorner = true;
+        //            break;
+        //        }
+        //    }
+        //    if (!inCorner || enermy._State != EActorState.Normal)
+        //    {
+        //        enermysToRemove.Add(enermy);
+        //    }
+        //}
+        //for (int i = 0; i < enermysToRemove.Count; i++)
+        //{
+        //    Enermy enermyRemove = enermysToRemove[i];
+        //    RemoveFormAlterness(enermyRemove);
+        //    UIManager._Instance.ShowFloatTip(enermyRemove._MonsterBD.name + "不再注意你");
+        //}
 
-        if (targetEnermys.Count > 0)
-        {
-            StartBattle();
-        }
-        else
-        {
-            CheckChangeMap();
-            GameManager.gameView.OnRoundEnd();
-        }
+        //// 敌人警觉检查
+
+        //for (int i = 0; i < mgsCorner.Count; i++)
+        //{
+        //    MapGrid mg = mgsCorner[i];
+        //    Enermy enermy = mg.GetItem<Enermy>();
+        //    if (enermy != null)
+        //    {
+        //        if (!enermysInAlterness.Contains(enermy))
+        //        {
+        //            enermysInAlterness.Add(enermy);
+        //            UIManager._Instance.ShowFloatTip(enermy._MonsterBD.name + "注意到你了");
+        //            // 停止行走
+        //            _State = EActorState.Normal;
+        //        }
+        //    }
+        //}
+
+        //// 设置战斗敌人
+        //SetTargetEnermys(grid);
+
+        //if (targetEnermys.Count > 0)
+        //{
+        //    StartBattle();
+        //}
+        //else
+        //{
+        //    CheckChangeMap();
+        //    GameManager.gameView.OnRoundEnd();
+        //}
     }
 
     /// <summary>
@@ -867,9 +986,24 @@ public class Hero : IActor
         }
     }
 
+    public List<Enermy> GetBattleTargets()
+    {
+        return targetEnermys;
+    }
+
+    public void AddAEnermyToBattle(Enermy enermy)
+    {
+        targetEnermys.Add(enermy);
+    }
+
+    public void ClearBattleTargets()
+    {
+        targetEnermys.Clear();
+    }
+
     public override void OnLeaveAGrid(MapGrid grid)
     {
-        UIManager._Instance.CloseUIChangeMapTip();
+        UIManager.Inst.CloseUIChangeMapTip();
     }
 
     /// <summary>
@@ -887,7 +1021,7 @@ public class Hero : IActor
                 if (mapTarget != null)
                 {
                     isInChange = true;
-                    UIManager._Instance.ShowUIChangeMapTip(mapTarget, mg._ToMapTargetGrid);
+                    UIManager.Inst.ShowUIChangeMapTip(mapTarget, mg._ToMapTargetGrid);
                 }
             }
             else if (mg.Type == EGridType.StartAndToHome)
@@ -896,7 +1030,7 @@ public class Hero : IActor
                 if (mapTarget != null)
                 {
                     isInChange = true;
-                    UIManager._Instance.ShowUIChangeMapTip(mapTarget, -1);
+                    UIManager.Inst.ShowUIChangeMapTip(mapTarget, -1);
                 }
             }
         }
@@ -916,7 +1050,7 @@ public class Hero : IActor
         curTarget = target;
         // 朝向目标
         // UI目标效果
-        UIManager._Instance.uiMain.SetTarget(target);
+        UIManager.Inst.uiMain.SetTarget(target);
     }
 
     /// <summary>
@@ -938,14 +1072,6 @@ public class Hero : IActor
     }
 
     /// <summary>
-    /// 添加一个敌人到战斗敌人列表
-    /// </summary>
-    public void AddAEnermy(Enermy enermy)
-    {
-        targetEnermys.Add(enermy);
-    }
-
-    /// <summary>
     /// 是否有需要战斗的敌人
     /// </summary>
     /// <returns></returns>
@@ -958,16 +1084,18 @@ public class Hero : IActor
     {
         base.OnAttackHit(target, atkOri);
         // 获得10点怒气
-        _Mp += 10;
-        UIManager._Instance.uiMain.RefreshHeroMP();
+        _Prop.Mp += 10;
+        UIManager.Inst.uiMain.RefreshHeroMP();
     }
 
     public override void OnHurted(int damage, EDamageType damagetype, IActor target, bool isDS)
     {
         base.OnHurted(damage, damagetype, target, isDS);
         // 获得伤害10%怒气
-        _Mp += (int)(damage * 0.1f);
-        UIManager._Instance.uiMain.RefreshHeroMP();
+        _Prop.Mp += (int)(damage * 0.1f);
+        UIManager.Inst.uiMain.RefreshHeroMP();
+
+        bsManager.ActionUnContol(2f);
     }
 
 #region 装备

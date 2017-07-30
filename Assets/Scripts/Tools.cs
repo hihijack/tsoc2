@@ -459,4 +459,21 @@ public static Collider GetColliderInDirection(GameObject ori, Vector3 direction,
 		{
 			UnityEngine.GameObject.DestroyObject (obj);
 		}
+
+    /// <summary>
+    /// 取物体上的一个组件，如果没有，则创建一个
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="gobjSelf"></param>
+    /// <returns></returns>
+    internal static T GetOrAddCom<T>(GameObject gobjSelf) where T : Component
+    {
+        Component r = null;
+        r = gobjSelf.GetComponent<T>();
+        if (r == null)
+        {
+            r = gobjSelf.AddComponent<T>();
+        }
+        return r as T;
+    }
 }

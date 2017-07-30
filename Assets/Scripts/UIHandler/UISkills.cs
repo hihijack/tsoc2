@@ -164,7 +164,7 @@ public class UISkills : MonoBehaviour
         }
         else
         {
-            UIManager._Instance.GeneralTip("等级不足", Color.red);
+            UIManager.Inst.GeneralTip("等级不足", Color.red);
         }
         
     }

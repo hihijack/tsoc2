@@ -10,7 +10,7 @@ public class UIHeroInfo : MonoBehaviour {
     public UILabel txtAgi;
     public UILabel txtInt;
     public UILabel txtSta;
-    public UILabel txtMP;
+    public UILabel txtDamreduce;
     public UILabel txtHP;
     public UILabel txtTL;
     public UILabel txtResFire;
@@ -18,11 +18,13 @@ public class UIHeroInfo : MonoBehaviour {
     public UILabel txtResThunder;
     public UILabel txtResForzen;
     public UILabel txtArm;
+    public UILabel txtLoad;
+    public UILabel txtMoveSpeed;
 
     public UILabel txtAtkPhy;
     public UILabel txtIAS;
-    public UILabel txtHit;
-    public UILabel txtDodge;
+    //public UILabel txtHit;
+    //public UILabel txtDodge;
     public UILabel txtAtkMag;
 
     public UILabel txtPropAllotLeft;
@@ -30,7 +32,7 @@ public class UIHeroInfo : MonoBehaviour {
 
     public UIButton btnAddStr;
     public UIButton btnAddAgi;
-    public UIButton btnAddInt;
+    public UIButton btnAddTen;
     public UIButton btnAddSta;
 
     GameView gameView;
@@ -42,22 +44,7 @@ public class UIHeroInfo : MonoBehaviour {
         txtName.text = hero.nickname;
         txtLevel.text = hero.level.ToString();
 
-        RefreshStrAndProp();
-        RefreshAgiAndProp();
-        RefreshIntAndProp();
-        RefreshStaAndProp();
-
-        txtResFire.text = hero.GetResFire().ToString();
-        txtResPoision.text = hero.GetResPoision().ToString();
-        txtResThunder.text = hero.GetResThunder().ToString();
-        txtResForzen.text = hero.GetResForzen().ToString();
-        txtArm.text = hero.GetArm().ToString();
-
-       
-       
-        txtAtkMag.text = hero.atkMag.ToString();
-
-        RefreshPropNeedAllot();
+        Refresh();
 
         btnAddStr.onClick.Clear();
         btnAddStr.onClick.Add(new EventDelegate(BtnAddStr));
@@ -65,11 +52,27 @@ public class UIHeroInfo : MonoBehaviour {
         btnAddAgi.onClick.Clear();
         btnAddAgi.onClick.Add(new EventDelegate(BtnAddAgi));
 
-        btnAddInt.onClick.Clear();
-        btnAddInt.onClick.Add(new EventDelegate(BtnAddInt));
+        btnAddTen.onClick.Clear();
+        btnAddTen.onClick.Add(new EventDelegate(BtnAddTen));
 
         btnAddSta.onClick.Clear();
         btnAddSta.onClick.Add(new EventDelegate(BtnAddSta));
+    }
+
+    void Refresh()
+    {
+        RefreshStrAndProp();
+        RefreshAgiAndProp();
+        RefreshTenAndProp();
+        RefreshStaAndProp();
+        RefreshMoveSpeed();
+        txtResFire.text = Hero._Inst._Prop.ResFire.ToString();
+        txtResPoision.text = Hero._Inst._Prop.ResPoision.ToString();
+        txtResThunder.text = Hero._Inst._Prop.ResThunder.ToString();
+        txtResForzen.text = Hero._Inst._Prop.ResForzen.ToString();
+        txtArm.text = Hero._Inst._Prop.Arm.ToString();
+
+        RefreshPropNeedAllot();
     }
 
     void RefreshPropNeedAllot()
@@ -79,44 +82,47 @@ public class UIHeroInfo : MonoBehaviour {
         {
             btnAddStr.gameObject.SetActive(false);
             btnAddAgi.gameObject.SetActive(false);
-            btnAddInt.gameObject.SetActive(false);
+            btnAddTen.gameObject.SetActive(false);
             btnAddSta.gameObject.SetActive(false);
         }
     }
 
     void RefreshStrAndProp()
     {
-        txtStr.text = gameView._MHero._Strength.ToString();
-        txtAtkPhy.text = gameView._MHero.GetAtk().ToString();
+        txtStr.text = Hero._Inst._Prop.Strength.ToString();
+        txtAtkPhy.text = Hero._Inst._Prop.Atk.ToString();
     }
 
     void RefreshAgiAndProp() 
     {
-        txtAgi.text = gameView._MHero.agility.ToString();
-        txtIAS.text = gameView._MHero._IAS.ToString("0.00") + "次/秒";
-        txtHit.text = gameView._MHero.hit.ToString();
-        txtDodge.text = gameView._MHero.dodge.ToString();
+        txtAgi.text = Hero._Inst._Prop.Agility.ToString();
+        txtIAS.text = Hero._Inst._Prop.IAS.ToString("0.00") + "次/秒";
     }
 
-    void RefreshIntAndProp()
+    void RefreshMoveSpeed()
     {
-        txtInt.text = gameView._MHero.intell.ToString();
-        txtMP.text = gameView._MHero._Mp + "/" + gameView._MHero.mpMax;
+        txtLoad.text = Hero._Inst._Prop.Load.ToString();
+        txtMoveSpeed.text = Hero._Inst._Prop.MoveSpeed.ToString();
+    }
+
+    void RefreshTenAndProp()
+    {
+        txtInt.text = Hero._Inst._Prop.Tenacity.ToString();
+        txtDamreduce.text = Hero._Inst._Prop.DamReduce.ToString("0.0%");
     }
 
 
     void RefreshStaAndProp()
     {
-        txtSta.text = gameView._MHero.stamina.ToString();
-        txtHP.text = gameView._MHero.hp + "/" + gameView._MHero._HpMax;
-        txtTL.text = gameView._MHero.tl + "/" + gameView._MHero.tlMax;
+        txtSta.text = gameView._MHero._Prop.Stamina.ToString();
+        txtHP.text = gameView._MHero._Prop.Hp + "/" + gameView._MHero._Prop.HpMax;
     }
 
     void BtnAddStr()
     {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
-        gameView._MHero._Strength++;
+        gameView._MHero._Prop.Strength++;
         gameView._PropHasAlltoToStr++;
         RefreshStrAndProp();
     }
@@ -125,29 +131,32 @@ public class UIHeroInfo : MonoBehaviour {
     {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
-        gameView._MHero.agility++;
-        gameView.AgiToDirectProp(1, true);
+        Hero._Inst._Prop.Agility++;
         gameView._PropHasAlltoToAgi++;
         RefreshAgiAndProp();
     }
 
-    void BtnAddInt()
+    void BtnAddTen()
     {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
-        gameView._MHero.intell++;
+        gameView._MHero._Prop.Tenacity++;
         gameView.IntToDirectProp(1,true);
-        gameView._PropHasAllotToInt++;
-        RefreshIntAndProp();
+        gameView._PropHasAllotToTen++;
+        RefreshTenAndProp();
     }
 
     void BtnAddSta()
     {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
-        gameView._MHero.stamina++;
-        gameView.StaToDirectProp(1, true);
+        gameView._MHero._Prop.Stamina++;
         gameView._PropHasAllotToSta++;
         RefreshStaAndProp();
+    }
+
+    void Update()
+    {
+        Refresh();
     }
 }

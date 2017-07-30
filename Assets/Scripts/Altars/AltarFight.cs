@@ -29,7 +29,7 @@ public class AltarFight : AltarBase {
 			baf = GameManager.hero.gameObject.AddComponent<Buff_AltarFight> ();
 			baf.Init (GameManager.hero, val, dur);
 			baf.StartEffect ();
-			UIManager._Instance.GeneralTip("你觉得充满力量",Color.green);
+			UIManager.Inst.GeneralTip("你觉得充满力量",Color.green);
 			// 使用后立即销毁
 			DestroyObject(gameObject);
 		}

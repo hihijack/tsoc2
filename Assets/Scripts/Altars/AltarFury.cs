@@ -26,7 +26,7 @@ public class AltarFury : AltarBase
             buffFury = GameManager.hero.gameObject.AddComponent<Buff_AltarFury>();
             buffFury.Init(GameManager.hero, val, dur);
             buffFury.StartEffect();
-			UIManager._Instance.GeneralTip("你觉得武器变得毫无重量",Color.green);
+			UIManager.Inst.GeneralTip("你觉得武器变得毫无重量",Color.green);
 			// 使用后立即销毁
 			DestroyObject(gameObject);
         }

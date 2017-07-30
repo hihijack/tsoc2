@@ -230,7 +230,7 @@ public static class GameDatas {
 
         if (GameManager.dba != null)
         {
-            SqliteDataReader sdr = GameManager.dba.ExecuteQuery(string.Format("select item_words.*,item_propertys.classid from item_words, item_propertys where item_words.prop_id = item_propertys.id and item_type like '%&{0}&%' and level between {1} and {2} group by prop_id order by random() limit {3}", itemType, levelMin, levelMax, count));
+            SqliteDataReader sdr = GameManager.dba.ExecuteQuery(string.Format("select item_words.*,item_propertys.classid from item_words, item_propertys where item_words.prop_id = item_propertys.id and item_type like '%_{0}_%' and level between {1} and {2} group by prop_id order by random() limit {3}", itemType, levelMin, levelMax, count));
             while (sdr.Read())
             {
                 EquipItemWordsBaseData tbd = new EquipItemWordsBaseData(sdr);

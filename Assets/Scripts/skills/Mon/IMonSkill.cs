@@ -86,4 +86,13 @@ public class IMonSkill : MonoBehaviour
     public virtual void OnAtkedLost(IActor atker) { }
 
     public virtual void OnHPChange(int hpBefore, int hpCur) { }
+
+    /// <summary>
+    /// 主动技能生效
+    /// </summary>
+    /// <param name="target"></param>
+    public virtual void StartEff(IActor target)
+    {
+
+    }
 }

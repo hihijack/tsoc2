@@ -16,6 +16,6 @@ public class UIWords : MonoBehaviour {
 
     void OnBtn_Close()
     {
-        UIManager._Instance.CloseNPCWords();
+        UIManager.Inst.CloseNPCWords();
     }
 }

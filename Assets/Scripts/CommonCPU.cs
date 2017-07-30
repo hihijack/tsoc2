@@ -209,6 +209,12 @@ public class CommonCPU : MonoBehaviour
             Sprite sp = sps[i];
             dicSprites.Add(sp.name, sp);
         }
+        sps = Resources.LoadAll<Sprite>("Texus/TiledMap");
+        for (int i = 0; i < sps.Length; i++)
+        {
+            Sprite sp = sps[i];
+            dicSprites.Add(sp.name, sp);
+        }
     }
 
     //public GameObject CreateA2DPlayer(JSONNode jdData)

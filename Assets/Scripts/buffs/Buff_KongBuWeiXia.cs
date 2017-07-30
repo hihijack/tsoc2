@@ -30,9 +30,9 @@ public class Buff_KongBuWeiXia : IBaseBuff {
         base.OnAdd();
         if (target._State != EActorState.Dead)
         {
-            target.AtkIncrease(1 - percent);
-            target.DefIncrease(1 - percent);
-            UIManager._Instance.uiMain.AddABuffToTarget(target, this);
+            target._Prop.AtkParmaC *= (1 - percent);
+            target._Prop.DefIncrease(1 - percent);
+            UIManager.Inst.uiMain.AddABuffToTarget(target, this);
         }
     }
 
@@ -41,9 +41,9 @@ public class Buff_KongBuWeiXia : IBaseBuff {
         base.OnRemove();
         if (target._State != EActorState.Dead)
         {
-            target.AtkIncrease(1 / (1 - percent));
-            target.DefIncrease(1 / (1 - percent));
-            UIManager._Instance.uiMain.RemoveABuff(target, this);
+            target._Prop.AtkParmaC /= (1 - percent);
+            target._Prop.DefIncrease(1 / (1 - percent));
+            UIManager.Inst.uiMain.RemoveABuff(target, this);
         }
         DestroyObject(this);
     }

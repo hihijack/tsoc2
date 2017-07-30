@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 /// <summary>
 /// 立即造成150%的伤害
@@ -31,28 +32,36 @@ public class MortalStrike : ISkill{
 	
 	public override IEnumerator Act ()
 	{
-		if(!InCD && target != null && CheckCost()){
-			StartCD();
-			caster.IsSkilling = true;
-			
+		if(CheckCast()){
+            StartCD();
+            StartCost();
 			// 施法前摇
             yield return new WaitForSeconds(GetBaseData().casttime);
 
             // 特效
             GameManager.commonCPU.CreateEffect("eff_hand_two_2", target.transform.position, new Color(150f/255, 246f/255, 1f), -1f);
 
-            int damage = (int)(caster.GetAtk() * damageRate);
+            int damage = (int)(caster._Prop.Atk * damageRate);
 			caster.DamageTarget(damage, target);
 			
 			// 施法后摇
 			yield return new WaitForSeconds(0.5f);
-            
-			caster.IsSkilling = false;
-		}
+
+            GameManager.gameView._MHero.BsManager.ActionSkillEnd(this);
+        }
+        else
+        {
+            GameManager.gameView._MHero.BsManager.ActionSkillEnd(this);
+        }
 	}
 
     public override void OnLevelChange()
     {
         SetDamageRateByLevel();
+    }
+
+    public override bool CheckCast()
+    {
+        return target != null && !InCD && CheckCost();
     }
 }

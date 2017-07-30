@@ -81,7 +81,7 @@ public class UIHeroBag : MonoBehaviour {
             gobjWin.transform.localPosition = new Vector3(xWinItemUesd, 0f, 0f);
             isSettingItemUsed = true;
             // 隐藏角色UI
-            UIManager._Instance.CloseHeroInfo();
+            UIManager.Inst.CloseHeroInfo();
         }
     }
 
@@ -118,14 +118,8 @@ public class UIHeroBag : MonoBehaviour {
             case EEquipPart.Necklace:
                 gobjPartToEquip = gobjPartNeckLace;
                 break;
-            case EEquipPart.Shoulder:
-                gobjPartToEquip = gobjPartShoulder;
-                break;
             case EEquipPart.Breastplate:
                 gobjPartToEquip = gobjPartBreastplate;
-                break;
-            case EEquipPart.Cuff:
-                gobjPartToEquip = gobjPartCuff;
                 break;
             case EEquipPart.Glove:
                 gobjPartToEquip = gobjPartGlove;
@@ -277,15 +271,15 @@ public class UIHeroBag : MonoBehaviour {
             case EEquipItemType.Necklace:
                 SetAGridEnable(gobjPartNeckLace, true);
                 break;
-            case EEquipItemType.Shoulder:
-                SetAGridEnable(gobjPartShoulder, true);
-                break;
+            //case EEquipItemType.Shoulder:
+            //    SetAGridEnable(gobjPartShoulder, true);
+            //    break;
             case EEquipItemType.Breastplate:
                 SetAGridEnable(gobjPartBreastplate, true);
                 break;
-            case EEquipItemType.Cuff:
-                SetAGridEnable(gobjPartCuff, true);
-                break;
+            //case EEquipItemType.Cuff:
+            //    SetAGridEnable(gobjPartCuff, true);
+            //    break;
             case EEquipItemType.Glove:
                 SetAGridEnable(gobjPartGlove, true);
                 break;

@@ -1,11 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class MapGrid : MonoBehaviour {
 
-	#region 属性
-	public int g_Id;
+    #region 属性
+    public EMGSurface _surface;
+
+    SpriteRenderer _spRender;
+
+    SpriteRenderer _spGrid;
+
+    public int g_Id;
 
     public int x;
     public int y;
@@ -23,16 +30,17 @@ public class MapGrid : MonoBehaviour {
 		}
 	}
 
+    /// <summary>
+    /// 当前选择状态
+    /// </summary>
+    private EChoosedState chooseState;
+
     public bool enableCreateAMon = true;// 允许刷新怪物
 
-    public int F;
-    public int G;
-    public int H;
-
-    public void CalcF()
-    {
-        this.F = this.G + this.H;
-    }
+    public Sprite spSurfNormal;
+    public Sprite spSurfGrass;
+    #endregion
+    public MapGridPathData pathData = new MapGridPathData();
 
     public T GetItem<T> () where T : Component
     {
@@ -69,6 +77,10 @@ public class MapGrid : MonoBehaviour {
         return gameObject.transform.position;
     }
 
+    /// <summary>
+    /// 燃烧的回合
+    /// </summary>
+    public int burnRoundIndex;
 #region 地图切换
     public int toMapId;
     public int _ToMapId
@@ -88,7 +100,7 @@ public class MapGrid : MonoBehaviour {
 #endregion
 
 
-#region 动作点
+
     GameObject g_GobjActionPoint;
     bool isEndACP;
 
@@ -100,8 +112,65 @@ public class MapGrid : MonoBehaviour {
             isEndACP = value; 
         }
     }
-#endregion
-    #endregion
+
+    public EMGSurface Surface
+    {
+        get
+        {
+            return _surface;
+        }
+
+        set
+        {
+            _surface = value;
+            RefreshBySurface();
+        }
+    }
+
+    public EChoosedState ChooseState
+    {
+        get
+        {
+            return chooseState;
+        }
+
+        set
+        {
+            chooseState = value;
+            switch (value)
+            {
+                case EChoosedState.UnChooseable:
+                    _spRender.color = Color.white;
+                    break;
+                case EChoosedState.Choosable:
+                    _spRender.color = Color.green;
+                    break;
+                case EChoosedState.Choosed:
+                    _spRender.color = Color.red;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 可以燃烧
+    /// </summary>
+    /// <returns></returns>
+    public bool CanBurn()
+    {
+        return Surface == EMGSurface.FireOil || Surface == EMGSurface.Grass;
+    }
+
+    /// <summary>
+    /// 点燃格子
+    /// </summary>
+    public void Burn()
+    {
+        Surface = EMGSurface.Fireing;
+    }
+
     public void ClearACP()
     {
         SetActionPoint(false);
@@ -127,6 +196,44 @@ public class MapGrid : MonoBehaviour {
                 g_GobjActionPoint.SetActive(false);
             }
         }
+    }
+
+    void Awake()
+    {
+        _spRender = GetComponent<SpriteRenderer>();
+        _spGrid = Tools.GetComponentInChildByPath<SpriteRenderer>(gameObject, "grid");
+
+        GameView._Inst.gListMGs.Add(this);
+    }
+
+    public void RefreshBySurface()
+    {
+        string spName = "";
+        switch (_surface)
+        {
+            case EMGSurface.Normal:
+                spName = "altas_8";
+                break;
+            case EMGSurface.Grass:
+                spName = "altas_7";
+                break;
+            case EMGSurface.FireOil:
+                break;
+            case EMGSurface.FireOilOnGrass:
+                break;
+            case EMGSurface.Water:
+                break;
+            case EMGSurface.Fireing:
+                spName = "altas_15";
+                break;
+            default:
+                break;
+        }
+        if (_spRender == null)
+        {
+            _spRender = GetComponent<SpriteRenderer>();
+        }
+        _spRender.sprite = GameManager.commonCPU.GetSprite(spName);
     }
 
     //public bool IsEndACP()
@@ -255,7 +362,7 @@ public class MapGrid : MonoBehaviour {
     /// 获取周围的格子
     /// </summary>
     /// <returns></returns>
-    public List<MapGrid> GetNearGrids()
+    public List<MapGrid> GetNearGrids(bool containCorner = false)
     {
         List<MapGrid> list = new List<MapGrid>();
         int idUp = g_Id - GameManager.gameView.gGameMapOri.width;
@@ -298,6 +405,12 @@ public class MapGrid : MonoBehaviour {
             {
                 list.Add(mgRight);
             }
+        }
+
+        //包含边角
+        if (containCorner)
+        {
+            list.AddRange(GetCornerGrids());
         }
 
         return list;
@@ -474,6 +587,19 @@ public class MapGrid : MonoBehaviour {
     }
 
     /// <summary>
+    /// 计算两个格子距离。方形距离。斜线为1
+    /// </summary>
+    /// <param name="form"></param>
+    /// <param name="to"></param>
+    /// <returns></returns>
+    public static int GetRectDis(MapGrid from, MapGrid to)
+    {
+        int dis = 0;
+        dis = Mathf.Max(Mathf.Abs(from.GetX() - to.GetX()), Mathf.Abs(from.GetY() - to.GetY()));
+        return dis;
+    }
+
+    /// <summary>
     /// 取其他相邻格子在当前格子的方向
     /// </summary>
     /// <param name="other"></param>
@@ -525,4 +651,39 @@ public class MapGrid : MonoBehaviour {
         return y;
     }
 
+    /// <summary>
+    /// 允许行走/通过
+    /// </summary>
+    /// <returns></returns>
+    public bool IsEnablePass()
+    {
+        bool enable = true;
+        if (Type == EGridType.Block || GetItemGobj() != null)
+        {
+            enable = false;
+        }
+        return enable;
+    }
+
+    /// <summary>
+    /// 取范围内的格子
+    /// </summary>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public List<MapGrid> GetMGsInRange(int range)
+    {
+        List<MapGrid> mgs = new List<MapGrid>();
+        for (int i = 0; i < GameView._Inst.gListMGs.Count; i++)
+        {
+            MapGrid mgItem = GameView._Inst.gListMGs[i];
+            if (mgItem != null && mgItem != this)
+            {
+                if (GetDis(this, mgItem) <= range)
+                {
+                    mgs.Add(mgItem);
+                }
+            }
+        }
+        return mgs;
+    }
 }

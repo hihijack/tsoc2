@@ -21,8 +21,8 @@ public class Buff_LingZhu : IBaseBuff {
 
     public override void OnAdd()
     {
-        UIManager._Instance.AddASmallTip(target.actorName + "获得BUFF:" + baseData.name);
-        target.arm += arm;
-        UIManager._Instance.uiMain.AddABuffToTarget(target, this);
+        UIManager.Inst.AddASmallTip(target.actorName + "获得BUFF:" + baseData.name);
+        target._Prop.arm += arm;
+        UIManager.Inst.uiMain.AddABuffToTarget(target, this);
     }
 }

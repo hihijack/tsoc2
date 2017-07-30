@@ -60,8 +60,8 @@ public class UINPCMutual : MonoBehaviour {
         switch (type)
         {
             case ENPCActionType.Bye:
-                UIManager._Instance.CloseNPCWords();
-                UIManager._Instance.CloseUINPCMutual();
+                UIManager.Inst.CloseNPCWords();
+                UIManager.Inst.CloseUINPCMutual();
                 break;
             case ENPCActionType.Talk:
                 GameManager.gameView.OnTaldToANPC(npc);
@@ -69,10 +69,10 @@ public class UINPCMutual : MonoBehaviour {
             case ENPCActionType.Trade:
                 // 交易
                 {
-                    UIManager._Instance.CloseUINPCMutual();
-                    UITrade uiTrade = UIManager._Instance.ShowUITrade();
+                    UIManager.Inst.CloseUINPCMutual();
+                    UITrade uiTrade = UIManager.Inst.ShowUITrade();
                     uiTrade.Init(npc);
-                    UIManager._Instance.ToggleUI_Bag();
+                    UIManager.Inst.ToggleUI_Bag();
                     //UIManager._Instance.GetUIBag().SetWinPosInTrade();
                 }
                 break;
@@ -85,15 +85,15 @@ public class UINPCMutual : MonoBehaviour {
             case ENPCActionType.Trial:
                 {
                     // 虚空钥匙
-                    UIManager._Instance.CloseUINPCMutual();
-                    UISmallBag bag = UIManager._Instance.ShowUISmallBag();
+                    UIManager.Inst.CloseUINPCMutual();
+                    UISmallBag bag = UIManager.Inst.ShowUISmallBag();
                     bag.Init(GameManager.gameView);
                 }
                 break;
             case ENPCActionType.Active:
                 {
                     // 激活神坛
-                    UIManager._Instance.CloseUINPCMutual();
+                    UIManager.Inst.CloseUINPCMutual();
                     GameManager.gameView.OnActiveANPC(npc);
                 }
                 break;

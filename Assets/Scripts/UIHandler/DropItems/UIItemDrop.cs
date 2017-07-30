@@ -56,13 +56,13 @@ public class UIItemDrop : MonoBehaviour {
                 // 拾取成功
                 grid.Reposition();
 
-                UIManager._Instance.uiMain.RefreshItemUsed(ei);
+                UIManager.Inst.uiMain.RefreshItemUsed(ei);
 
                 GameManager.commonCPU.SaveEquipItems();
             }
             else
             {
-                UIManager._Instance.GeneralTip("背包已满", Color.red);
+                UIManager.Inst.GeneralTip("背包已满", Color.red);
             }
         }
         
