@@ -67,7 +67,7 @@ public class UIManager: MonoBehaviour {
             uiMain.Init(gameView);
             uiMain.RefreshHeroHP();
             uiMain.RefreshHeroTL();
-            uiMain.RefreshHeroMP();
+            uiMain.RefreshHeroVigor();
             uiMain.RefreshExp(gameView._ExpCurLevel, gameView.GetNeedExpInCurLevel());
         }
         return isSuccess;
@@ -79,7 +79,7 @@ public class UIManager: MonoBehaviour {
         {
             uiMain.RefreshHeroHP();
             uiMain.RefreshHeroTL();
-            uiMain.RefreshHeroMP();
+            uiMain.RefreshHeroVigor();
         }
     }
 
@@ -372,7 +372,30 @@ public class UIManager: MonoBehaviour {
         int rYTo = Random.Range(198, 253);
         tp.to = new Vector3(rXTo, rYTo, 0f);
         tp.PlayForward();
-       
+    }
+
+    public void ShowDodgeTip()
+    {
+        GameObject gobj = Tools.AddNGUIChild(g_UIRootDlg, IPath.UI + "txt_hurt");
+        UILabel uiTxt = Tools.GetComponentInChildByPath<UILabel>(gobj, "txt");
+        uiTxt.text = "闪避";
+        TweenPosition tp = uiTxt.GetComponent<TweenPosition>();
+        int rXTo = Random.Range(-100, -247);
+        int rYTo = Random.Range(-305, -200);
+        tp.to = new Vector3(rXTo, rYTo, 0f);
+        tp.PlayForward();
+    }
+
+    public void ShowEnermyDodgeTip()
+    {
+        GameObject gobj = Tools.AddNGUIChild(g_UIRootDlg, IPath.UI + "txt_damage");
+        UILabel uiTxt = Tools.GetComponentInChildByPath<UILabel>(gobj, "txt");
+        uiTxt.text = "闪避";
+        TweenPosition tp = uiTxt.GetComponent<TweenPosition>();
+        int rXTo = Random.Range(199, 340);
+        int rYTo = Random.Range(198, 253);
+        tp.to = new Vector3(rXTo, rYTo, 0f);
+        tp.PlayForward();
     }
 
     /// <summary>
@@ -440,7 +463,6 @@ public class UIManager: MonoBehaviour {
         // 内容
         UILabel txtContext = Tools.GetComponentInChildByPath<UILabel>(gobjMsg, "txt");
         txtContext.text = txt;
-
         GObjLife gl = gobjMsg.GetComponent<GObjLife>();
         gl.OnDie = OnMsgDie;
     }

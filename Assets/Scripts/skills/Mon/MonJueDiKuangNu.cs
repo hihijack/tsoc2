@@ -18,10 +18,10 @@ public class MonJueDiKuangNu : IMonSkill {
     public override void OnHPChange(int hpBefore, int hpCur)
     {
         base.OnHPChange(hpBefore, hpCur);
-        int hpTri = Mathf.FloorToInt(_ECur._Prop.HpMax * 0.3f); 
+        int hpTri = Mathf.FloorToInt(_ECur.Prop.HpMax * 0.3f); 
         if (hpBefore >= hpTri && hpCur < hpTri)
         {
-            _ECur._Prop.AtkParmaC *= (1 + percent);
+            _ECur.Prop.AtkParmaC *= (1 + percent);
             GameManager.commonCPU.CreateEffect("eff_juedikuangnu", _ECur.GetPos(), Color.white, -1f);
         }
     }

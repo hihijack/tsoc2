@@ -20,6 +20,6 @@ public class MonCanBao : IMonSkill {
     {
         base.OnEnterBattle();
         Enermy eCur = GetCurEnermy();
-        eCur._Prop.DeadlyStrike = val;
+        eCur.Prop.DeadlyStrike = val;
     }
 }

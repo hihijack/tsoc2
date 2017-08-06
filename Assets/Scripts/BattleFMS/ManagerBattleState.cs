@@ -13,7 +13,7 @@ public class ManagerBattleState
     public BattleStateSkilling bsSkilling;
     public BattleStateUnControl bsUnControl;
     public BattleStateHit bsHit;
-
+    public BattleStateDodoge bsDodge;
     public IBattleState CurState
     {
         get
@@ -40,6 +40,7 @@ public class ManagerBattleState
         bsSkilling = new BattleStateSkilling(this);
         bsUnControl = new BattleStateUnControl(this);
         bsHit = new BattleStateHit(this);
+        bsDodge = new BattleStateDodoge(this);
     }
 
 
@@ -129,6 +130,24 @@ public class ManagerBattleState
         if (CurState != null)
         {
             IBattleState next = CurState.ActionStopDef();
+            ChangeState(next);
+        }
+    }
+
+    public void ActionDodge(float dur)
+    {
+        if (CurState != null)
+        {
+            IBattleState next = CurState.ActionDodge(dur);
+            ChangeState(next);
+        }
+    }
+
+    internal void ActionDodgeEnd(float unCtlTime)
+    {
+        if (CurState != null)
+        {
+            IBattleState next = CurState.ActionDodgeEnd(unCtlTime);
             ChangeState(next);
         }
     }

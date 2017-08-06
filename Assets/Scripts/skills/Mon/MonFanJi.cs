@@ -15,7 +15,7 @@ public class MonFanJi : IMonSkill {
     public override void OnAtkedLost(IActor atker)
     {
         Enermy eCur = GetCurEnermy();
-        int atk = eCur._Prop.Atk;
+        int atk = eCur.Prop.Atk;
         eCur.DamageTarget(atk, atker, EDamageType.Phy, true);
     }
 }

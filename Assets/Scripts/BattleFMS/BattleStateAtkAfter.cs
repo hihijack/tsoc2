@@ -5,7 +5,7 @@
     public BattleStateAtkAfter(ManagerBattleState managerBattleState)
     {
         this.managerBattleState = managerBattleState;
-        stateType = EBattleState.AtkAfter;
+        _stateType = EBattleState.AtkAfter;
     }
 
     public override void Start()

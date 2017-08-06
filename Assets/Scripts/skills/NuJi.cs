@@ -60,10 +60,10 @@ public class NuJi : ISkill {
             // 特效
             GameManager.commonCPU.CreateEffect("eff_hand_two_1", target.transform.position, Color.red, -1f);
 
-            int damage = (int)(caster._Prop.Atk * damageRate);
+            int damage = (int)(caster.Prop.Atk * damageRate);
             caster.DamageTarget(damage, target);
-            caster._Prop.Mp += engGet;
-            UIManager.Inst.uiMain.RefreshHeroMP();
+            caster.Prop.Vigor += engGet;
+            UIManager.Inst.uiMain.RefreshHeroVigor();
 
             // 施法后摇
             yield return new WaitForSeconds(0.5f);

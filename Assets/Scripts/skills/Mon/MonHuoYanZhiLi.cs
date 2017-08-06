@@ -21,7 +21,7 @@ public class MonHuoYanZhiLi : IMonSkill
         base.OnHurt(damager, damage, damageType, isDS);
         if (damageType == EDamageType.Fire)
         {
-            _ECur._Prop.AtkParmaD += val;
+            _ECur.Prop.AtkParmaD += val;
         }
     }
 }

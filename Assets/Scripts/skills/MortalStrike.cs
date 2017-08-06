@@ -41,7 +41,7 @@ public class MortalStrike : ISkill{
             // 特效
             GameManager.commonCPU.CreateEffect("eff_hand_two_2", target.transform.position, new Color(150f/255, 246f/255, 1f), -1f);
 
-            int damage = (int)(caster._Prop.Atk * damageRate);
+            int damage = (int)(caster.Prop.Atk * damageRate);
 			caster.DamageTarget(damage, target);
 			
 			// 施法后摇

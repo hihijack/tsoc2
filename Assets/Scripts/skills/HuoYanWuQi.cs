@@ -28,11 +28,11 @@ public class HuoYanWuQi : ISkill {
 
     public override void StartEff()
     {
-        GameManager.hero._Prop.atkFireParamAdd += fireDamage;
+        GameManager.hero.Prop.atkFireParamAdd += fireDamage;
     }
 
     public override void RemoveEff()
     {
-        GameManager.hero._Prop.atkFireParamAdd -= fireDamage;
+        GameManager.hero.Prop.atkFireParamAdd -= fireDamage;
     }
 }

@@ -7,7 +7,7 @@
     public BattleStateAtkAfterNPC(ManagerBattleStateNPC managerBattleStateNPC)
     {
         this.manager = managerBattleStateNPC;
-        stateType = EBattleState.AtkAfter;
+        _stateType = EBattleState.AtkAfter;
     }
 
     public override IBattleState ActionAtkAfterTimeEnd()

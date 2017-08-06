@@ -5,7 +5,7 @@
     public BattleStateIdleNPC(ManagerBattleStateNPC managerBattleStateNPC)
     {
         this.manager = managerBattleStateNPC;
-        stateType = EBattleState.Normal;
+        _stateType = EBattleState.Normal;
     }
 
     public override void Start()

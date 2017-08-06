@@ -18,10 +18,10 @@ public class MonEMoJia : IMonSkill {
     public override void OnHPChange(int hpBefore, int hpCur)
     {
         base.OnHPChange(hpBefore, hpCur);
-        int hpTri = Mathf.FloorToInt(_ECur._Prop.HpMax * 0.3f);
+        int hpTri = Mathf.FloorToInt(_ECur.Prop.HpMax * 0.3f);
         if (hpBefore >= hpTri && hpCur < hpTri)
         {
-            _ECur._Prop.DefIncrease(percent);
+            _ECur.Prop.DefIncrease(percent);
             GameManager.commonCPU.CreateEffect("eff_emojia", _ECur.GetPos(), Color.white, -1f);
         }
     }

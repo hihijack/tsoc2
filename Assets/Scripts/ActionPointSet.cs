@@ -117,7 +117,7 @@ public class ActionPointSet : MonoBehaviour {
         }
 	}
 
-    // TODO SetACEnd
+  
     void SetACEnd(MapGrid mg)
     {
         if (!isEnd)

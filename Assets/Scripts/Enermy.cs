@@ -131,22 +131,22 @@ public class Enermy : IActor {
 
     public void Init(MonsterBaseData mbd)
     {
-        _Prop = new PropertyNPC(this);
+        Prop = new PropertyNPC(this);
         _MonsterBD = mbd;
-        _Prop.Hp = mbd.hp;
-        _Prop.HpMax = mbd.hp;
-        this._Prop.arm = mbd.arm;
-        this._Prop.MoveSpeedBase = mbd.moveSpeed;
-        this._Prop.resFire = mbd.resfire;
-        this._Prop.resForzen = mbd.resfrozen;
-        this._Prop.resPoision = mbd.respoison;
-        this._Prop.resThunder = mbd.reslighting;
+        Prop.Hp = mbd.hp;
+        Prop.HpMax = mbd.hp;
+        this.Prop.arm = mbd.arm;
+        this.Prop.MoveSpeedBase = mbd.moveSpeed;
+        this.Prop.resFire = mbd.resfire;
+        this.Prop.resForzen = mbd.resfrozen;
+        this.Prop.resPoision = mbd.respoison;
+        this.Prop.resThunder = mbd.reslighting;
 
         this.atkAnimTimeBeforeBase = mbd.atkTimeBefore;
         this.atkAnimTimeAfterBase = mbd.atkTimeAfter;
-        //this._IAS = mbd.ias;
+       
         this._CurGridid = transform.parent.GetComponent<MapGrid>().g_Id;
-        this._Prop.DeadlyStrike = 0.05f;
+        this.Prop.DeadlyStrike = 0.05f;
 
         // 初始化技能
         if (!string.IsNullOrEmpty(_MonsterBD.skills))
@@ -165,8 +165,8 @@ public class Enermy : IActor {
 
         RefreshSpeedFlag();
 
-        _Prop.AtkBaseA = mbd.atkMin;
-        _Prop.BaseWeaponIAS = mbd.ias;
+        Prop.AtkBaseA = mbd.atkMin;
+        Prop.BaseWeaponIAS = mbd.ias;
 
         GameView._Inst.AddToListEnermy(this);
 
@@ -174,20 +174,21 @@ public class Enermy : IActor {
         AI.Init(this);
 
         gFSMManager = new ManagerBattleStateNPC(this);
+
+        //根据攻击时间计算攻击动画速率
     }
 
     private void RefreshSpeedFlag()
     {
-        if (_flagSpeedCtl == null)
-        {
-           GameObject gobjFlag = Tools.LoadResourcesGameObject("Prefabs/Effects/speedflag", gameObject, 0f, 0f, 0f);
-            _flagSpeedCtl = gobjFlag.GetComponent<FlagSpeedCtl>();
+        //if (_flagSpeedCtl == null)
+        //{
+        //   GameObject gobjFlag = Tools.LoadResourcesGameObject("Prefabs/Effects/speedflag", gameObject, 0f, 0f, 0f);
+        //    _flagSpeedCtl = gobjFlag.GetComponent<FlagSpeedCtl>();
 
-            //TODO 移除速度标识
-            _flagSpeedCtl.SetVisible(false);//#####
-        }
+        //    _flagSpeedCtl.SetVisible(false);
+        //}
 
-        _flagSpeedCtl.RefreshState(Hero._Inst._Prop.MoveSpeed - _Prop.MoveSpeed);
+        //_flagSpeedCtl.RefreshState(Hero.Inst.Prop.MoveSpeed - Prop.MoveSpeed);
     }
 
     public void RefreshWaringFlag(bool hiding)
@@ -431,10 +432,10 @@ public class Enermy : IActor {
 
     public void RecoverHp(int hp)
     {
-        this._Prop.Hp += hp;
-        if (this._Prop.Hp > _Prop.HpMax)
+        this.Prop.Hp += hp;
+        if (this.Prop.Hp > Prop.HpMax)
         {
-            this._Prop.Hp = _Prop.HpMax;
+            this.Prop.Hp = Prop.HpMax;
         }
         UIManager.Inst.uiMain.RefreshTargetHP(this);
     }
@@ -483,7 +484,7 @@ public class Enermy : IActor {
             // 攻击伤害
             if (CheckHitTarget(curBattleTarget))
             {
-                int atk = _Prop.Atk;
+                int atk = Prop.Atk;
                 OnAttackHit(curBattleTarget, atk);
                 curBattleTarget.OnAttackedHit(this, atk);
                 DamageTarget(atk, curBattleTarget);
@@ -732,7 +733,7 @@ public class Enermy : IActor {
 
     internal IEnumerator CoAIAction()
     {
-        MapGrid mgHero = Hero._Inst.GetCurMapGrid();
+        MapGrid mgHero = Hero.Inst.GetCurMapGrid();
         MapGrid mgCur = GetCurMapGrid();
         int dis = MapGrid.GetDis(mgHero, mgCur);
         //int readDis = MapGrid.GetDis(mgHero, mgCur);
@@ -817,7 +818,7 @@ public class Enermy : IActor {
         GameObject gobjArrow = Instantiate(Resources.Load<GameObject>("Prefabs/Effects/eff_arrow"));
         gobjArrow.transform.position = GetPos();
         ProjCtl projCtl = ProjCtl.ProjAGobj(gobjArrow);
-        projCtl.SetProjMode(new ProjModeToPosInV(6f, Hero._Inst.GetPos(), OnLongRangeAtkHero));
+        projCtl.SetProjMode(new ProjModeToPosInV(6f, Hero.Inst.GetPos(), OnLongRangeAtkHero));
         while (projCtl != null)
         {
             yield return 1;
@@ -826,10 +827,10 @@ public class Enermy : IActor {
 
     private void OnLongRangeAtkHero(ProjCtl ctl)
     {
-        int atk = _Prop.Atk;
-        OnAttackHit(Hero._Inst, atk);
-        Hero._Inst.OnAttackedHit(this, atk);
-        DamageTarget(atk, Hero._Inst);
+        int atk = Prop.Atk;
+        OnAttackHit(Hero.Inst, atk);
+        Hero.Inst.OnAttackedHit(this, atk);
+        DamageTarget(atk, Hero.Inst);
         UIManager.Inst.uiMain.RefreshHeroHP();
         DestroyObject(ctl.gameObject);
     }
@@ -841,10 +842,10 @@ public class Enermy : IActor {
     private IEnumerator CoAtkInHiding()
     {
         RefreshHiding(false);
-        int atk = 3 * _Prop.Atk;
-        OnAttackHit(Hero._Inst, atk);
-        Hero._Inst.OnAttackedHit(this, atk);
-        DamageTarget(atk, Hero._Inst, EDamageType.Phy, false);
+        int atk = 3 * Prop.Atk;
+        OnAttackHit(Hero.Inst, atk);
+        Hero.Inst.OnAttackedHit(this, atk);
+        DamageTarget(atk, Hero.Inst, EDamageType.Phy, false);
         UIManager.Inst.uiMain.RefreshHeroHP();
         yield return new WaitForSeconds(1f);
     }
@@ -865,7 +866,7 @@ public class Enermy : IActor {
     {
         bool toBattle = false;
         MapGrid mgCur = GetCurMapGrid();
-        MapGrid mgHero = Hero._Inst.GetCurMapGrid();
+        MapGrid mgHero = Hero.Inst.GetCurMapGrid();
         int dis = MapGrid.GetRectDis(mgCur, mgHero);
         int disReal = MapGrid.GetDis(mgCur, mgHero);
         if (disReal <= monsterBD.atkrange)
@@ -889,7 +890,7 @@ public class Enermy : IActor {
                     Enermy eTemp = mgTemp.GetItem<Enermy>();
                     if (eTemp != null)
                     {
-                        int disTemp = MapGrid.GetDis(eTemp.GetCurMapGrid(), Hero._Inst.GetCurMapGrid());
+                        int disTemp = MapGrid.GetDis(eTemp.GetCurMapGrid(), Hero.Inst.GetCurMapGrid());
                         if (disTemp == 1)
                         {
                             toBattle = true;

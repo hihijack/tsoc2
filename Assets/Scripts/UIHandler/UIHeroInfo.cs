@@ -66,11 +66,11 @@ public class UIHeroInfo : MonoBehaviour {
         RefreshTenAndProp();
         RefreshStaAndProp();
         RefreshMoveSpeed();
-        txtResFire.text = Hero._Inst._Prop.ResFire.ToString();
-        txtResPoision.text = Hero._Inst._Prop.ResPoision.ToString();
-        txtResThunder.text = Hero._Inst._Prop.ResThunder.ToString();
-        txtResForzen.text = Hero._Inst._Prop.ResForzen.ToString();
-        txtArm.text = Hero._Inst._Prop.Arm.ToString();
+        txtResFire.text = Hero.Inst.Prop.ResFire.ToString();
+        txtResPoision.text = Hero.Inst.Prop.ResPoision.ToString();
+        txtResThunder.text = Hero.Inst.Prop.ResThunder.ToString();
+        txtResForzen.text = Hero.Inst.Prop.ResForzen.ToString();
+        txtArm.text = Hero.Inst.Prop.Arm.ToString();
 
         RefreshPropNeedAllot();
     }
@@ -89,40 +89,40 @@ public class UIHeroInfo : MonoBehaviour {
 
     void RefreshStrAndProp()
     {
-        txtStr.text = Hero._Inst._Prop.Strength.ToString();
-        txtAtkPhy.text = Hero._Inst._Prop.Atk.ToString();
+        txtStr.text = Hero.Inst.Prop.Strength.ToString();
+        txtAtkPhy.text = Hero.Inst.Prop.Atk.ToString();
     }
 
     void RefreshAgiAndProp() 
     {
-        txtAgi.text = Hero._Inst._Prop.Agility.ToString();
-        txtIAS.text = Hero._Inst._Prop.IAS.ToString("0.00") + "次/秒";
+        txtAgi.text = Hero.Inst.Prop.Agility.ToString();
+        txtIAS.text = Hero.Inst.Prop.IAS.ToString("0.00") + "次/秒";
     }
 
     void RefreshMoveSpeed()
     {
-        txtLoad.text = Hero._Inst._Prop.Load.ToString();
-        txtMoveSpeed.text = Hero._Inst._Prop.MoveSpeed.ToString();
+        txtLoad.text = Hero.Inst.Prop.Load.ToString();
+        txtMoveSpeed.text = Hero.Inst.Prop.MoveSpeed.ToString();
     }
 
     void RefreshTenAndProp()
     {
-        txtInt.text = Hero._Inst._Prop.Tenacity.ToString();
-        txtDamreduce.text = Hero._Inst._Prop.DamReduce.ToString("0.0%");
+        txtInt.text = Hero.Inst.Prop.Tenacity.ToString();
+        txtDamreduce.text = Hero.Inst.Prop.DamReduce.ToString("0.0%");
     }
 
 
     void RefreshStaAndProp()
     {
-        txtSta.text = gameView._MHero._Prop.Stamina.ToString();
-        txtHP.text = gameView._MHero._Prop.Hp + "/" + gameView._MHero._Prop.HpMax;
+        txtSta.text = gameView._MHero.Prop.Stamina.ToString();
+        txtHP.text = gameView._MHero.Prop.Hp + "/" + gameView._MHero.Prop.HpMax;
     }
 
     void BtnAddStr()
     {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
-        gameView._MHero._Prop.Strength++;
+        gameView._MHero.Prop.Strength++;
         gameView._PropHasAlltoToStr++;
         RefreshStrAndProp();
     }
@@ -131,7 +131,7 @@ public class UIHeroInfo : MonoBehaviour {
     {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
-        Hero._Inst._Prop.Agility++;
+        Hero.Inst.Prop.Agility++;
         gameView._PropHasAlltoToAgi++;
         RefreshAgiAndProp();
     }
@@ -140,7 +140,7 @@ public class UIHeroInfo : MonoBehaviour {
     {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
-        gameView._MHero._Prop.Tenacity++;
+        gameView._MHero.Prop.Tenacity++;
         gameView.IntToDirectProp(1,true);
         gameView._PropHasAllotToTen++;
         RefreshTenAndProp();
@@ -150,7 +150,7 @@ public class UIHeroInfo : MonoBehaviour {
     {
         gameView._ProNeedAllot--;
         RefreshPropNeedAllot();
-        gameView._MHero._Prop.Stamina++;
+        gameView._MHero.Prop.Stamina++;
         gameView._PropHasAllotToSta++;
         RefreshStaAndProp();
     }

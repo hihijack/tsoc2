@@ -6,13 +6,16 @@ using System;
 
 public class Hero : IActor
 {
-    public static Hero _Inst;
+    public static Hero Inst;
     #region 成员属性
     public string nickname;
     public int[] arrItemUesd = new int[3]; // 使用的道具id
     public float speed = 10.0f;
+
     List<Enermy> targetEnermys = new List<Enermy>(4);
+
     public ISkill[] mSkills = new ISkill[4];
+
     /// <summary>
     /// 处于警觉中的敌人
     /// </summary>
@@ -169,6 +172,27 @@ public class Hero : IActor
     }
 
     #region 战斗状态逻辑
+    internal void OnBSEndDodge()
+    {
+        UIManager.Inst.uiMain.uiBattle.RefreshUIDodge(false);
+    }
+
+    internal void OnBSStartDodge(float dur)
+    {
+        //TODO 闪避精力消耗
+        Prop.Vigor -= 10;
+        UIManager.Inst.uiMain.RefreshHeroVigor();
+
+        UIManager.Inst.uiMain.uiBattle.RefreshUIDodge(true);
+    }
+
+    internal void OnBSUpdateIdle()
+    {
+        //恢复精力
+        Prop.Vigor += (Prop.VigorRecoveSpeed * Time.deltaTime);
+        UIManager.Inst.uiMain.RefreshHeroVigor();
+    }
+
     internal void OnBSStartSkill(ISkill skill)
     {
         if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
@@ -192,6 +216,9 @@ public class Hero : IActor
     internal void OnBSUpdateUnControl(float dur)
     {
         UIManager.Inst.uiMain.uiBattle.UpdateUnControlTime(dur);
+        //恢复精力
+        Prop.Vigor += (Prop.VigorRecoveSpeed * Time.deltaTime);
+        UIManager.Inst.uiMain.RefreshHeroVigor();
     }
 
     /// <summary>
@@ -203,6 +230,10 @@ public class Hero : IActor
         {
             return;
         }
+        //TODO蓄力消耗精力
+        //Prop.Vigor -= 20;
+        //UIManager.Inst.uiMain.RefreshHeroVigor();
+
         UIManager.Inst.uiMain.uiBattle.ToPowering();
     }
 
@@ -211,7 +242,7 @@ public class Hero : IActor
     /// </summary>
     internal void OnBSUpdatePowering()
     {
-        _PowerVal += _Prop.PowerSpeed * Time.deltaTime;
+        _PowerVal += Prop.PowerSpeed * Time.deltaTime;
         UIManager.Inst.uiMain.uiBattle.UpdatePowerVal(_PowerVal);
     }
 
@@ -254,7 +285,7 @@ public class Hero : IActor
     }
 
     /// <summary>
-    /// 后摇
+    /// 前摇
     /// </summary>
     internal void OnBSStartAtkBefore()
     {
@@ -262,6 +293,11 @@ public class Hero : IActor
         {
             return;
         }
+
+        //TODO攻击消耗精力
+        //Prop.Vigor -= 10;
+        //UIManager.Inst.uiMain.RefreshHeroVigor();
+
         UIManager.Inst.uiMain.uiBattle.ToAtkPoint(AtkAnimTimeBefore);
         OnStartAAttack(curTarget);
     }
@@ -277,15 +313,15 @@ public class Hero : IActor
 
         if (CheckHitTarget(curTarget))
         {
-            int atk = _Prop.Atk;
+            int atk = Prop.Atk;
             // 攻击伤害
             OnAttackHit(curTarget, atk);
             curTarget.OnAttackedHit(this, atk);
             DamageTarget(atk, curTarget);
-            DamageTarget(_Prop.AtkFire, curTarget, EDamageType.Fire);
-            DamageTarget(_Prop.AtkThunder, curTarget, EDamageType.Lighting);
-            DamageTarget(_Prop.AtkPoison, curTarget, EDamageType.Poison);
-            DamageTarget(_Prop.AtkIce, curTarget, EDamageType.Forzen);
+            DamageTarget(Prop.AtkFire, curTarget, EDamageType.Fire);
+            DamageTarget(Prop.AtkThunder, curTarget, EDamageType.Lighting);
+            DamageTarget(Prop.AtkPoison, curTarget, EDamageType.Poison);
+            DamageTarget(Prop.AtkIce, curTarget, EDamageType.Forzen);
         }
         else
         {
@@ -357,9 +393,9 @@ public class Hero : IActor
 
     public void Init()
     {
-        _Inst = this;
+        Inst = this;
         BsManager = new ManagerBattleState(this);
-        _Prop = new PropertyHero(this);
+        Prop = new PropertyHero(this);
     }
 
     public override void SetDir(EDirection dir) 
@@ -392,14 +428,15 @@ public class Hero : IActor
         atkAnimTimeBeforeBase = 0.5f;
         atkAnimTimeAfterBase = 0.5f;
 
-        _Prop.BaseWeaponIAS = IConst.BaseIAS;
-        _Prop.DeadlyStrike = IConst.BaseDS;
-        _Prop.Strength = IConst.BASE_STR;
-        _Prop.Agility = IConst.BASE_AGI;
-        _Prop.Tenacity = IConst.BASE_TEN;
-        _Prop.Stamina = IConst.BASE_STA;
-        _Prop.PowerSpeed = IConst.BASE_POWERSPEED;
-        _Prop.MoveSpeedBase = IConst.BASE_MOVESPEED;
+        Prop.BaseWeaponIAS = IConst.BaseIAS;
+        Prop.DeadlyStrike = IConst.BaseDS;
+        Prop.Strength = IConst.BASE_STR;
+        Prop.Agility = IConst.BASE_AGI;
+        Prop.Tenacity = IConst.BASE_TEN;
+        Prop.Stamina = IConst.BASE_STA;
+        Prop.PowerSpeed = IConst.BASE_POWERSPEED;
+        Prop.MoveSpeedBase = IConst.BASE_MOVESPEED;
+        Prop.EngRecoverSpeedBase = IConst.BASE_ENG_RECOVER;
     }
 
     public void InitWeapon()
@@ -692,15 +729,15 @@ public class Hero : IActor
 
             if (CheckHitTarget(curTarget))
             {
-                int atk = _Prop.Atk;
+                int atk = Prop.Atk;
                 // 攻击伤害
                 OnAttackHit(curTarget, atk);
                 curTarget.OnAttackedHit(this, atk);
                 DamageTarget(atk, curTarget);
-                DamageTarget(_Prop.AtkFire, curTarget, EDamageType.Fire);
-                DamageTarget(_Prop.AtkThunder, curTarget, EDamageType.Lighting);
-                DamageTarget(_Prop.AtkPoison, curTarget, EDamageType.Poison);
-                DamageTarget(_Prop.AtkIce, curTarget, EDamageType.Forzen);
+                DamageTarget(Prop.AtkFire, curTarget, EDamageType.Fire);
+                DamageTarget(Prop.AtkThunder, curTarget, EDamageType.Lighting);
+                DamageTarget(Prop.AtkPoison, curTarget, EDamageType.Poison);
+                DamageTarget(Prop.AtkIce, curTarget, EDamageType.Forzen);
             }
             else
             {
@@ -801,10 +838,10 @@ public class Hero : IActor
     }
 
 	public void RecoverHp(int hp){
-		this._Prop.Hp += hp;
-        if (_Prop.Hp > _Prop.HpMax)
+		this.Prop.Hp += hp;
+        if (Prop.Hp > Prop.HpMax)
         {
-            _Prop.Hp = _Prop.HpMax;
+            Prop.Hp = Prop.HpMax;
 		}
 		UIManager.Inst.uiMain.RefreshHeroHP();
         GameManager.gameView.UIShowHeal(hp);
@@ -815,11 +852,11 @@ public class Hero : IActor
     /// </summary>
     /// <param name="engReduce"></param>
 	public void ReduceEng(int engReduce){
-        _Prop.Mp -= engReduce;
-		if(_Prop.Mp < 0){
-            _Prop.Mp = 0;
+        Prop.Vigor -= engReduce;
+		if(Prop.Vigor < 0){
+            Prop.Vigor = 0;
 		}
-        UIManager.Inst.uiMain.RefreshHeroMP();
+        UIManager.Inst.uiMain.RefreshHeroVigor();
         //GameManager.gameView.UpdateUIHeroEng(this);
 	}
 
@@ -887,7 +924,7 @@ public class Hero : IActor
     {
         //GameManager.gameView._RoundLogicState = GameRoundLogicState.WorldEventAction;
 
-        //TODO 玩家进入格子事件
+        //玩家进入格子事件
 
         //List<MapGrid> mgsCorner = grid.GetCornerGrids();
         ////警觉脱离检测
@@ -1083,17 +1120,21 @@ public class Hero : IActor
     public override void OnAttackHit(IActor target, int atkOri)
     {
         base.OnAttackHit(target, atkOri);
-        // 获得10点怒气
-        _Prop.Mp += 10;
-        UIManager.Inst.uiMain.RefreshHeroMP();
+    }
+
+    public override void OnParry(int damageParry)
+    {
+        base.OnParry(damageParry);
+        //TODO 消耗精力
+        Prop.Vigor -= 10;
     }
 
     public override void OnHurted(int damage, EDamageType damagetype, IActor target, bool isDS)
     {
         base.OnHurted(damage, damagetype, target, isDS);
         // 获得伤害10%怒气
-        _Prop.Mp += (int)(damage * 0.1f);
-        UIManager.Inst.uiMain.RefreshHeroMP();
+        Prop.Vigor += (int)(damage * 0.1f);
+        UIManager.Inst.uiMain.RefreshHeroVigor();
 
         bsManager.ActionUnContol(2f);
     }

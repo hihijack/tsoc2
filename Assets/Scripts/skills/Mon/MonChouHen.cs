@@ -19,7 +19,7 @@ public class MonChouHen : IMonSkill {
     {
         base.OnAllyDead(eDead);
         Enermy eCur = GetCurEnermy();
-        eCur._Prop.AtkParmaD += val;
+        eCur.Prop.AtkParmaD += val;
         GameManager.commonCPU.CreateEffect("eff_monatk_up", eCur.GetPos(), Color.white, -1);
     }
 }

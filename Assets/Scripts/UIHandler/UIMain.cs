@@ -81,7 +81,7 @@ public class UIMain : MonoBehaviour {
         gobjTargets[1].SetActive(false);
         gobjTargets[2].SetActive(false);
         gobjTargets[3].SetActive(false);
-        SetUIBattleSkillsVisble(false);
+        SetUIBattleVisble(false);
         targetMask.SetActive(false);
 
         gUIChooseTarget.SetVisible(false);
@@ -240,15 +240,16 @@ public class UIMain : MonoBehaviour {
         }
     }
 
-    void SetUIBattleSkillsVisble(bool visble)
+    void SetUIBattleVisble(bool visble)
     {
         if (visble)
         {
             gobjBattle.transform.localPosition = Vector3.zero;
+            uiBattle.OnShow();
         }
         else
         {
-            gobjBattle.transform.localPosition = new Vector3(0f, -500f, 0f);
+            gobjBattle.transform.localPosition = new Vector3(0f, -5000f, 0f);
         }
     }
 
@@ -261,8 +262,8 @@ public class UIMain : MonoBehaviour {
     public void RefreshHeroHP()
     {
         // hp
-        int curHp = gameView._MHero._Prop.Hp;
-        int maxHp = gameView._MHero._Prop.HpMax;
+        int curHp = gameView._MHero.Prop.Hp;
+        int maxHp = gameView._MHero.Prop.HpMax;
         float hpVal = (float)curHp / maxHp;
         heroHP.value = hpVal;
         txtHeroHp.text = curHp + "/" + maxHp;
@@ -278,39 +279,39 @@ public class UIMain : MonoBehaviour {
         //txtHeroTL.text = curTL + "/" + maxTL;
     }
 
-    public void RefreshHeroMP()
+    public void RefreshHeroVigor()
     {
         // 魔法值
-        int curMP = gameView._MHero._Prop.Mp;
-        int maxMP = gameView._MHero.mpMax;
-        float mpVal = (float)curMP / maxMP;
+        float curMP = Hero.Inst.Prop.Vigor;
+        int maxMP = Hero.Inst.Prop.VigorMax;
+        float mpVal = curMP / maxMP;
         heroMP.value = mpVal;
-        txtHeroMP.text = curMP + "/" + maxMP;
+        txtHeroMP.text = curMP.ToString("0") + "/" + maxMP;
 
-        RefreshHeroEnergy();
+        //RefreshHeroEnergy();
     }
 
-    public void RefreshHeroEnergy()
-    {
-        //能力点
-        for (int i = 0; i < 5; i++)
-        {
-            UISprite icon = Tools.GetComponentInChildByPath<UISprite>(energyPoints, i.ToString());
-            if (i < gameView._MHero._Prop.EnergyPoint)
-            {
-                icon.alpha = 1f;
-            }
-            else
-            {
-                icon.alpha = 0f;
-            }
-        }
-    }
+    //public void RefreshHeroEnergy()
+    //{
+    //    //能力点
+    //    for (int i = 0; i < 5; i++)
+    //    {
+    //        UISprite icon = Tools.GetComponentInChildByPath<UISprite>(energyPoints, i.ToString());
+    //        if (i < gameView._MHero._Prop.EnergyPoint)
+    //        {
+    //            icon.alpha = 1f;
+    //        }
+    //        else
+    //        {
+    //            icon.alpha = 0f;
+    //        }
+    //    }
+    //}
 
     public void RefreshTargetHP(Enermy target)
     {
-        targetHPs[target.uiIndex].value = (float)target._Prop.Hp / target._Prop.HpMax;
-        txtTargetHPs[target.uiIndex].text = target._Prop.Hp + "/" + target._Prop.HpMax;
+        targetHPs[target.uiIndex].value = (float)target.Prop.Hp / target.Prop.HpMax;
+        txtTargetHPs[target.uiIndex].text = target.Prop.Hp + "/" + target.Prop.HpMax;
     }
 
     // TODO ShowTargetUI
@@ -321,7 +322,7 @@ public class UIMain : MonoBehaviour {
 
     public void ShowUIBattle(bool isshow)
     {
-        SetUIBattleSkillsVisble(isshow);
+        SetUIBattleVisble(isshow);
 
         gobjSkillTractics.SetActive(!isshow);
         SetUIBtnsShow(!isshow);

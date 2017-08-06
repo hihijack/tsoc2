@@ -20,6 +20,6 @@ public class MonQiangXi : IMonSkill {
     {
         base.OnEnterBattle();
         Enermy eCur = GetCurEnermy();
-        eCur._Prop.DeadlyStrikeDamage += val;
+        eCur.Prop.DeadlyStrikeDamage += val;
     }
 }

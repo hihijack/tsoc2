@@ -6,10 +6,15 @@ public class PropertyBase
     private float deadlyStrike;	// 致命一击几率[0~1]
     private int hp;//当前血量
     private int hpMax;// 生命值上限
+    private float _vigor;//精力
+    //TODO精力上限
+    private int _vigorMax = 100;//精力上限
+
     private int stamina; // 体能
     private int strength; // 力量
     private int agility; // 敏捷
     private int tenacity;  // 坚韧
+
     private float baseWeaponIAS; // 基础武器速度
     private float ias;//最终攻速
     private float iasParmaA;
@@ -56,16 +61,54 @@ public class PropertyBase
     public int atkIceParamAdd = 0;      // 额外的冰冷伤害参数A
     public float atkIceParmaDot = 1f;   // 额外的冰冷伤害参数B
     private float deadlyStrikeDamage = 2f; //致命一击倍率
+
+    [System.Obsolete]
     private int energyPoint;
-    private int mp;
     float powerSpeed;//蓄力速度
     int loadPramaA;
     float loadPramaB = 1f;
     private int _loadBase;//负重
     private int _load;//最终负重
+
+    //精力恢复速度
+    private int _engRecoverSpeedBase;
+    private float _engRecoverSpeedParmPercent = 1f;
+    private int _engRecoveSpeedParmAdd = 0;
     #endregion
 
     #region GeterAndSeter
+    public int EngRecoverSpeedBase
+    {
+        set
+        {
+            _engRecoverSpeedBase = value;
+        }
+    }
+
+    public float EngRecoverSpeedParmPercent
+    {
+        set
+        {
+            _engRecoverSpeedParmPercent = value;
+        }
+    }
+
+    public int EngRecoveSpeedParmAdd
+    {
+        set
+        {
+            _engRecoveSpeedParmAdd = value;
+        }
+    }
+
+    public int VigorRecoveSpeed
+    {
+        get
+        {
+            return  Mathf.CeilToInt(_engRecoverSpeedBase * _engRecoverSpeedParmPercent) + _engRecoveSpeedParmAdd;
+        }
+    }
+
     /// <summary>
     /// 能量点
     /// </summary>
@@ -199,17 +242,17 @@ public class PropertyBase
         }
     }
 
-    public int Mp
+    /// <summary>
+    /// 精力
+    /// </summary>
+    public float Vigor
     {
-        get { return mp; }
+        get { return _vigor; }
         set
         {
-            mp = value;
-            if (mp < 0)
-            {
-                mp = 0;
-            }
-            CalEnergyPoint();
+            _vigor = value;
+            //Debug.LogError(value);//##########
+            _vigor = Mathf.Clamp(_vigor, 0, VigorMax);
         }
     }
     public float PowerSpeed
@@ -284,6 +327,24 @@ public class PropertyBase
             if (Hp > hpMax)
             {
                 Hp = hpMax;
+            }
+        }
+    }
+
+    public int VigorMax
+    {
+        get
+        {
+            return _vigorMax;
+        }
+
+        set
+        {
+            _vigorMax = value;
+
+            if (Vigor > _vigorMax)
+            {
+                Vigor = _vigorMax;
             }
         }
     }
@@ -652,10 +713,10 @@ public class PropertyBase
 
     private void CalEnergyPoint()
     {
-        //每30点转换成1点能量点
-        int eng = mp / 30;
-        EnergyPoint += eng;
-        mp = mp % 30;
+        ////每30点转换成1点能量点
+        //int eng = _vigor / 30;
+        //EnergyPoint += eng;
+        //_vigor = _vigor % 30;
     }
 
     void CalMoveSpeed()

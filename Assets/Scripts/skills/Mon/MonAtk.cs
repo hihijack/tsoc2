@@ -18,7 +18,7 @@ public class MonAtk : IMonSkill
     public override void StartEff(IActor target)
     {
         base.StartEff(target);
-        int atk = Mathf.CeilToInt(_ECur._Prop.Atk * percent);
+        int atk = Mathf.CeilToInt(_ECur.Prop.Atk * percent);
         _ECur.OnAttackHit(target, atk);
         target.OnAttackedHit(_ECur, atk);
         _ECur.DamageTarget(atk, target, EDamageType.Phy);

@@ -7,7 +7,7 @@
     public BattleStateDefing(ManagerBattleState managerBattleState)
     {
         this.managerBattleState = managerBattleState;
-        stateType = EBattleState.Defing;
+        _stateType = EBattleState.Defing;
     }
 
     public override void Start()
@@ -20,11 +20,11 @@
     public override void Update()
     {
         base.Update();
-        curTime += UnityEngine.Time.deltaTime;
-        if (curTime >= maxTime)
-        {
-            managerBattleState.ActionStopDef();
-        }
+        //curTime += UnityEngine.Time.deltaTime;
+        //if (curTime >= maxTime)
+        //{
+        //    managerBattleState.ActionStopDef();
+        //}
     }
 
     public override void End()

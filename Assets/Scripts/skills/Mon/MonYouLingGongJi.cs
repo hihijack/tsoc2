@@ -20,6 +20,6 @@ public class MonYouLingGongJi : IMonSkill {
     public override void OnAttackHit(IActor target, int attack)
     {
         base.OnAttackHit(target, attack);
-        target._Prop.Mp -= val;
+        target.Prop.Vigor -= val;
     }
 }

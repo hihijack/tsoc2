@@ -6,7 +6,7 @@
     public BattleStateUnControlNPC(ManagerBattleStateNPC managerBattleStateNPC)
     {
         this.manager = managerBattleStateNPC;
-        stateType = EBattleState.Uncontrol;
+        _stateType = EBattleState.Uncontrol;
     }
 
     public override IBattleState ActionUnControlEnd()

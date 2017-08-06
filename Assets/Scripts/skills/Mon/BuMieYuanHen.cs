@@ -23,7 +23,7 @@ public class BuMieYuanHen : IMonSkill {
         for (int i = 0; i < allies.Count; i++)
         {
             Enermy eItem = allies[i];
-            eItem._Prop.AtkParmaC *= (1 + val);
+            eItem.Prop.AtkParmaC *= (1 + val);
             GameManager.commonCPU.CreateEffect("eff_monatk_up", eItem.transform.position, Color.white, -1);
         }
         

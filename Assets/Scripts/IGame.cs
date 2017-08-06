@@ -886,6 +886,7 @@ public static class IConst
     public const int BASE_TEN = 10; // 基础坚韧
     public const int BASE_STA = 10; // 基础体能
     public const int BASE_MOVESPEED = 5;// 基础移动速度
+    public const int BASE_ENG_RECOVER = 10;//基础精力恢复速度。点/秒
     public const float BASE_POWERSPEED = 1.5f;//基础蓄力速度
     public const int MP_PER_INT = 2;   // 每点智力增加的魔法上限
     public const int TL_PER_STA = 10;   // 每点体能增加的体力上限

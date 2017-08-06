@@ -5,7 +5,7 @@
     public BattleStatePowering(ManagerBattleState managerBattleState)
     {
         this.managerBattleState = managerBattleState;
-        stateType = EBattleState.Powering;
+        _stateType = EBattleState.Powering;
     }
 
     public override void Start()

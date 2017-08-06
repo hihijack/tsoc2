@@ -6,7 +6,7 @@
     public BattleStateDodgeNPC(ManagerBattleStateNPC managerBattleStateNPC)
     {
         this.manager = managerBattleStateNPC;
-        stateType = EBattleState.Dodge;
+        _stateType = EBattleState.Dodge;
     }
 
     public override IBattleState ActionDodgeEnd(float unControlTime)

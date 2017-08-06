@@ -2,13 +2,13 @@
 
 public class IBattleState
 {
-    protected EBattleState stateType;
+    protected EBattleState _stateType;
 
     public EBattleState StateType
     {
         get
         {
-            return stateType;
+            return _stateType;
         }
     }
 

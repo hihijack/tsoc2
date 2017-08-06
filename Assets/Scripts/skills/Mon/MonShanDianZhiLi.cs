@@ -20,7 +20,7 @@ public class MonShanDianZhiLi : IMonSkill
         base.OnHurt(damager, damage, damageType, isDS);
         if (damageType == EDamageType.Lighting)
         {
-            _ECur._Prop.AtkParmaD += val;
+            _ECur.Prop.AtkParmaD += val;
         }
     }
 }

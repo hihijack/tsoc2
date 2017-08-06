@@ -21,12 +21,12 @@ public class DuoShan : ISkill {
 
     public override void StartEff()
     {
-        GameManager.hero._Prop.MoveSpeedIncrease(val);
+        GameManager.hero.Prop.MoveSpeedIncrease(val);
     }
 
     public override void RemoveEff()
     {
-        GameManager.hero._Prop.MoveSpeedIncrease(-1 * val);
+        GameManager.hero.Prop.MoveSpeedIncrease(-1 * val);
     }
 
     public override void OnLevelChange()

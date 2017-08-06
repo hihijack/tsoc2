@@ -22,7 +22,7 @@ public class MonDuSuZhiLi : IMonSkill
         base.OnHurt(damager, damage, damageType, isDS);
         if (damageType == EDamageType.Poison)
         {
-            _ECur._Prop.AtkParmaD += val;
+            _ECur.Prop.AtkParmaD += val;
         }
     }
 }

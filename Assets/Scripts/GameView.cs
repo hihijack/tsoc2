@@ -423,6 +423,12 @@ public class GameView : MonoBehaviour {
             _MHero.BsManager.ActionStopDef();
         }
 
+        if (Input.GetButtonDown("Dodge"))
+        {
+            //TODO 闪避时间
+            _MHero.BsManager.ActionDodge(1f);
+        }
+
         if (Input.GetButtonDown("Skill1"))
         {
             ISkill skill = _MHero.GetSkillByIndex(1);
@@ -612,7 +618,7 @@ public class GameView : MonoBehaviour {
        GameManager.commonCPU.ReadEquipItem();
 
         // 创建几个物品给英雄
-        AddAEquipItemToBag(Hero._Inst, GenerateAEquipItem(95, EEquipItemQLevel.Normal));
+        //AddAEquipItemToBag(Hero.Inst, GenerateAEquipItem(95, EEquipItemQLevel.Normal));
 
        if (_MHero.itemsHasEquip.Count == 0 && _MHero.itemsInBag.Count == 0)
        {
@@ -638,9 +644,8 @@ public class GameView : MonoBehaviour {
        BasePropToDirectProp();
 
         // 设置状态为100%
-        _MHero._Prop.Hp = _MHero._Prop.HpMax;
-        _MHero._Prop.Mp = 0;
-        _MHero.mpMax = 30;
+        _MHero.Prop.Hp = _MHero.Prop.HpMax;
+        _MHero.Prop.Vigor = _MHero.Prop.VigorMax;
 
        _ProNeedAllot = ReadHeroProNeedAllot();
        ReadSavedGold();
@@ -962,7 +967,7 @@ public class GameView : MonoBehaviour {
     {
         _RoundLogicState = GameRoundLogicState.Normal;
         //切换地图判断
-        Hero._Inst.CheckChangeMap();
+        Hero.Inst.CheckChangeMap();
     }
 
     /// <summary>
@@ -1001,9 +1006,9 @@ public class GameView : MonoBehaviour {
         }
 
         //玩家在火中受伤
-        if (Hero._Inst.GetCurMapGrid().Surface == EMGSurface.Fireing)
+        if (Hero.Inst.GetCurMapGrid().Surface == EMGSurface.Fireing)
         {
-            DamageTarget(Hero._Inst, 100, EDamageType.Fire);
+            DamageTarget(Hero.Inst, 100, EDamageType.Fire);
         }
 
         //逻辑结束
@@ -1044,16 +1049,16 @@ public class GameView : MonoBehaviour {
     private void DamageTarget(IActor target, int damage, EDamageType damageType)
     {
         //坚韧
-        damage = Mathf.CeilToInt(damage * (1 - target._Prop.DamReduce));
+        damage = Mathf.CeilToInt(damage * (1 - target.Prop.DamReduce));
 
         target.OnHurted(damage, damageType, null, false);
 
-        int oriTargetHP = target._Prop.Hp;
+        int oriTargetHP = target.Prop.Hp;
 
-        target._Prop.Hp -= damage;
-        if (target._Prop.Hp <= 0)
+        target.Prop.Hp -= damage;
+        if (target.Prop.Hp <= 0)
         {
-            target._Prop.Hp = 0;
+            target.Prop.Hp = 0;
             target._State = EActorState.Dead;
             target.OnDead();
             if (target.isHero)
@@ -1068,7 +1073,7 @@ public class GameView : MonoBehaviour {
         }
         else
         {
-            target.OnHPChange(oriTargetHP, target._Prop.Hp);
+            target.OnHPChange(oriTargetHP, target.Prop.Hp);
         }
 
         if (!target.isHero)
@@ -1123,9 +1128,9 @@ public class GameView : MonoBehaviour {
     /// </summary>
     internal void StartRoundLogicBattle()
     {
-        Hero._Inst.ClearBattleTargets();
+        Hero.Inst.ClearBattleTargets();
 
-        List<MapGrid> mgsNearHero = Hero._Inst.GetCurMapGrid().GetNearGrids(true);
+        List<MapGrid> mgsNearHero = Hero.Inst.GetCurMapGrid().GetNearGrids(true);
         for (int i = 0; i < mgsNearHero.Count; i++)
         {
             MapGrid mgNearHero = mgsNearHero[i];
@@ -1133,7 +1138,7 @@ public class GameView : MonoBehaviour {
             if (e != null && (e._AIState == EAIState.Battle || e._AIState == EAIState.FindTarget))
             {
                 MapGrid mgEnermy = e.GetCurMapGrid();
-                int dis = MapGrid.GetDis(Hero._Inst.GetCurMapGrid(), mgEnermy);
+                int dis = MapGrid.GetDis(Hero.Inst.GetCurMapGrid(), mgEnermy);
                 if (dis == 2)
                 {
                     //隐匿状态不被动加入战斗
@@ -1146,22 +1151,22 @@ public class GameView : MonoBehaviour {
                             Enermy eTemp = mgTemp.GetItem<Enermy>();
                             if (eTemp != null && eTemp._AIState == EAIState.Battle)
                             {
-                                Hero._Inst.AddAEnermyToBattle(e);
+                                Hero.Inst.AddAEnermyToBattle(e);
                             }
                         }
                     }
                 }
                 else
                 {
-                    Hero._Inst.AddAEnermyToBattle(e);
+                    Hero.Inst.AddAEnermyToBattle(e);
                 }
                 
             }
         }
 
-        if (Hero._Inst.HasEnermyToBattle())
+        if (Hero.Inst.HasEnermyToBattle())
         {
-            StartCoroutine(CoOnEnterBattle(Hero._Inst.GetBattleTargets()));
+            StartCoroutine(CoOnEnterBattle(Hero.Inst.GetBattleTargets()));
         }
         else
         {
@@ -1385,8 +1390,8 @@ public class GameView : MonoBehaviour {
         if (_MHero._State != EActorState.Dead)
         {
             _MHero._State = EActorState.Normal;
-            _MHero._Prop.Mp = 0;
-            UIManager.Inst.uiMain.RefreshHeroMP();
+            _MHero.Prop.Vigor = _MHero.Prop.VigorMax;
+            UIManager.Inst.uiMain.RefreshHeroVigor();
             _MHero.transform.position = _MHero.GetCurMapGrid().transform.position;
             _MHero.CheckChangeMap();
             OnRoundEnd();
@@ -1524,7 +1529,7 @@ public class GameView : MonoBehaviour {
     public void OnLevelUP()
     {
         // 恢复至百分百状态
-        _MHero._Prop.Hp = _MHero._Prop.HpMax;
+        _MHero.Prop.Hp = _MHero.Prop.HpMax;
         //_MHero._Mp = _MHero.mpMax;
         UIManager.Inst.RefreshMainUIHeroStateInfo();
         // 获得5属性点
@@ -2356,7 +2361,7 @@ public class GameView : MonoBehaviour {
                     string data = gItemToUse.baseData.data;
                     JSONNode jdData = JSONNode.Parse(data);
                     int range = jdData["range"].AsInt;
-                    List<MapGrid> mgs = Hero._Inst.GetCurMapGrid().GetMGsInRange(range);
+                    List<MapGrid> mgs = Hero.Inst.GetCurMapGrid().GetMGsInRange(range);
                     foreach (MapGrid itemMG in mgs)
                     {
                         itemMG.ChooseState = EChoosedState.Choosable;
@@ -2378,10 +2383,10 @@ public class GameView : MonoBehaviour {
         int intAllot = _PropHasAllotToTen;
         int staAllot = _PropHasAllotToSta;
 
-        _MHero._Prop.Strength += strAllot;
-        _MHero._Prop.Agility += agiAllot;
-        _MHero._Prop.Tenacity += intAllot;
-        _MHero._Prop.Stamina += staAllot;
+        _MHero.Prop.Strength += strAllot;
+        _MHero.Prop.Agility += agiAllot;
+        _MHero.Prop.Tenacity += intAllot;
+        _MHero.Prop.Stamina += staAllot;
     }
 
     /// <summary>
@@ -2403,37 +2408,37 @@ public class GameView : MonoBehaviour {
     void AddEuqipItemPrpToHero(EquipItem eiHasEque)
     {
         // 基础装备属性，如护甲，攻击力
-        _MHero._Prop.arm += eiHasEque.baseData.arm;
+        _MHero.Prop.arm += eiHasEque.baseData.arm;
 
         if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand)
         {
             if (eiHasEque._Part == EEquipPart.Hand1)
             {
-                Hero._Inst._Prop.AtkBaseA = eiHasEque.baseData.atk;
+                Hero.Inst.Prop.AtkBaseA = eiHasEque.baseData.atk;
             }
             else if (eiHasEque._Part == EEquipPart.Hand2)
             {
-                Hero._Inst._Prop.AtkBaseB = eiHasEque.baseData.atk;
+                Hero.Inst.Prop.AtkBaseB = eiHasEque.baseData.atk;
             }
         }
         else if (eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
         {
-            Hero._Inst._Prop.AtkBaseA = eiHasEque.baseData.atk;
-            Hero._Inst._Prop.AtkBaseB = 0;
+            Hero.Inst.Prop.AtkBaseA = eiHasEque.baseData.atk;
+            Hero.Inst.Prop.AtkBaseB = 0;
         }
 
         if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand || eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
         {
             // 武器速度计算
-            _MHero._Prop.BaseWeaponIAS = GetWeaponIAS();
+            _MHero.Prop.BaseWeaponIAS = GetWeaponIAS();
         }
 
         //重量
-        Hero._Inst._Prop.LoadBase += eiHasEque.baseData.weight;
+        Hero.Inst.Prop.LoadBase += eiHasEque.baseData.weight;
         // 移动速度
-        Hero._Inst._Prop.MoveSpeedBase += eiHasEque.baseData.movespeed;
+        Hero.Inst.Prop.MoveSpeedBase += eiHasEque.baseData.movespeed;
         // 基础格挡率
-        Hero._Inst._Prop.parryDamPerBase += (eiHasEque.baseData.parry * 0.01f);
+        Hero.Inst.Prop.parryDamPerBase += (eiHasEque.baseData.parry * 0.01f);
         // 魔法属性
         for (int wordIndex = 0; wordIndex < eiHasEque.words.Count; wordIndex++)
         {
@@ -2443,78 +2448,78 @@ public class GameView : MonoBehaviour {
             {
                 case EEquipItemProperty.Str:
                     {
-                        _MHero._Prop.Strength += eiw.val;
+                        _MHero.Prop.Strength += eiw.val;
                     }
                     
                     break;
                 case EEquipItemProperty.Agi:
                     {
-                        _MHero._Prop.Agility += eiw.val;
+                        _MHero.Prop.Agility += eiw.val;
                     }
                     break;
                 case EEquipItemProperty.Ten:
                     {
-                        _MHero._Prop.Tenacity += eiw.val;
+                        _MHero.Prop.Tenacity += eiw.val;
                     }
                     break;
                 case EEquipItemProperty.Sta:
                     {
-                        _MHero._Prop.Stamina += eiw.val;
+                        _MHero.Prop.Stamina += eiw.val;
                     }
                     break;
                 case EEquipItemProperty.Arm:
-                    _MHero._Prop.arm += eiw.val;
+                    _MHero.Prop.arm += eiw.val;
                     break;
                 case EEquipItemProperty.IAS:
-                    _MHero._Prop.BaseWeaponIAS *= (1 + eiw.val / 100f);
+                    _MHero.Prop.BaseWeaponIAS *= (1 + eiw.val / 100f);
                     break;
                 case EEquipItemProperty.ResFire:
-                    _MHero._Prop.resFire += eiw.val;
+                    _MHero.Prop.resFire += eiw.val;
                     break;
                 case EEquipItemProperty.ResThunder:
-                    _MHero._Prop.resThunder += eiw.val;
+                    _MHero.Prop.resThunder += eiw.val;
                     break;
                 case EEquipItemProperty.ResPoison:
-                    _MHero._Prop.resPoision += eiw.val;
+                    _MHero.Prop.resPoision += eiw.val;
                     break;
                 case EEquipItemProperty.ResFrozen:
-                    _MHero._Prop.resForzen += eiw.val;
+                    _MHero.Prop.resForzen += eiw.val;
                     break;
                 case EEquipItemProperty.CriticalStrike:
-                    _MHero._Prop.DeadlyStrike *= (1 + eiw.val / 100f);
+                    _MHero.Prop.DeadlyStrike *= (1 + eiw.val / 100f);
                     break;
                 case EEquipItemProperty.ParryDamage:
-                    _MHero._Prop.parryDmbPerParamB *= (1 + eiw.val * 0.01f);
+                    _MHero.Prop.parryDmbPerParamB *= (1 + eiw.val * 0.01f);
                     break;
                 case EEquipItemProperty.FireDamage:
-                    _MHero._Prop.atkFireParamAdd += eiw.val;
+                    _MHero.Prop.atkFireParamAdd += eiw.val;
                     break;
                 case EEquipItemProperty.ThunderDamage:
-                    _MHero._Prop.atkThunderParamAdd += eiw.val;
+                    _MHero.Prop.atkThunderParamAdd += eiw.val;
                     break;
                 case EEquipItemProperty.PoisonDamage:
-                    _MHero._Prop.atkPoisonParamAdd += eiw.val;
+                    _MHero.Prop.atkPoisonParamAdd += eiw.val;
                     break;
                 case EEquipItemProperty.ForzenDamage:
-                    _MHero._Prop.atkIceParamAdd += eiw.val;
+                    _MHero.Prop.atkIceParamAdd += eiw.val;
                     break;
                 case EEquipItemProperty.AddDamagePercent:
-                    Hero._Inst._Prop.AtkParmaA += eiw.val;
+                    Hero.Inst.Prop.AtkParmaA += eiw.val;
                     break;
                 case EEquipItemProperty.Weight:
-                    Hero._Inst._Prop.LoadBase += eiw.val;
+                    Hero.Inst.Prop.LoadBase += eiw.val;
                     break;
                 case EEquipItemProperty.MoveSpeed:
-                    Hero._Inst._Prop.MoveSpeedBase += eiw.val;
+                    Hero.Inst.Prop.MoveSpeedBase += eiw.val;
                     break;
                 case EEquipItemProperty.AddDamage:
-                    Hero._Inst._Prop.AtkParmaB += eiw.val;
+                    Hero.Inst.Prop.AtkParmaB += eiw.val;
                     break;
                 case EEquipItemProperty.ArmPercent:
-                    Hero._Inst._Prop.DefIncrease(1 + eiw.val * 0.01f);
+                    Hero.Inst.Prop.DefIncrease(1 + eiw.val * 0.01f);
                     break;
                 case EEquipItemProperty.PowerSpeed:
-                    Hero._Inst._Prop.PowerSpeedIncrease(1 + eiw.val * 0.01f);
+                    Hero.Inst.Prop.PowerSpeedIncrease(1 + eiw.val * 0.01f);
                     break;
                 default:
                     break;
@@ -2531,37 +2536,37 @@ public class GameView : MonoBehaviour {
     void RemoveEquipItemPropFromHero(EquipItem eiHasEque)
     {
         // 基础装备属性，如护甲，攻击力
-        _MHero._Prop.arm -= eiHasEque.baseData.arm;
+        _MHero.Prop.arm -= eiHasEque.baseData.arm;
 
         if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand)
         {
             if (eiHasEque._Part == EEquipPart.Hand1)
             {
-                Hero._Inst._Prop.AtkBaseA = 0;
+                Hero.Inst.Prop.AtkBaseA = 0;
             }
             else if (eiHasEque._Part == EEquipPart.Hand2)
             {
-                Hero._Inst._Prop.AtkBaseB = 0;
+                Hero.Inst.Prop.AtkBaseB = 0;
             }
         }
         else if (eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
         {
-            Hero._Inst._Prop.AtkBaseA = 0;
-            Hero._Inst._Prop.AtkBaseB = 0;
+            Hero.Inst.Prop.AtkBaseA = 0;
+            Hero.Inst.Prop.AtkBaseB = 0;
         }
 
         if (eiHasEque.baseData.type == EEquipItemType.WeaponOneHand || eiHasEque.baseData.type == EEquipItemType.WeaponTwoHand)
         {
             // 武器速度计算
-            _MHero._Prop.BaseWeaponIAS = GetWeaponIAS();
+            _MHero.Prop.BaseWeaponIAS = GetWeaponIAS();
         }
 
         //重量
-        Hero._Inst._Prop.LoadBase -= eiHasEque.baseData.weight;
+        Hero.Inst.Prop.LoadBase -= eiHasEque.baseData.weight;
         // 移动速度
-        Hero._Inst._Prop.MoveSpeedBase -= eiHasEque.baseData.movespeed;
+        Hero.Inst.Prop.MoveSpeedBase -= eiHasEque.baseData.movespeed;
         // 基础格挡率
-        Hero._Inst._Prop.parryDamPerBase -= (eiHasEque.baseData.parry * 0.01f);
+        Hero.Inst.Prop.parryDamPerBase -= (eiHasEque.baseData.parry * 0.01f);
         // 魔法属性
         for (int wordIndex = 0; wordIndex < eiHasEque.words.Count; wordIndex++)
         {
@@ -2571,79 +2576,79 @@ public class GameView : MonoBehaviour {
             {
                 case EEquipItemProperty.Str:
                     {
-                        _MHero._Prop.Strength -= eiw.val;
+                        _MHero.Prop.Strength -= eiw.val;
                     }
 
                     break;
                 case EEquipItemProperty.Agi:
                     {
-                        _MHero._Prop.Agility -= eiw.val;
+                        _MHero.Prop.Agility -= eiw.val;
                     }
                     break;
                 case EEquipItemProperty.Ten:
                     {
-                        _MHero._Prop.Tenacity -= eiw.val;
+                        _MHero.Prop.Tenacity -= eiw.val;
                     }
 
                     break;
                 case EEquipItemProperty.Sta:
                     {
-                        _MHero._Prop.Stamina -= eiw.val;
+                        _MHero.Prop.Stamina -= eiw.val;
                     }
                     break;
                 case EEquipItemProperty.Arm:
-                    _MHero._Prop.arm -= eiw.val;
+                    _MHero.Prop.arm -= eiw.val;
                     break;
                 case EEquipItemProperty.IAS:
-                    _MHero._Prop.BaseWeaponIAS /= (1 + eiw.val / 100f);
+                    _MHero.Prop.BaseWeaponIAS /= (1 + eiw.val / 100f);
                     break;
                 case EEquipItemProperty.ResFire:
-                    _MHero._Prop.resFire -= eiw.val;
+                    _MHero.Prop.resFire -= eiw.val;
                     break;
                 case EEquipItemProperty.ResThunder:
-                    _MHero._Prop.resThunder -= eiw.val;
+                    _MHero.Prop.resThunder -= eiw.val;
                     break;
                 case EEquipItemProperty.ResPoison:
-                    _MHero._Prop.resPoision -= eiw.val;
+                    _MHero.Prop.resPoision -= eiw.val;
                     break;
                 case EEquipItemProperty.ResFrozen:
-                    _MHero._Prop.resForzen -= eiw.val;
+                    _MHero.Prop.resForzen -= eiw.val;
                     break;
                 case EEquipItemProperty.CriticalStrike:
-                    _MHero._Prop.DeadlyStrike /= (1 + eiw.val / 100f);
+                    _MHero.Prop.DeadlyStrike /= (1 + eiw.val / 100f);
                     break;
                 case EEquipItemProperty.ParryDamage:
-                    _MHero._Prop.parryDmbPerParamB /= (1 + eiw.val * 0.01f);
+                    _MHero.Prop.parryDmbPerParamB /= (1 + eiw.val * 0.01f);
                     break;
                 case EEquipItemProperty.FireDamage:
-                    _MHero._Prop.atkFireParamAdd -= eiw.val;
+                    _MHero.Prop.atkFireParamAdd -= eiw.val;
                     break;
                 case EEquipItemProperty.ThunderDamage:
-                    _MHero._Prop.atkThunderParamAdd -= eiw.val;
+                    _MHero.Prop.atkThunderParamAdd -= eiw.val;
                     break;
                 case EEquipItemProperty.PoisonDamage:
-                    _MHero._Prop.atkPoisonParamAdd -= eiw.val;
+                    _MHero.Prop.atkPoisonParamAdd -= eiw.val;
                     break;
                 case EEquipItemProperty.ForzenDamage:
-                    _MHero._Prop.atkIceParamAdd -= eiw.val;
+                    _MHero.Prop.atkIceParamAdd -= eiw.val;
                     break;
                 case EEquipItemProperty.AddDamagePercent:
-                    Hero._Inst._Prop.AtkParmaA -= eiw.val;
+                    Hero.Inst.Prop.AtkParmaA -= eiw.val;
                     break;
                 case EEquipItemProperty.Weight:
-                    Hero._Inst._Prop.LoadBase -= eiw.val;
+                    Hero.Inst.Prop.LoadBase -= eiw.val;
                     break;
                 case EEquipItemProperty.MoveSpeed:
-                    Hero._Inst._Prop.MoveSpeedBase -= eiw.val;
+                    Hero.Inst.Prop.MoveSpeedBase -= eiw.val;
                     break;
                 case EEquipItemProperty.AddDamage:
-                    Hero._Inst._Prop.AtkParmaB -= eiw.val;
+                    Hero.Inst.Prop.AtkParmaB -= eiw.val;
                     break;
                 case EEquipItemProperty.ArmPercent:
-                    Hero._Inst._Prop.DefIncrease(1 / (1 + eiw.val * 0.01f));
+                    Hero.Inst.Prop.DefIncrease(1 / (1 + eiw.val * 0.01f));
                     break;
                 case EEquipItemProperty.PowerSpeed:
-                    Hero._Inst._Prop.PowerSpeedIncrease(1 / (1 + eiw.val * 0.01f));
+                    Hero.Inst.Prop.PowerSpeedIncrease(1 / (1 + eiw.val * 0.01f));
                     break;
                 default:
                     break;
@@ -3235,7 +3240,7 @@ public class GameView : MonoBehaviour {
             // 如果进入了一个城镇，则保存
             GameManager.commonCPU.SaveCurHomeMap(gGameMapOri.id);
             // 在城镇中恢复生命
-            _MHero.RecoverHp(_MHero._Prop.HpMax - _MHero._Prop.Hp);
+            _MHero.RecoverHp(_MHero.Prop.HpMax - _MHero.Prop.Hp);
         }
 
         // 任务检查

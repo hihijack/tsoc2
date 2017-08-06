@@ -31,9 +31,16 @@ public class UIBattle : MonoBehaviour
     public UILabel txtUnContrlTime;
     public UILabel txtSkillName;
 
+    public GameObject gobjEffDodge;
+
     void Awake()
     {
         utp = progBar.GetComponent<UITweenProgbar>();
+    }
+
+    public void OnShow()
+    {
+        gobjEffDodge.SetActive(false);
     }
 
     internal void ToNormalState()
@@ -140,5 +147,10 @@ public class UIBattle : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    internal void RefreshUIDodge(bool show)
+    {
+        gobjEffDodge.SetActive(show);
     }
 }

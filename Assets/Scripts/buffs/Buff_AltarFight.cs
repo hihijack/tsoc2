@@ -22,7 +22,7 @@ public class Buff_AltarFight : IBaseBuff
         base.OnAdd();
         if (target._State != EActorState.Dead)
         {
-            target._Prop.AtkParmaC *= percent;
+            target.Prop.AtkParmaC *= percent;
             UIManager.Inst.uiMain.AddABuffToTarget(target, this);
         }
 
@@ -33,7 +33,7 @@ public class Buff_AltarFight : IBaseBuff
         base.OnRemove();
         if (target._State != EActorState.Dead)
         {
-            target._Prop.AtkParmaC /= percent;
+            target.Prop.AtkParmaC /= percent;
             UIManager.Inst.uiMain.RemoveABuff(target, this);
         }
         DestroyObject(this);

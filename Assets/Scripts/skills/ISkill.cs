@@ -76,7 +76,7 @@ public class ISkill : MonoBehaviour{
         if (caster.isHero)
         {
             Hero hero = caster as Hero;
-            if (hero._Prop.EnergyPoint >= cost)
+            if (hero.Prop.EnergyPoint >= cost)
             {
                 r = true;
             }
@@ -96,8 +96,8 @@ public class ISkill : MonoBehaviour{
     protected void StartCost()
     {
         Hero hero = caster as Hero;
-        hero._Prop.EnergyPoint -= baseData.cost;
-        UIManager.Inst.uiMain.RefreshHeroEnergy();
+        hero.Prop.EnergyPoint -= baseData.cost;
+        //UIManager.Inst.uiMain.RefreshHeroEnergy();
     }
 
     public virtual bool CheckCast()

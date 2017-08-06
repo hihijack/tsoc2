@@ -1,18 +1,18 @@
 ﻿public class BattleStateAtkBefore : IBattleState
 {
     float durTime;
-    private ManagerBattleState managerBattleState;
+    private ManagerBattleState manager;
 
     public BattleStateAtkBefore(ManagerBattleState managerBattleState)
     {
-        this.managerBattleState = managerBattleState;
-        this.stateType = EBattleState.AtkBefore;
+        this.manager = managerBattleState;
+        this._stateType = EBattleState.AtkBefore;
     }
 
     public override void Start()
     {
         base.Start();
-        managerBattleState.hero.OnBSStartAtkBefore();
+        manager.hero.OnBSStartAtkBefore();
         durTime = 0f;
     }
 
@@ -20,52 +20,59 @@
     {
         base.Update();
         durTime += UnityEngine.Time.deltaTime;
-        if (durTime >= managerBattleState.hero.AtkAnimTimeBefore)
+        if (durTime >= manager.hero.AtkAnimTimeBefore)
         {
-            managerBattleState.ActionAtkBeforeTimeEnd();
+            manager.ActionAtkBeforeTimeEnd();
         }
     }
 
     public override IBattleState ActionAtkBeforeTimeEnd()
     {
-        return managerBattleState.bsHit;
+        return manager.bsHit;
     }
 
     public override IBattleState ActionStop()
     {
-        return managerBattleState.bsNormal;
+        return manager.bsNormal;
     }
 
     public override IBattleState ActionDef()
     {
-        if (managerBattleState.hero._Prop.EnergyPoint > 0)
-        {
-            managerBattleState.hero._Prop.EnergyPoint--;
-            UIManager.Inst.uiMain.RefreshHeroEnergy();
-            return managerBattleState.bsDefing;
-        }
-        else
-        {
-            return null;
-        }
+        return manager.bsDefing;
     }
 
     public override IBattleState ActionSKill(ISkill skill)
     {
-        skill.SetCaster(managerBattleState.hero);
+        skill.SetCaster(manager.hero);
         if (skill.GetBaseData().targetType != ESkillTargetType.None)
         {
-            skill.SetTarget(managerBattleState.hero.curTarget);
+            skill.SetTarget(manager.hero.curTarget);
         }
         if (skill.CheckCast())
         {
-            managerBattleState.bsSkilling.skill = skill;
-            return managerBattleState.bsSkilling;
+            manager.bsSkilling.skill = skill;
+            return manager.bsSkilling;
         }
         else
         {
             return null;
         }
 
+    }
+
+    public override IBattleState ActionDodge(float dur)
+    {
+        IBattleState r = null;
+        //TODO 闪避消耗
+        if (manager.hero.Prop.Vigor >= 10)
+        {
+            manager.bsDodge.dur = dur;
+            r = manager.bsDodge;
+        }
+        else
+        {
+            UIManager.Inst.ShowFloatTip("精力不足");
+        }
+        return r;
     }
 }

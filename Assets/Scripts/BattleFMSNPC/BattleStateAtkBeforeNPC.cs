@@ -7,7 +7,7 @@
     public BattleStateAtkBeforeNPC(ManagerBattleStateNPC managerBattleStateNPC)
     {
         this.manager = managerBattleStateNPC;
-        stateType = EBattleState.AtkBefore;
+        _stateType = EBattleState.AtkBefore;
     }
 
     public override void Start()

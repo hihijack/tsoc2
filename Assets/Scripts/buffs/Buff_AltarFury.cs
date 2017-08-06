@@ -21,7 +21,7 @@
     {
         if (target._State != EActorState.Dead)
         {
-            target._Prop.IasParmaB *= (1 + percent);
+            target.Prop.IasParmaB *= (1 + percent);
             UIManager.Inst.uiMain.AddABuffToTarget(target, this);
         }
     }
@@ -31,7 +31,7 @@
         base.OnRemove();
         if (target._State != EActorState.Dead)
         {
-            target._Prop.IasParmaB /= (1 + percent);
+            target.Prop.IasParmaB /= (1 + percent);
             UIManager.Inst.uiMain.RemoveABuff(target, this);
         }
         DestroyObject(this);

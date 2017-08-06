@@ -5,7 +5,7 @@
     public BattleStateDefingNPC(ManagerBattleStateNPC managerBattleStateNPC)
     {
         this.mananger = managerBattleStateNPC;
-        stateType = EBattleState.Defing;
+        _stateType = EBattleState.Defing;
     }
 
     public override IBattleState ActionStopDef()

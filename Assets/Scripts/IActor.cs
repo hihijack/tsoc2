@@ -76,19 +76,18 @@ public class IActor : MonoBehaviour {
     public int level;
     public int tlMax;   // 体力上限
 
-    public int mpMax = 30;
-
     //================================================================
     public int atkMag;  // 魔法攻击力
 
     public float animRate;
 
     // 动画时间1秒。攻速不会超过1
+    [System.Obsolete]
     public void SetAnimRateByIAS()
     {
         // 根据动画时间和攻速设置实际时间
         float atkTimeOri = atkAnimTimeBeforeBase + atkAnimTimeAfterBase;
-        float atkTime = 1 / _Prop.IAS;
+        float atkTime = 1 / Prop.IAS;
 
         if (atkTime >= atkTimeOri)
         {
@@ -208,7 +207,7 @@ public class IActor : MonoBehaviour {
         }
     }
 
-    public PropertyBase _Prop
+    public PropertyBase Prop
     {
         get
         {
@@ -265,19 +264,19 @@ public class IActor : MonoBehaviour {
         switch (damageType)
         {
             case EDamageType.Phy:
-                armOther = other._Prop.Arm;
+                armOther = other.Prop.Arm;
                 break;
             case EDamageType.Fire:
-                armOther = other._Prop.ResFire;
+                armOther = other.Prop.ResFire;
                 break;
             case EDamageType.Lighting:
-                armOther = other._Prop.ResThunder;
+                armOther = other.Prop.ResThunder;
                 break;
             case EDamageType.Poison:
-                armOther = other._Prop.ResPoision;
+                armOther = other.Prop.ResPoision;
                 break;
             case EDamageType.Forzen:
-                armOther = other._Prop.ResForzen;
+                armOther = other.Prop.ResForzen;
                 break;
             default:
                 break;
@@ -313,6 +312,20 @@ public class IActor : MonoBehaviour {
             return;
         }
 
+        //闪避
+        if (target._BattleState == EBattleState.Dodge)
+        {
+            if (target.isHero)
+            {
+                UIManager.Inst.ShowDodgeTip();
+            }
+            else
+            {
+                UIManager.Inst.ShowEnermyDodgeTip();
+            }
+            return;
+        }
+
         //蓄力
         if (_PowerVal >= 1 && _PowerVal < 2)
         {
@@ -335,7 +348,7 @@ public class IActor : MonoBehaviour {
         int damParry = 0;
         if (target._BattleState == EBattleState.Defing)
         {
-            damParry = Mathf.RoundToInt(damageOri * target._Prop.ParryDamPercent);
+            damParry = Mathf.RoundToInt(damageOri * target.Prop.ParryDamPercent);
             //格挡百分百伤害
             damageOri -= damParry;
             target.OnParry(damParry);
@@ -345,22 +358,22 @@ public class IActor : MonoBehaviour {
         int damage = GetDamgerToOther(damageOri, target, damageType);
         bool isDs = false;// 是否致命一击
                           // 致命一击
-        if (canDS && Tools.IsHitOdds(_Prop.DeadlyStrike)) {
-            damage = (int)(damage * _Prop.DeadlyStrikeDamage);
+        if (canDS && Tools.IsHitOdds(Prop.DeadlyStrike)) {
+            damage = (int)(damage * Prop.DeadlyStrikeDamage);
             isDs = true;
         }
 
         //坚韧
-        damage = Mathf.CeilToInt(damage * (1 - _Prop.DamReduce));
+        damage = Mathf.CeilToInt(damage * (1 - Prop.DamReduce));
 
         target.OnHurted(damage, damageType, this, isDs);
         OnDamageTarget(damage, target, isDs);
 
-        int oriTargetHP = target._Prop.Hp;
+        int oriTargetHP = target.Prop.Hp;
 
-        target._Prop.Hp -= damage;
-        if (target._Prop.Hp <= 0) {
-            target._Prop.Hp = 0;
+        target.Prop.Hp -= damage;
+        if (target.Prop.Hp <= 0) {
+            target.Prop.Hp = 0;
             target._State = EActorState.Dead;
             target.OnDead();
             if (target.isHero)
@@ -380,7 +393,7 @@ public class IActor : MonoBehaviour {
         }
         else
         {
-            target.OnHPChange(oriTargetHP, target._Prop.Hp);
+            target.OnHPChange(oriTargetHP, target.Prop.Hp);
         }
         if (!target.isHero) {
             UIManager.Inst.uiMain.RefreshTargetHP(target as Enermy);
@@ -434,9 +447,9 @@ public class IActor : MonoBehaviour {
     public void Hurted(int damageOri) {
         int damage = GetDamgerToOther(damageOri, this);
 
-        _Prop.Hp -= damage;
-        if (_Prop.Hp <= 0) {
-            _Prop.Hp = 0;
+        Prop.Hp -= damage;
+        if (Prop.Hp <= 0) {
+            Prop.Hp = 0;
         }
         if (isHero) {
             UIManager.Inst.uiMain.RefreshHeroHP();
@@ -597,8 +610,8 @@ public class IActor : MonoBehaviour {
                 // 每次移动消耗怒气
                 if (isHero)
                 {
-                    _Prop.EnergyPoint--;
-                    UIManager.Inst.uiMain.RefreshHeroMP();
+                    Prop.EnergyPoint--;
+                    UIManager.Inst.uiMain.RefreshHeroVigor();
                 }
                 OnIntoAGrid(GetCurMapGrid());
             }

@@ -16,7 +16,7 @@ public class AltarRecover : AltarBase {
     public override void OnActive()
     {
         base.OnActive();
-        GameManager.hero.RecoverHp(Hero._Inst._Prop.HpMax - Hero._Inst._Prop.Hp);
+        GameManager.hero.RecoverHp(Hero.Inst.Prop.HpMax - Hero.Inst.Prop.Hp);
         UIManager.Inst.GeneralTip("你获得了新生",Color.green);
         // 使用后立即销毁
         DestroyObject(gameObject);
