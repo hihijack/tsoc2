@@ -26,7 +26,7 @@ public enum EPlayInputState
 }
 
 public class GameView : MonoBehaviour {
-    public static GameView _Inst;
+    public static GameView Inst;
     public GameObject g_GobjMapRoot;
 
     public CameraControl cameraControl;
@@ -133,6 +133,21 @@ public class GameView : MonoBehaviour {
         }
     }
 
+    int propHasAllotToEnd = 0;
+    public int _PropHasAllotToEnd
+    {
+        get
+        {
+            return propHasAllotToEnd;
+        }
+
+        set
+        {
+            propHasAllotToEnd = value;
+            PlayerPrefs.SetInt(IConst.KEY_HASALLOT_END, value);
+        }
+    }
+
     MapGrid mgInterActive = null; //当前点击交互格子 
 
     int enermysCount = 0; // 当前地图敌人总数
@@ -203,7 +218,7 @@ public class GameView : MonoBehaviour {
 
     IEnumerator CoInit()
     {
-        _Inst = this;
+        Inst = this;
         GameManager.gameView = this;
 
         InitCommonCPU();
@@ -387,6 +402,8 @@ public class GameView : MonoBehaviour {
         }
     }
 
+  
+
     /// <summary>
     /// 战斗状态输入
     /// </summary>
@@ -425,8 +442,8 @@ public class GameView : MonoBehaviour {
 
         if (Input.GetButtonDown("Dodge"))
         {
-            //TODO 闪避时间
-            _MHero.BsManager.ActionDodge(1f);
+            //闪避时间
+            _MHero.BsManager.ActionDodge(Hero.Inst.GetDodgeDur());
         }
 
         if (Input.GetButtonDown("Skill1"))
@@ -894,7 +911,7 @@ public class GameView : MonoBehaviour {
 
     public void PlayerActionEnd()
     {
-        StartCoroutine(GameView._Inst.RoundLogicPlayerActionEventCo());
+        StartCoroutine(GameView.Inst.RoundLogicPlayerActionEventCo());
     }
 
     /// <summary>
@@ -1561,7 +1578,7 @@ public class GameView : MonoBehaviour {
     #region 装备管理
     // 生成一件装备
     // 决定装备上的词缀列表
-    EquipItem GenerateAEquipItem(int id, EEquipItemQLevel qlevel)
+    public EquipItem GenerateAEquipItem(int id, EEquipItemQLevel qlevel)
     {
         EquipItem ei = new EquipItem();
        // 生成词缀
@@ -2100,7 +2117,8 @@ public class GameView : MonoBehaviour {
         //基础格挡率
         if (ei.baseData.parry > 0)
         {
-            desc.Append("格挡:" + ei.baseData.parry + "%\n");
+            desc.Append("格挡伤害削减:" + ei.baseData.parry + "%\n");
+            desc.Append("格挡值:" + ei.baseData.parryVigor + "\n");
         }
         //重量
         desc.Append("重量:" + ei.baseData.weight + "\n");
@@ -2382,11 +2400,14 @@ public class GameView : MonoBehaviour {
         int agiAllot =_PropHasAlltoToAgi;
         int intAllot = _PropHasAllotToTen;
         int staAllot = _PropHasAllotToSta;
+        int endAllot = _PropHasAllotToEnd;
+
 
         _MHero.Prop.Strength += strAllot;
         _MHero.Prop.Agility += agiAllot;
         _MHero.Prop.Tenacity += intAllot;
         _MHero.Prop.Stamina += staAllot;
+        _MHero.Prop.Endurance += endAllot;
     }
 
     /// <summary>
@@ -2439,6 +2460,8 @@ public class GameView : MonoBehaviour {
         Hero.Inst.Prop.MoveSpeedBase += eiHasEque.baseData.movespeed;
         // 基础格挡率
         Hero.Inst.Prop.parryDamPerBase += (eiHasEque.baseData.parry * 0.01f);
+        //基础格挡值
+        Hero.Inst.Prop.parryDmgVigorBase += eiHasEque.baseData.parryVigor;
         // 魔法属性
         for (int wordIndex = 0; wordIndex < eiHasEque.words.Count; wordIndex++)
         {
@@ -2567,6 +2590,8 @@ public class GameView : MonoBehaviour {
         Hero.Inst.Prop.MoveSpeedBase -= eiHasEque.baseData.movespeed;
         // 基础格挡率
         Hero.Inst.Prop.parryDamPerBase -= (eiHasEque.baseData.parry * 0.01f);
+        // 基础格挡值
+        Hero.Inst.Prop.parryDmgVigorBase -= eiHasEque.baseData.parryVigor;
         // 魔法属性
         for (int wordIndex = 0; wordIndex < eiHasEque.words.Count; wordIndex++)
         {
@@ -2996,7 +3021,7 @@ public class GameView : MonoBehaviour {
     /// </summary>
     internal void OnCancelUseItem()
     {
-        GameView._Inst.InputState = EPlayInputState.Nomal;
+        GameView.Inst.InputState = EPlayInputState.Nomal;
         foreach (MapGrid itemMG in gListMGs)
         {
             itemMG.ChooseState = EChoosedState.UnChooseable;
@@ -3009,7 +3034,7 @@ public class GameView : MonoBehaviour {
     internal void OnComfirmUseItemToTarget()
     {
         //恢复状态
-        GameView._Inst.InputState = EPlayInputState.Nomal;
+        GameView.Inst.InputState = EPlayInputState.Nomal;
         foreach (MapGrid itemMG in gListMGs)
         {
             itemMG.ChooseState = EChoosedState.UnChooseable;
@@ -3241,6 +3266,9 @@ public class GameView : MonoBehaviour {
             GameManager.commonCPU.SaveCurHomeMap(gGameMapOri.id);
             // 在城镇中恢复生命
             _MHero.RecoverHp(_MHero.Prop.HpMax - _MHero.Prop.Hp);
+            //恢复精力
+            Hero.Inst.Prop.Vigor = Hero.Inst.Prop.VigorMax;
+            UIManager.Inst.uiMain.RefreshHeroVigor();
         }
 
         // 任务检查
@@ -3252,7 +3280,7 @@ public class GameView : MonoBehaviour {
 
         yield return 0;
 
-        GameView._Inst.RoundLogicOnInitMap();
+        GameView.Inst.RoundLogicOnInitMap();
     }
     #endregion
 

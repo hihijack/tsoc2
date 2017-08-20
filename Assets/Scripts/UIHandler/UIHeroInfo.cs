@@ -13,6 +13,8 @@ public class UIHeroInfo : MonoBehaviour {
     public UILabel txtDamreduce;
     public UILabel txtHP;
     public UILabel txtTL;
+    public UILabel txtEnd;
+    public UILabel txtVigorMax;
     public UILabel txtResFire;
     public UILabel txtResPoision;
     public UILabel txtResThunder;
@@ -34,6 +36,7 @@ public class UIHeroInfo : MonoBehaviour {
     public UIButton btnAddAgi;
     public UIButton btnAddTen;
     public UIButton btnAddSta;
+    public UIButton btnAddEnd;
 
     GameView gameView;
 
@@ -57,6 +60,9 @@ public class UIHeroInfo : MonoBehaviour {
 
         btnAddSta.onClick.Clear();
         btnAddSta.onClick.Add(new EventDelegate(BtnAddSta));
+
+        btnAddEnd.onClick.Clear();
+        btnAddEnd.onClick.Add(new EventDelegate(BtnAddEnd));
     }
 
     void Refresh()
@@ -66,6 +72,7 @@ public class UIHeroInfo : MonoBehaviour {
         RefreshTenAndProp();
         RefreshStaAndProp();
         RefreshMoveSpeed();
+        RefreshEndAndProp();
         txtResFire.text = Hero.Inst.Prop.ResFire.ToString();
         txtResPoision.text = Hero.Inst.Prop.ResPoision.ToString();
         txtResThunder.text = Hero.Inst.Prop.ResThunder.ToString();
@@ -78,12 +85,13 @@ public class UIHeroInfo : MonoBehaviour {
     void RefreshPropNeedAllot()
     {
         txtPropAllotLeft.text = gameView._ProNeedAllot.ToString();
-        if (gameView._ProNeedAllot == 0)
+        if (gameView._ProNeedAllot <= 0)
         {
             btnAddStr.gameObject.SetActive(false);
             btnAddAgi.gameObject.SetActive(false);
             btnAddTen.gameObject.SetActive(false);
             btnAddSta.gameObject.SetActive(false);
+            btnAddEnd.gameObject.SetActive(false);
         }
     }
 
@@ -102,7 +110,7 @@ public class UIHeroInfo : MonoBehaviour {
     void RefreshMoveSpeed()
     {
         txtLoad.text = Hero.Inst.Prop.Load.ToString();
-        txtMoveSpeed.text = Hero.Inst.Prop.MoveSpeed.ToString();
+        //txtMoveSpeed.text = Hero.Inst.Prop.MoveSpeed.ToString();
     }
 
     void RefreshTenAndProp()
@@ -116,6 +124,12 @@ public class UIHeroInfo : MonoBehaviour {
     {
         txtSta.text = gameView._MHero.Prop.Stamina.ToString();
         txtHP.text = gameView._MHero.Prop.Hp + "/" + gameView._MHero.Prop.HpMax;
+    }
+
+    void RefreshEndAndProp()
+    {
+        txtEnd.text = Hero.Inst.Prop.Endurance.ToString();
+        txtVigorMax.text = Hero.Inst.Prop.VigorMax.ToString();
     }
 
     void BtnAddStr()
@@ -153,6 +167,15 @@ public class UIHeroInfo : MonoBehaviour {
         gameView._MHero.Prop.Stamina++;
         gameView._PropHasAllotToSta++;
         RefreshStaAndProp();
+    }
+
+    void BtnAddEnd()
+    {
+        gameView._ProNeedAllot--;
+        RefreshPropNeedAllot();
+        gameView._MHero.Prop.Endurance++;
+        gameView._PropHasAllotToEnd++;
+        RefreshEndAndProp();
     }
 
     void Update()

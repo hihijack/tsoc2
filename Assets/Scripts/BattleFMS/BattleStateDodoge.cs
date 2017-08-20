@@ -37,7 +37,39 @@ public class BattleStateDodoge : IBattleState
 
     public override IBattleState ActionDodgeEnd(float unControlTime)
     {
-        manager.bsUnControl.dur = unControlTime;
-        return manager.bsUnControl;
+        return manager.bsNormal;
+    }
+
+    public override IBattleState ActionAtk()
+    {
+        return manager.bsAtkBefore;
+    }
+
+    public override IBattleState ActionPowerStart()
+    {
+        return manager.bsPowering;
+    }
+
+    public override IBattleState ActionDef()
+    {
+        return manager.bsDefing;
+    }
+
+    public override IBattleState ActionSKill(ISkill skill)
+    {
+        skill.SetCaster(manager.hero);
+        if (skill.GetBaseData().targetType != ESkillTargetType.None)
+        {
+            skill.SetTarget(manager.hero.curTarget);
+        }
+        if (skill.CheckCast())
+        {
+            manager.bsSkilling.skill = skill;
+            return manager.bsSkilling;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

@@ -76,14 +76,14 @@ public class ISkill : MonoBehaviour{
         if (caster.isHero)
         {
             Hero hero = caster as Hero;
-            if (hero.Prop.EnergyPoint >= cost)
+            if (hero.Prop.Vigor >= cost)
             {
                 r = true;
             }
             else
             {
                 // 怒气不足
-                UIManager.Inst.GeneralTip("能量点不足", Color.red);
+                UIManager.Inst.GeneralTip("精力不足", Color.red);
             }
         }
         else
@@ -96,8 +96,8 @@ public class ISkill : MonoBehaviour{
     protected void StartCost()
     {
         Hero hero = caster as Hero;
-        hero.Prop.EnergyPoint -= baseData.cost;
-        //UIManager.Inst.uiMain.RefreshHeroEnergy();
+        hero.Prop.Vigor -= baseData.cost;
+        UIManager.Inst.uiMain.RefreshHeroVigor();
     }
 
     public virtual bool CheckCast()

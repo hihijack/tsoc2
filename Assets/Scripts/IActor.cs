@@ -346,12 +346,38 @@ public class IActor : MonoBehaviour {
         // 格挡
         bool isParry = false;
         int damParry = 0;
+        float parryPercent = target.Prop.ParryDamPercent;
         if (target._BattleState == EBattleState.Defing)
         {
-            damParry = Mathf.RoundToInt(damageOri * target.Prop.ParryDamPercent);
+            if (target.isHero)
+            {
+                int vigorCost = target.Prop.VigorMax;
+                if (target.Prop.ParryDmgVigor > 0)
+                {
+                    vigorCost = Mathf.CeilToInt(damageOri / target.Prop.ParryDmgVigor);
+                }
+
+                if (target.Prop.Vigor < vigorCost)
+                {
+                    //精力不足于完全格挡
+                    parryPercent = target.Prop.Vigor / vigorCost;
+                }
+
+                //精力消耗
+                target.Prop.Vigor -= vigorCost;
+                UIManager.Inst.uiMain.RefreshHeroVigor();
+                //格挡受击硬直
+                if (target.Prop.Vigor == 0)
+                {
+                    Hero.Inst.BsManager.ActionUnContol(3f);
+                }
+            }
+           
+
+            damParry = Mathf.RoundToInt(damageOri * parryPercent);
             //格挡百分百伤害
+            target.OnParry(damParry, damageOri);
             damageOri -= damParry;
-            target.OnParry(damParry);
             isParry = true;
         }
         
@@ -539,7 +565,7 @@ public class IActor : MonoBehaviour {
     /// 当格挡时
     /// </summary>
     /// <param name="damageParry"></param>
-    public virtual void OnParry(int damageParry) { }
+    public virtual void OnParry(int damageParry, int dmgOri) { }
     #endregion
 
     //public IEnumerator CoMoveToAGrid(MapGrid mg)
@@ -674,7 +700,7 @@ public class IActor : MonoBehaviour {
 
             if (isHero)
             {
-                GameView._Inst.PlayerActionEnd();
+                GameView.Inst.PlayerActionEnd();
             }
             
         }

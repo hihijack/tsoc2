@@ -30,4 +30,10 @@
         managerBattleState.bsUnControl.dur += dur;
         return managerBattleState.bsUnControl;
     }
+
+    internal override IBattleState ActionHurted(float unCtlDur)
+    {
+        managerBattleState.bsUnControl.dur += unCtlDur;
+        return managerBattleState.bsUnControl;
+    }
 }

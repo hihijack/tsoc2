@@ -27,13 +27,13 @@ public class UIChooseTarget : MonoBehaviour
 
     private void BtnComfirm()
     {
-        GameView._Inst.OnComfirmUseItemToTarget();
+        GameView.Inst.OnComfirmUseItemToTarget();
         Close();
     }
 
     private void BtnCancel()
     {
-        GameView._Inst.OnCancelUseItem();
+        GameView.Inst.OnCancelUseItem();
         Close();
     }
 

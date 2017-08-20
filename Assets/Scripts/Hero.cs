@@ -179,8 +179,8 @@ public class Hero : IActor
 
     internal void OnBSStartDodge(float dur)
     {
-        //TODO 闪避精力消耗
-        Prop.Vigor -= 10;
+        //闪避精力消耗
+        Prop.Vigor -= GetVigorCostDodge();
         UIManager.Inst.uiMain.RefreshHeroVigor();
 
         UIManager.Inst.uiMain.uiBattle.RefreshUIDodge(true);
@@ -217,7 +217,7 @@ public class Hero : IActor
     {
         UIManager.Inst.uiMain.uiBattle.UpdateUnControlTime(dur);
         //恢复精力
-        Prop.Vigor += (Prop.VigorRecoveSpeed * Time.deltaTime);
+        Prop.Vigor += (Prop.VigorRecoveSpeed * IConst.VIGOR_RECOVE_SPEED_RATE * Time.deltaTime);
         UIManager.Inst.uiMain.RefreshHeroVigor();
     }
 
@@ -434,6 +434,7 @@ public class Hero : IActor
         Prop.Agility = IConst.BASE_AGI;
         Prop.Tenacity = IConst.BASE_TEN;
         Prop.Stamina = IConst.BASE_STA;
+        Prop.Endurance = IConst.BASE_END;
         Prop.PowerSpeed = IConst.BASE_POWERSPEED;
         Prop.MoveSpeedBase = IConst.BASE_MOVESPEED;
         Prop.EngRecoverSpeedBase = IConst.BASE_ENG_RECOVER;
@@ -860,6 +861,49 @@ public class Hero : IActor
         //GameManager.gameView.UpdateUIHeroEng(this);
 	}
 
+    /// <summary>
+    /// 计算闪避需要的精力
+    /// </summary>
+    /// <returns></returns>
+    public int GetVigorCostDodge()
+    {
+        int cost = 0;
+        if (Prop.Load <= 15)
+        {
+            cost = 10;
+        }
+        else if (cost <= 25)
+        {
+            cost = 30;
+        }
+        else
+        {
+            cost = 60;
+        }
+        return cost;
+    }
+
+    /// <summary>
+    /// 计算闪避时间
+    /// </summary>
+    /// <returns></returns>
+    public float GetDodgeDur()
+    {
+        float dur = 0f;
+        if (Prop.Load <= 15)
+        {
+            dur = 1f;
+        }
+        else if (Prop.Load <= 26)
+        {
+            dur = 0.5f;
+        }
+        else
+        {
+            dur = 0.3f;
+        }
+        return dur;
+    }
     //public void MoveTo(Vector3 pos, int nextgridid)
     //{
     //    PlayAnim("Run");
@@ -1122,21 +1166,16 @@ public class Hero : IActor
         base.OnAttackHit(target, atkOri);
     }
 
-    public override void OnParry(int damageParry)
+    public override void OnParry(int damageParry, int dmgOri)
     {
-        base.OnParry(damageParry);
-        //TODO 消耗精力
-        Prop.Vigor -= 10;
+        base.OnParry(damageParry, dmgOri);
+       
     }
 
     public override void OnHurted(int damage, EDamageType damagetype, IActor target, bool isDS)
     {
         base.OnHurted(damage, damagetype, target, isDS);
-        // 获得伤害10%怒气
-        Prop.Vigor += (int)(damage * 0.1f);
-        UIManager.Inst.uiMain.RefreshHeroVigor();
-
-        bsManager.ActionUnContol(2f);
+        BsManager.ActionHurted(3f);
     }
 
 #region 装备

@@ -203,7 +203,7 @@ public class MapGrid : MonoBehaviour {
         _spRender = GetComponent<SpriteRenderer>();
         _spGrid = Tools.GetComponentInChildByPath<SpriteRenderer>(gameObject, "grid");
 
-        GameView._Inst.gListMGs.Add(this);
+        GameView.Inst.gListMGs.Add(this);
     }
 
     public void RefreshBySurface()
@@ -673,9 +673,9 @@ public class MapGrid : MonoBehaviour {
     public List<MapGrid> GetMGsInRange(int range)
     {
         List<MapGrid> mgs = new List<MapGrid>();
-        for (int i = 0; i < GameView._Inst.gListMGs.Count; i++)
+        for (int i = 0; i < GameView.Inst.gListMGs.Count; i++)
         {
-            MapGrid mgItem = GameView._Inst.gListMGs[i];
+            MapGrid mgItem = GameView.Inst.gListMGs[i];
             if (mgItem != null && mgItem != this)
             {
                 if (GetDis(this, mgItem) <= range)

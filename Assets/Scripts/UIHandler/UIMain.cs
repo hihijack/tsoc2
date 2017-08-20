@@ -115,7 +115,7 @@ public class UIMain : MonoBehaviour {
     /// </summary>
     private void OnBtn_Wait()
     {
-        GameView._Inst.RoundLogicWaitARound();
+        GameView.Inst.RoundLogicWaitARound();
     }
 
     /// <summary>

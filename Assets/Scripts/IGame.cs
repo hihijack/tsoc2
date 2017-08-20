@@ -302,6 +302,7 @@ public class EquipItemBaseData
     public int atk;
     public float ias;
     public int parry;//除以100
+    public int parryVigor;//每点精力格挡伤害
     public int weight;
     public int movespeed;
     public string model;
@@ -323,6 +324,7 @@ public class EquipItemBaseData
         this.atk = (int)sdr["atk"];
         this.ias = float.Parse(sdr["ias"].ToString());
         parry = (int)sdr["parry"];
+        parryVigor = (int)sdr["parry_vigor"];
         weight = (int)sdr["weight"];
         movespeed = (int)sdr["movespeed"];
         this.model = sdr["model"].ToString();
@@ -885,12 +887,14 @@ public static class IConst
     public const int BASE_AGI = 10; // 基础敏捷
     public const int BASE_TEN = 10; // 基础坚韧
     public const int BASE_STA = 10; // 基础体能
+    public const int BASE_END = 10; //基础持久力
     public const int BASE_MOVESPEED = 5;// 基础移动速度
     public const int BASE_ENG_RECOVER = 10;//基础精力恢复速度。点/秒
     public const float BASE_POWERSPEED = 1.5f;//基础蓄力速度
     public const int MP_PER_INT = 2;   // 每点智力增加的魔法上限
     public const int TL_PER_STA = 10;   // 每点体能增加的体力上限
     public const int HP_PER_STA = 5;   // 每点体能增加的生命值上限
+    public const int VIGOR_PER_END = 10;//每点持久提供的精力上限
     public const float DAMREDUCE_PER_TEN = 0.01f;//每点坚韧减少百分百伤害
     public const float ATK_PHY_PER_STR = 0.01f;  // 每点力量提供的百分百武器伤害
     public const int ATK_MAG_PER_INT = 2; // 每点智力提供的魔法攻击力
@@ -903,6 +907,7 @@ public static class IConst
     public const int EXP_MON_BASE = 40; // 怪提供的经验
     public const int EXP_MON_K = 10;
     public const int LOST_GOLD_LEVEL = 300; // 死亡损失金钱
+    public const float VIGOR_RECOVE_SPEED_RATE = 5f;//硬直状态精力恢复速度
     public static readonly float BaseDS = 0.05f; //基础致命一击几率
 
     public const float Power1DamPer = 4f;//一段蓄力伤害
@@ -913,6 +918,7 @@ public static class IConst
     public const string KEY_HASALLOT_AGI = "agiallot";     // 已分配的敏捷点
     public const string KEY_HASALLOT_INT = "intallot";     // 已分配的精神力点
     public const string KEY_HASALLOT_STA = "staallot";      // 已分配的体能点
+    public const string KEY_HASALLOT_END = "endallot";  //已分配的持久力
     public const string KEY_NEED_ALLOT = "noallot";         // 还未分配的属性点
     public const string KEY_LEVEL = "level";    // 等级
     public const string KEY_EXP_CURLEVEL = "expcurlevel";   // 当前等级经验

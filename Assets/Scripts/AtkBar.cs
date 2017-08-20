@@ -13,7 +13,6 @@ public class AtkBar : MonoBehaviour {
 
     void Awake() { 
        progBar = GetComponent<UIProgressBar>();
-        //Debug.LogError(progBar);//########
     }
 
 	// Use this for initialization

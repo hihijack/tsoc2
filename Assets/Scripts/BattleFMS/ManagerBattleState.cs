@@ -214,5 +214,14 @@ public class ManagerBattleState
             ChangeState(next);
         }
     }
+
+    internal void ActionHurted(float unCtlDur)
+    {
+        if (CurState != null)
+        {
+            IBattleState next = CurState.ActionHurted(unCtlDur);
+            ChangeState(next);
+        }
+    }
     #endregion
 }

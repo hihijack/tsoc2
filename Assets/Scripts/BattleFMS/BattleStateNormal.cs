@@ -76,8 +76,8 @@
     public override IBattleState ActionDodge(float dur)
     {
         IBattleState r = null;
-        //TODO 闪避消耗
-        if (manager.hero.Prop.Vigor >= 10)
+        //闪避消耗
+        if (manager.hero.Prop.Vigor >= manager.hero.GetVigorCostDodge())
         {
             manager.bsDodge.dur = dur;
             r = manager.bsDodge;

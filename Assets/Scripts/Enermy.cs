@@ -168,7 +168,7 @@ public class Enermy : IActor {
         Prop.AtkBaseA = mbd.atkMin;
         Prop.BaseWeaponIAS = mbd.ias;
 
-        GameView._Inst.AddToListEnermy(this);
+        GameView.Inst.AddToListEnermy(this);
 
         AI = GetComponent<IAI>();
         AI.Init(this);
@@ -582,7 +582,7 @@ public class Enermy : IActor {
     /// </summary>
     public override void OnDead()
     {
-        GameView._Inst.RemoveFormListEnermy(this);
+        GameView.Inst.RemoveFormListEnermy(this);
         // 从警觉中移除
         //GameManager.hero.RemoveFormAlterness(this);
         // 技能触发检测
@@ -1054,11 +1054,14 @@ public class Enermy : IActor {
     /// <param name="skillid"></param>
     public void OnBSStartAtkAfter(int skillId, IActor target)
     {
-        //技能生效
-        IMonSkill skill = GetSkillById(skillId);
-        if (skill != null)
+        if (_State != EActorState.Dead)
         {
-            skill.StartEff(target);
+            //技能生效
+            IMonSkill skill = GetSkillById(skillId);
+            if (skill != null)
+            {
+                skill.StartEff(target);
+            }
         }
     }
 

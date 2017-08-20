@@ -37,4 +37,10 @@
     {
         return managerBattleState.bsNormal;
     }
+
+    public override IBattleState ActionUnControl(float dur)
+    {
+        managerBattleState.bsUnControl.dur = dur;
+        return managerBattleState.bsUnControl;
+    }
 }

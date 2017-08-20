@@ -109,4 +109,9 @@ public class IBattleState
     {
         return null;
     }
+
+    internal virtual IBattleState ActionHurted(float unCtlDur)
+    {
+        return null;
+    }
 }

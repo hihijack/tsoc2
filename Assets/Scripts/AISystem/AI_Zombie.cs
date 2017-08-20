@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class AI_Zombie : IAI
 {
+    public float atkInterMin = 2f;
+    public float atkInterMax = 3f;
+    public float heavyAtkOdds = 0.2f;
+
     AIStateIdle stateIdle;
     AIStateAtk stateAtk;
     AIStateAtk stateHeavy;
@@ -56,17 +60,17 @@ public class AI_Zombie : IAI
         {
             curState.dur += Time.deltaTime;
 
-            if (curState.dur >= UnityEngine.Random.Range(2f,3f))
+            if (curState.dur >= UnityEngine.Random.Range(atkInterMin,atkInterMax))
             {
-                if (Tools.IsHitOdds(0.8f))
-                {
-                    stateAtk.target = npc.curBattleTarget;
-                    ToAIState(stateAtk);
-                }
-                else
+                if (Tools.IsHitOdds(heavyAtkOdds))
                 {
                     stateHeavy.target = npc.curBattleTarget;
                     ToAIState(stateHeavy);
+                }
+                else
+                {
+                    stateAtk.target = npc.curBattleTarget;
+                    ToAIState(stateAtk);
                 }
             }
         }

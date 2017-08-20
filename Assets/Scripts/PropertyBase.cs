@@ -14,6 +14,7 @@ public class PropertyBase
     private int strength; // 力量
     private int agility; // 敏捷
     private int tenacity;  // 坚韧
+    private int endurance;//持久力
 
     private float baseWeaponIAS; // 基础武器速度
     private float ias;//最终攻速
@@ -52,6 +53,9 @@ public class PropertyBase
     public float parryDmgPerParamA = 0f;//格挡伤害百分比参数A
     public float parryDmbPerParamB = 1f;//格挡伤害百分比参数B
     public float parryDamPerBase; //格挡伤害百分比基础。
+    public float parryDmgVigorBase = 0f;//格挡值基础
+    public float parryDmgVigorParamMul = 1f;
+    public float parryDmgVigorParamAdd = 0f;
     public int atkFireParamAdd = 0; // 火焰伤害参数A
     public float atkFireParamDot = 1f; // 火焰伤害参数B
     public int atkThunderParamAdd = 0;  // 额外的闪电伤害参数A
@@ -77,6 +81,17 @@ public class PropertyBase
     #endregion
 
     #region GeterAndSeter
+    /// <summary>
+    /// 格挡值。每点精力格挡伤害
+    /// </summary>
+    public float ParryDmgVigor
+    {
+        get
+        {
+            return parryDmgVigorBase * parryDmgVigorParamMul + parryDmgVigorParamAdd;
+        }
+    }
+
     public int EngRecoverSpeedBase
     {
         set
@@ -251,7 +266,6 @@ public class PropertyBase
         set
         {
             _vigor = value;
-            //Debug.LogError(value);//##########
             _vigor = Mathf.Clamp(_vigor, 0, VigorMax);
         }
     }
@@ -299,6 +313,19 @@ public class PropertyBase
         }
     }
 
+    public int Endurance
+    {
+        get
+        {
+            return endurance;
+        }
+        set
+        {
+            endurance = value;
+            VigorMax = IConst.VIGOR_PER_END * endurance;
+        }
+    }
+
     /// <summary>
     /// 当前血量
     /// </summary>
@@ -341,7 +368,6 @@ public class PropertyBase
         set
         {
             _vigorMax = value;
-
             if (Vigor > _vigorMax)
             {
                 Vigor = _vigorMax;
