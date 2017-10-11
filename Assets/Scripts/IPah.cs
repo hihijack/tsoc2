@@ -9,5 +9,6 @@ public static class IPath
     public static string UI = "Prefabs/UI/";
     public static string Weapons = "Prefabs/EquipItems/Weapons/";
     public static string Maps = "Prefabs/Maps/";
+    public static string MapItems = "Prefabs/MapItem/";
 }
 

@@ -4,6 +4,6 @@
     public override void OnInto()
     {
         base.OnInto();
-        AI.npc.gFSMManager.ActionDef();
+        AI.NPC.gFSMManager.ActionDef();
     }
 }

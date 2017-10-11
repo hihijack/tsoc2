@@ -24,15 +24,20 @@ public class UITrade : MonoBehaviour {
             // icon
             UISprite eiIcon = Tools.GetComponentInChildByPath<UISprite>(gobjItem, "icon");
             eiIcon.spriteName = eiItem.GetIcon();
-            UIButton btnIcon = Tools.GetComponentInChildByPath<UIButton>(gobjItem, "icon");
-            btnIcon.data = eiItem;
+            //UIButton btnIcon = Tools.GetComponentInChildByPath<UIButton>(gobjItem, "icon");
+            UIEquipItemOperControll operCtl = eiIcon.GetComponent<UIEquipItemOperControll>();
+            operCtl.Init(eiItem, false);
             // name
             UILabel eiTxt = Tools.GetComponentInChildByPath<UILabel>(gobjItem, "txt_name");
-            eiTxt.text = GameManager.gameView.GetEIName(eiItem);
+            eiTxt.text = GameView.Inst.eiManager.GetEIName(eiItem);
             // pricce
             UILabel txtPrice = Tools.GetComponentInChildByPath<UILabel>(gobjItem, "btn_buy/txt_price");
             txtPrice.text = eiItem.GetTradePrice().ToString();
-            
+
+            ////库存
+            //UILabel txtCount = Tools.GetComponentInChildByPath<UILabel>(gobjItem, "txt_count");
+            //txtCount.text = "库存:" + eiItem.count;
+
             UIButton btnBuy = Tools.GetComponentInChildByPath<UIButton>(gobjItem, "btn_buy");
             btnBuy.onClick.Add(new EventDelegate(BtnClick_Buy));
             btnBuy.data = eiItem;
@@ -45,42 +50,17 @@ public class UITrade : MonoBehaviour {
     {
         EquipItem ei = UIButton.current.data as EquipItem;
         int needPrice = ei.GetTradePrice();
-        if (GameManager.hero._Gold >= needPrice)
+        if (GameView.Inst.eiManager._Gold >= needPrice)
         {
-            EquipItem eiInbag = null;
-            bool canPile = false;
-            if (GameManager.gameView.AddAEquipItemToBag(GameManager.hero, ei, out eiInbag, out canPile))
+            EquipItem eiClone = ei.Clone();
+            if (GameView.Inst.DoAddAEquipToBag(eiClone))
             {
-                GameManager.hero._Gold -= needPrice;
+                GameView.Inst.eiManager._Gold -= needPrice;
                 
-                // 刷新背包物品
-                if (canPile)
-                {
-                    UIManager.Inst.GetUIBag().RefreshEquipItemCount(eiInbag);
-                }
-                else
-                {
-                    UIManager.Inst.GetUIBag().AddAEquipItemToAGrid(ei);
-                }
-                
-                // 刷新配置
-                if (eiInbag != null)
-                {
-                    UIManager.Inst.uiMain.RefreshItemUsed(eiInbag);
-                }
-                
-
-                GameManager.commonCPU.SaveEquipItems();
-
-                // npc移除商品
+                //// npc移除商品
                 //npc.RemoveSells(ei);
-
-                // 刷新UI
+                //// 刷新UI
                 //DestroyObject(UIButton.current.transform.parent.gameObject);
-            }
-            else
-            {
-                UIManager.Inst.GeneralTip("背包已满", Color.red);
             }
         }
         else

@@ -13,6 +13,7 @@ public enum EGridType
 	Block,		// 路障
     Start,       // 玩家开始位置
     StartAndToHome, // 试炼塔开始及返回城镇
+    Tips,       //提示
 }
 
 public enum EChoosedState
@@ -136,7 +137,12 @@ public enum ENPCActionType
     Treat = 3,  // 治疗
     Forge = 4,   // 锻造
     Trial = 5,     // 试炼塔
-    Active = 6      // 激活
+    Active = 6,      // 激活
+    ActiveTransfer = 7, //激活传送站
+    Transfer = 8, //传送
+    Rest = 9,    //休息
+    OpenDoor = 10,
+    TouchGirlTip = 11//触碰少女提示
 }
 
 /// <summary>
@@ -206,7 +212,9 @@ public enum EEquipItemType
     Gold = 20,          // 金钱
     HPPotion = 21,        // 治疗药水
     ResPoiPotion = 22,         // 毒抗药水
-    Torch = 23
+    Torch = 23,
+    Core = 24,                   //升级核心
+    CoreDebris = 25
 }
 
 /// <summary>
@@ -311,6 +319,7 @@ public class EquipItemBaseData
     public EEquipItemUseType useType;
     public int pile; //堆叠上限
     public string data;
+    public string desc;//描述
 
     public EquipItemBaseData(SqliteDataReader sdr)
     {
@@ -333,6 +342,18 @@ public class EquipItemBaseData
         this.useType = (EEquipItemUseType)sdr["use"];
         this.pile = (int)sdr["pile"];
         this.data = sdr["data"].ToString();
+        desc = sdr["desc"].ToString();
+    }
+
+    public int GetIntData(string key)
+    {
+        int val = 0;
+        if (!string.IsNullOrEmpty(data))
+        {
+            JSONNode jdData = JSONNode.Parse(data);
+            val = jdData[key].AsInt;
+        }
+        return val;
     }
 }
 
@@ -665,7 +686,7 @@ public class EquipItemWord
     public EquipItemWordsBaseData wordBaseData;  // 词缀基础数据
     public int val;       // 词缀值
 
-    public string ToString()
+    public override string ToString()
     {
         string desc = "";
         switch (wordBaseData.propertyType)
@@ -745,6 +766,14 @@ public class EquipItemWord
         return desc;
         //return GameTools.Prop2Desc(wordBaseData.propertyType) + "+" + val;
     }
+
+    public EquipItemWord Clone()
+    {
+        EquipItemWord c = new EquipItemWord();
+        c.wordBaseData = this.wordBaseData;
+        c.val = this.val;
+        return c;
+    }
 }
 
 // 游戏中的一个物品装备
@@ -759,7 +788,7 @@ public class EquipItem
     public EEquipItemQLevel qLevel; // 品质
     public List<EquipItemWord> words; // 词缀列表
 
-    public int bagGridId;   // 在背包中的位置
+    private int _bagGridId;   // 在背包中的位置
     private EEquipPart part = EEquipPart.None;     // 装备的部位
 
     public EEquipPart _Part
@@ -768,7 +797,30 @@ public class EquipItem
         set { part = value;}
     }
 
+    public int BagGridId
+    {
+        get
+        {
+            return _bagGridId;
+        }
+
+        set
+        {
+            _bagGridId = value;
+        }
+    }
+
     public int count = 1;   // 堆叠
+
+    public bool IsInBag()
+    {
+        return BagGridId > 0;
+    }
+
+    public bool IsInEquip()
+    {
+        return part != EEquipPart.None;
+    }
 
     public string GetIcon()
     {
@@ -875,6 +927,22 @@ public class EquipItem
         }
         return color;
     }
+
+
+    public EquipItem Clone()
+    {
+        EquipItem ei = new EquipItem();
+        ei.id = GameView.Inst.eiManager.GenerateEquipItemId();
+        ei.baseData = baseData;
+        ei.legendBaseData = legendBaseData;
+        ei.qLevel = qLevel;
+        ei.words = new List<EquipItemWord>(words.Count);
+        for (int i = 0; i < words.Count; i++)
+        {
+            ei.words[i] = words[i].Clone();
+        }
+        return ei;
+    }
 }
 
 public static class IConst
@@ -894,7 +962,7 @@ public static class IConst
     public const int MP_PER_INT = 2;   // 每点智力增加的魔法上限
     public const int TL_PER_STA = 10;   // 每点体能增加的体力上限
     public const int HP_PER_STA = 5;   // 每点体能增加的生命值上限
-    public const int VIGOR_PER_END = 10;//每点持久提供的精力上限
+    public const int VIGOR_PER_END = 1;//每点持久提供的精力上限
     public const float DAMREDUCE_PER_TEN = 0.01f;//每点坚韧减少百分百伤害
     public const float ATK_PHY_PER_STR = 0.01f;  // 每点力量提供的百分百武器伤害
     public const int ATK_MAG_PER_INT = 2; // 每点智力提供的魔法攻击力
@@ -909,6 +977,8 @@ public static class IConst
     public const int LOST_GOLD_LEVEL = 300; // 死亡损失金钱
     public const float VIGOR_RECOVE_SPEED_RATE = 5f;//硬直状态精力恢复速度
     public static readonly float BaseDS = 0.05f; //基础致命一击几率
+
+    public const int ATK_EMPTY = 1;//空手攻击力
 
     public const float Power1DamPer = 4f;//一段蓄力伤害
     public const float Power2DamPer = 8f;//二段蓄力伤害
@@ -927,11 +997,14 @@ public static class IConst
     public const string KEY_MISSION = "mission";    // 当前任务进度
     public const string KEY_HOMEMAP = "curhomemap"; // 当前城镇地图id
     public const string KEY_BEST_TRIAL = "besttrial"; // 试炼塔最好层数
-
+    public const string KEY_TRANSFER_ACTIVED = "transfer_actived";
     public const string KEY_GOLD = "gold";  // 金币数
 
     public const string KEY_ITEM_USED = "itemused";
-
+    internal static readonly string KEY_KILL_RECORD = "killrecord";
+    internal static readonly string KEY_CHEST_OPENED = "checsopened";
+    internal static readonly string KEY_DOOR_OPEND = "dooropend";
+    internal static readonly string KEY_GIRLTIP;
 }
 
 /// <summary>

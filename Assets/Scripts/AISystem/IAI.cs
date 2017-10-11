@@ -2,11 +2,19 @@
 {
     public IAIState curState;
 
-    public Enermy npc;
+    protected Enermy npc;
 
     public virtual void Init(Enermy npc)
     {
         this.npc = npc;
+    }
+
+    public Enermy NPC
+    {
+        get
+        {
+            return npc;
+        }
     }
 
     /// <summary>

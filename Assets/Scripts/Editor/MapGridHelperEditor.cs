@@ -2,7 +2,7 @@
 using UnityEditor;
 using System.Collections;
 
-[CustomEditor(typeof(MapGridHelper))]
+[CustomEditor(typeof(GameMap))]
 public class MapGridHelperEditor : Editor {
 
 	Transform thisTf;
@@ -39,7 +39,7 @@ public class MapGridHelperEditor : Editor {
 	}
 	void ShowInfoInScene()
 	{
-		MapGridHelper mgh = target as MapGridHelper;
+		GameMap mgh = target as GameMap;
 		thisTf = mgh.transform;
 		Handles.color = Color.blue;
 		foreach (Transform child in thisTf) 

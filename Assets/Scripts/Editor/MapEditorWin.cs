@@ -33,7 +33,7 @@ public class MapEditorWin : EditorWindow {
         {
             GameObject gobjMap = new GameObject();
             gobjMap.name = mapName;
-            gobjMap.AddComponent<MapGridHelper>();
+            gobjMap.AddComponent<GameMap>();
             int index = 0;
             for (int y = 0; y < height; y++)
             {

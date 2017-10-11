@@ -7,49 +7,7 @@ using SimpleJSON;
 
 public class CommonCPU : MonoBehaviour
 {
-    /// <summary>
-    /// 保存玩家装备
-    /// </summary>
-    public void SaveEquipItems()
-    {
-        string fileName = Application.persistentDataPath + "/eiinbag.dat";
-        Stream fStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite);
-        BinaryFormatter binFormat = new BinaryFormatter();//创建二进制序列化器
-        binFormat.Serialize(fStream, GameManager.hero.itemsInBag);
 
-        string fileName2 = Application.persistentDataPath + "/eihasequip.dat";
-        Stream fStream2 = new FileStream(fileName2, FileMode.Create, FileAccess.ReadWrite);
-        BinaryFormatter binFormat2 = new BinaryFormatter();//创建二进制序列化器
-        binFormat.Serialize(fStream2, GameManager.hero.itemsHasEquip);
-
-        Debug.Log("SaveEquipItems Complete");
-        fStream.Close();
-        fStream2.Close();
-    }
-
-    public void ReadEquipItem()
-    {
-        string fileName = Application.persistentDataPath + "/eiinbag.dat";
-        string fileName2 = Application.persistentDataPath + "/eihasequip.dat";
-
-        if (File.Exists(fileName))
-        {
-            Stream fStream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite);
-            BinaryFormatter binFormat = new BinaryFormatter();//创建二进制序列化器
-            GameManager.hero.itemsInBag = (List<EquipItem>)binFormat.Deserialize(fStream);
-            fStream.Close();
-        }
-
-        if (File.Exists(fileName2))
-        {
-            Stream fStream2 = new FileStream(fileName2, FileMode.Open, FileAccess.ReadWrite);
-            BinaryFormatter binFormat2 = new BinaryFormatter();//创建二进制序列化器
-            GameManager.hero.itemsHasEquip = (List<EquipItem>)binFormat2.Deserialize(fStream2);
-            fStream2.Close();
-        }
-
-        Debug.Log("ReadEquipItem" + GameManager.hero.itemsInBag.Count + "  " + GameManager.hero.itemsHasEquip.Count);//###########
-    }
 
     /// <summary>
     /// 保存玩家技能配置
@@ -76,35 +34,7 @@ public class CommonCPU : MonoBehaviour
         PlayerPrefs.SetInt(IConst.KEY_SKILLPOINT_NEEDALLOT, GameManager.hero._SkillNeedAllot);
     }
 
-    /// <summary>
-    /// 保存使用的道具
-    /// </summary>
-    public void SaveItemUesd() 
-    {
-        string strData = "";
-        for (int i = 0; i < GameManager.hero.arrItemUesd.Length; i++)
-        {
-            int itemId = GameManager.hero.arrItemUesd[i];
-            strData = strData + itemId + "&";
-        }
-        PlayerPrefs.SetString(IConst.KEY_ITEM_USED, strData);
-    }
-
-    public void ReadAndSetItemUsed() 
-    {
-        if (PlayerPrefs.HasKey(IConst.KEY_ITEM_USED))
-        {
-            string strData = PlayerPrefs.GetString(IConst.KEY_ITEM_USED);
-            string[] strs = strData.Split('&');
-            for (int i = 0; i < strs.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(strs[i]))
-                {
-                    GameManager.hero.SetItemUsed(i, int.Parse(strs[i]));
-                }
-            }
-        }
-    }
+ 
 
     /// <summary>
     /// 读取玩家技能配置
@@ -181,7 +111,7 @@ public class CommonCPU : MonoBehaviour
     /// <returns></returns>
     public int ReadCurHomeMap()
     {
-        int curhomemap = 6; // 默认是地图6
+        int curhomemap = 1; // 默认是地图6
         if (PlayerPrefs.HasKey(IConst.KEY_HOMEMAP))
         {
             curhomemap = PlayerPrefs.GetInt(IConst.KEY_HOMEMAP);
@@ -210,6 +140,12 @@ public class CommonCPU : MonoBehaviour
             dicSprites.Add(sp.name, sp);
         }
         sps = Resources.LoadAll<Sprite>("Texus/TiledMap");
+        for (int i = 0; i < sps.Length; i++)
+        {
+            Sprite sp = sps[i];
+            dicSprites.Add(sp.name, sp);
+        }
+        sps = Resources.LoadAll<Sprite>("Texus/Items");
         for (int i = 0; i < sps.Length; i++)
         {
             Sprite sp = sps[i];

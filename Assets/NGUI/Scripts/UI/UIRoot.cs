@@ -16,7 +16,7 @@ using System.Collections.Generic;
 public class UIRoot : MonoBehaviour
 {
 	static public List<UIRoot> list = new List<UIRoot>();
-
+    public static UIRoot Inst;
 	/// <summary>
 	/// List of all UIRoots present in the scene.
 	/// </summary>
@@ -113,7 +113,7 @@ public class UIRoot : MonoBehaviour
 
 	Transform mTrans;
 
-	protected virtual void Awake () { mTrans = transform; }
+	protected virtual void Awake () { mTrans = transform; Inst = this; }
 	protected virtual void OnEnable () { list.Add(this); }
 	protected virtual void OnDisable () { list.Remove(this); }
 

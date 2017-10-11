@@ -182,4 +182,9 @@ public class UIHeroInfo : MonoBehaviour {
     {
         Refresh();
     }
+
+    public void Close()
+    {
+        UIManager.Inst.CloseHeroInfo();
+    }
 }

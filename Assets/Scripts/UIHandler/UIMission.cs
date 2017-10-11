@@ -35,5 +35,10 @@ public class UIMission : MonoBehaviour {
             }
         }
         gridTargets.Reposition();
+    }
+    
+    public void Close()
+    {
+        UIManager.Inst.CloseUIMission();
     }    
 }

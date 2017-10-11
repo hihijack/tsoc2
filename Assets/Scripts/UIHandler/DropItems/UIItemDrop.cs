@@ -7,12 +7,13 @@ public class UIItemDrop : MonoBehaviour {
     public UILabel txtName;
 
     EquipItem ei;
-    UIGrid grid;
 
-    public void Init(UIGrid grid, EquipItem ei)
+    UIDropItems uiDropItems;
+
+    public void Init(UIDropItems ui, EquipItem ei)
     {
         this.ei = ei;
-        this.grid = grid;
+        this.uiDropItems = ui;
         // icon
         string iconname = "";
         if (ei.qLevel == EEquipItemQLevel.Legend)
@@ -27,7 +28,7 @@ public class UIItemDrop : MonoBehaviour {
         
         // name
         string strName = "";
-        strName = GameManager.gameView.GetEIName(ei);
+        strName = GameView.Inst.eiManager.GetEIName(ei);
         if (ei.count > 1)
         {
             strName = strName + "x" + ei.count;
@@ -43,30 +44,27 @@ public class UIItemDrop : MonoBehaviour {
     {
         if (ei.baseData.id == 11) //金币
         {
-            GameManager.gameView.GetGold(ei.count);
+            GameView.Inst.eiManager.GetGold(ei.count);
             gameObject.SetActive(false);
             // 拾取成功
-            grid.Reposition();
+            uiDropItems.grid.Reposition();
+            uiDropItems.OnGet();
         }
         else
         {
-            if (GameManager.gameView.AddAEquipItemToBag(GameManager.gameView._MHero, ei))
+            if (GameView.Inst.DoAddAEquipToBag(ei))
             {
                 gameObject.SetActive(false);
                 // 拾取成功
-                grid.Reposition();
-
-                UIManager.Inst.uiMain.RefreshItemUsed(ei);
-
-                GameManager.commonCPU.SaveEquipItems();
+                uiDropItems.grid.Reposition();
+                uiDropItems.OnGet();
+                //UIManager.Inst.uiMain.RefreshItemUsed(ei);
             }
             else
             {
                 UIManager.Inst.GeneralTip("背包已满", Color.red);
             }
         }
-        
+       
     }
-
-
 }

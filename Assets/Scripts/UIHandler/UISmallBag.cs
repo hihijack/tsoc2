@@ -11,9 +11,9 @@ public class UISmallBag : UIHeroBag
         CreateBagGrid();
 
         // 背包里的物品
-        for (int i = 0; i < gameView._MHero.itemsInBag.Count; i++)
+        for (int i = 0; i < GameView.Inst.eiManager.itemsInBag.Count; i++)
         {
-            EquipItem eiInBag = gameView._MHero.itemsInBag[i];
+            EquipItem eiInBag = GameView.Inst.eiManager.itemsInBag[i];
             AddAEquipItemToAGrid(eiInBag);
         }
 

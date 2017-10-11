@@ -97,9 +97,11 @@ public class MapGrid : MonoBehaviour {
         set { toMapTargetGrid = value; }
     }
 
-#endregion
+    #endregion
 
-
+    #region 提示
+    public string tips;
+    #endregion
 
     GameObject g_GobjActionPoint;
     bool isEndACP;
@@ -202,8 +204,11 @@ public class MapGrid : MonoBehaviour {
     {
         _spRender = GetComponent<SpriteRenderer>();
         _spGrid = Tools.GetComponentInChildByPath<SpriteRenderer>(gameObject, "grid");
+    }
 
-        GameView.Inst.gListMGs.Add(this);
+    void Start()
+    {
+        GameView.Inst.mListMGs.Add(this);
     }
 
     public void RefreshBySurface()
@@ -351,7 +356,7 @@ public class MapGrid : MonoBehaviour {
     {
         bool isnear = true;
         int difVal = Mathf.Abs(g_Id - otherGrid.g_Id);
-        if (difVal > 1 && difVal != GameManager.gameView.gGameMapOri.width)
+        if (difVal > 1 && difVal != GameManager.gameView.mCurGameMap.baseData.width)
         {
             isnear = false;
         }
@@ -365,7 +370,7 @@ public class MapGrid : MonoBehaviour {
     public List<MapGrid> GetNearGrids(bool containCorner = false)
     {
         List<MapGrid> list = new List<MapGrid>();
-        int idUp = g_Id - GameManager.gameView.gGameMapOri.width;
+        int idUp = g_Id - GameManager.gameView.mCurGameMap.baseData.width;
         if (idUp >= 0)
         {
             MapGrid mgUp = GameManager.gameView.GetMapGridById(idUp);
@@ -375,7 +380,7 @@ public class MapGrid : MonoBehaviour {
             }
         }
 
-        int idBottom = g_Id + GameManager.gameView.gGameMapOri.width;
+        int idBottom = g_Id + GameManager.gameView.mCurGameMap.baseData.width;
         if (idBottom >= 0)
         {
             MapGrid mgBottom = GameManager.gameView.GetMapGridById(idBottom);
@@ -386,7 +391,7 @@ public class MapGrid : MonoBehaviour {
             
         }
 
-        if (!IsMapLeft(GameManager.gameView.gGameMapOri.width))
+        if (!IsMapLeft(GameManager.gameView.mCurGameMap.baseData.width))
         {
             int idLeft = g_Id - 1;
             MapGrid mgLeft = GameManager.gameView.GetMapGridById(idLeft);
@@ -397,7 +402,7 @@ public class MapGrid : MonoBehaviour {
             
         }
 
-        if (!IsMapRight(GameManager.gameView.gGameMapOri.width))
+        if (!IsMapRight(GameManager.gameView.mCurGameMap.baseData.width))
         {
             int idRight = g_Id + 1;
             MapGrid mgRight = GameManager.gameView.GetMapGridById(idRight);
@@ -421,7 +426,7 @@ public class MapGrid : MonoBehaviour {
         MapGrid nextMG = null;
         if (dir == EDirection.Up)
         {
-            int idUp = g_Id - GameManager.gameView.gGameMapOri.width;
+            int idUp = g_Id - GameManager.gameView.mCurGameMap.baseData.width;
             if (idUp >= 0)
             {
                 MapGrid mgUp = GameManager.gameView.GetMapGridById(idUp);
@@ -433,7 +438,7 @@ public class MapGrid : MonoBehaviour {
         }
         else if (dir == EDirection.Down)
         {
-            int idBottom = g_Id + GameManager.gameView.gGameMapOri.width;
+            int idBottom = g_Id + GameManager.gameView.mCurGameMap.baseData.width;
             if (idBottom >= 0)
             {
                 MapGrid mgBottom = GameManager.gameView.GetMapGridById(idBottom);
@@ -446,7 +451,7 @@ public class MapGrid : MonoBehaviour {
         }
         else if (dir == EDirection.Left)
         {
-            if (!IsMapLeft(GameManager.gameView.gGameMapOri.width))
+            if (!IsMapLeft(GameManager.gameView.mCurGameMap.baseData.width))
             {
                 int idLeft = g_Id - 1;
                 MapGrid mgLeft = GameManager.gameView.GetMapGridById(idLeft);
@@ -459,7 +464,7 @@ public class MapGrid : MonoBehaviour {
         }
         else if (dir == EDirection.Right)
         {
-            if (!IsMapRight(GameManager.gameView.gGameMapOri.width))
+            if (!IsMapRight(GameManager.gameView.mCurGameMap.baseData.width))
             {
                 int idRight = g_Id + 1;
                 MapGrid mgRight = GameManager.gameView.GetMapGridById(idRight);
@@ -480,9 +485,9 @@ public class MapGrid : MonoBehaviour {
     {
         List<MapGrid> mgs = new List<MapGrid>();
         
-        if (!IsMapLeft(GameManager.gameView.gGameMapOri.width))
+        if (!IsMapLeft(GameManager.gameView.mCurGameMap.baseData.width))
         {
-            int idTopLeft = g_Id - GameManager.gameView.gGameMapOri.width - 1;
+            int idTopLeft = g_Id - GameManager.gameView.mCurGameMap.baseData.width - 1;
             if (idTopLeft >= 0)
             {
                 MapGrid mgTL = GameManager.gameView.GetMapGridById(idTopLeft);
@@ -492,7 +497,7 @@ public class MapGrid : MonoBehaviour {
                 }
             }
 
-            int idBottomLeft = g_Id + GameManager.gameView.gGameMapOri.width - 1;
+            int idBottomLeft = g_Id + GameManager.gameView.mCurGameMap.baseData.width - 1;
             if (idBottomLeft >= 0)
             {
                 MapGrid mgBL = GameManager.gameView.GetMapGridById(idBottomLeft);
@@ -503,9 +508,9 @@ public class MapGrid : MonoBehaviour {
             }
         }
 
-        if (!IsMapRight(GameManager.gameView.gGameMapOri.width))
+        if (!IsMapRight(GameManager.gameView.mCurGameMap.baseData.width))
         {
-            int idTopRight = g_Id - GameManager.gameView.gGameMapOri.width + 1;
+            int idTopRight = g_Id - GameManager.gameView.mCurGameMap.baseData.width + 1;
             if (idTopRight >= 0)
             {
                 MapGrid mgTR = GameManager.gameView.GetMapGridById(idTopRight);
@@ -515,7 +520,7 @@ public class MapGrid : MonoBehaviour {
                 }
             }
 
-            int idBottomRight = g_Id + GameManager.gameView.gGameMapOri.width + 1;
+            int idBottomRight = g_Id + GameManager.gameView.mCurGameMap.baseData.width + 1;
             if (idBottomRight >= 0)
             {
                 MapGrid mgBR = GameManager.gameView.GetMapGridById(idBottomRight);
@@ -636,7 +641,7 @@ public class MapGrid : MonoBehaviour {
     public int GetX()
     {
         int x = 0;
-        x = g_Id % GameManager.gameView.gGameMapOri.width;
+        x = g_Id % GameManager.gameView.mCurGameMap.baseData.width;
         return x;
     }
 
@@ -647,7 +652,7 @@ public class MapGrid : MonoBehaviour {
     public int GetY()
     {
         int y = 0;
-        y = g_Id / GameManager.gameView.gGameMapOri.width;
+        y = g_Id / GameManager.gameView.mCurGameMap.baseData.width;
         return y;
     }
 
@@ -673,9 +678,9 @@ public class MapGrid : MonoBehaviour {
     public List<MapGrid> GetMGsInRange(int range)
     {
         List<MapGrid> mgs = new List<MapGrid>();
-        for (int i = 0; i < GameView.Inst.gListMGs.Count; i++)
+        for (int i = 0; i < GameView.Inst.mListMGs.Count; i++)
         {
-            MapGrid mgItem = GameView.Inst.gListMGs[i];
+            MapGrid mgItem = GameView.Inst.mListMGs[i];
             if (mgItem != null && mgItem != this)
             {
                 if (GetDis(this, mgItem) <= range)

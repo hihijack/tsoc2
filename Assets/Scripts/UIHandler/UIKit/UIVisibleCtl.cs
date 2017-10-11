@@ -4,6 +4,7 @@ using System.Collections;
 [ExecuteInEditMode]
 public class UIVisibleCtl : MonoBehaviour
 {
+    public bool showing = false;
     public Vector3 oriPos;
 
     // Update is called once per frame
@@ -25,5 +26,6 @@ public class UIVisibleCtl : MonoBehaviour
         {
             transform.localPosition = Vector3.right * 3000;
         }
+        showing = val;
     }
 }

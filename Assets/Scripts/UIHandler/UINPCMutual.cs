@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class UINPCMutual : MonoBehaviour {
 
@@ -8,10 +9,51 @@ public class UINPCMutual : MonoBehaviour {
 
     ItemNPC npc;
 
+    ItemTransfer transfer;
+
+    ItemDoor door;
+
+    ItemGrilTip girlTip;
+
     public void Init(ItemNPC npc) 
     {
         this.npc = npc;
         ENPCActionType[] types = npc.arrActions;
+        InitItemsByActions(types);
+    }
+
+    public void Init(ItemTransfer transfer)
+    {
+        this.transfer = transfer;
+        ENPCActionType[] types = null;
+        if (transfer.actived)
+        {
+            types = new ENPCActionType[2] { ENPCActionType.Transfer, ENPCActionType.Bye };
+        }
+        else
+        {
+            types = new ENPCActionType[2] { ENPCActionType.ActiveTransfer, ENPCActionType.Bye };
+        }
+
+        InitItemsByActions(types);
+    }
+
+    internal void Init(ItemDoor door)
+    {
+        this.door = door;
+        ENPCActionType[] types = new ENPCActionType[2] { ENPCActionType.OpenDoor, ENPCActionType.Bye };
+        InitItemsByActions(types);
+    }
+
+    public void Init(ItemGrilTip girlTip)
+    {
+        this.girlTip = girlTip;
+        ENPCActionType[] types = new ENPCActionType[2] { ENPCActionType.TouchGirlTip, ENPCActionType.Bye };
+        InitItemsByActions(types);
+    }
+
+    void InitItemsByActions(ENPCActionType[] types)
+    {
         for (int i = 0; i < types.Length; i++)
         {
             ENPCActionType actType = types[i];
@@ -22,6 +64,15 @@ public class UINPCMutual : MonoBehaviour {
             {
                 case ENPCActionType.Bye:
                     strDesc = "再见";
+                    break;
+                case ENPCActionType.Active:
+                    strDesc = "激活";
+                    break;
+                case ENPCActionType.ActiveTransfer:
+                    strDesc = "激活传送站";
+                    break;
+                case ENPCActionType.Transfer:
+                    strDesc = "传送";
                     break;
                 case ENPCActionType.Talk:
                     strDesc = "交谈";
@@ -38,8 +89,11 @@ public class UINPCMutual : MonoBehaviour {
                 case ENPCActionType.Trial:
                     strDesc = "试炼塔";
                     break;
-                case ENPCActionType.Active:
-                    strDesc = "激活";
+                case ENPCActionType.Rest:
+                    strDesc = "休息";
+                    break;
+                case ENPCActionType.TouchGirlTip:
+                    strDesc = "触碰印记";
                     break;
                 default:
                     break;
@@ -49,12 +103,11 @@ public class UINPCMutual : MonoBehaviour {
             btn.onClick.Add(new EventDelegate(BtnClick_Action));
             btn.data = actType;
         }
-
         // 设置bg长度
         bg.height = 92 * types.Length + 18;
     }
 
-    void BtnClick_Action() 
+    void BtnClick_Action()
     {
         ENPCActionType type = (ENPCActionType)UIButton.current.data;
         switch (type)
@@ -95,6 +148,42 @@ public class UINPCMutual : MonoBehaviour {
                     // 激活神坛
                     UIManager.Inst.CloseUINPCMutual();
                     GameManager.gameView.OnActiveANPC(npc);
+                }
+                break;
+            case ENPCActionType.ActiveTransfer:
+                {
+                    //激活传送站
+                    UIManager.Inst.CloseUINPCMutual();
+                    GameView.Inst.ActiveTransfer(transfer);
+                }
+                break;
+            case ENPCActionType.Transfer:
+                {
+                    //传送
+                    UITransfer uiTransfer = UIManager.Inst.ShowUITransfer();
+                    uiTransfer.Init();
+                    UIManager.Inst.CloseUINPCMutual();
+                }
+                break;
+            case ENPCActionType.Rest:
+                {
+                    //休息
+                    UIManager.Inst.CloseUINPCMutual();
+                    GameView.Inst.OnRest();
+                }
+                break;
+            case ENPCActionType.OpenDoor:
+                {
+                    //开门
+                    UIManager.Inst.CloseUINPCMutual();
+                    GameView.Inst.OnOpenDoor(door);
+                }
+                break;
+            case ENPCActionType.TouchGirlTip:
+                {
+                    //触碰印记
+                    UIManager.Inst.CloseUINPCMutual();
+                    GameView.Inst.OnTouchGirlTip(girlTip);
                 }
                 break;
             default:

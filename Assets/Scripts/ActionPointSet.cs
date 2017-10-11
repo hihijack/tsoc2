@@ -153,7 +153,7 @@ public class ActionPointSet : MonoBehaviour {
             else
             {
                 int difVal = Mathf.Abs(mgTemp.g_Id - mg.g_Id);
-                if (difVal > 1 && difVal != gameView.gGameMapOri.width)
+                if (difVal > 1 && difVal != gameView.mCurGameMap.baseData.width)
                 {
                     success = false;
                     break;

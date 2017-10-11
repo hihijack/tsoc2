@@ -6,6 +6,6 @@
     public override void OnInto()
     {
         base.OnInto();
-        AI.npc.gFSMManager.ActionDodge(1f);
+        AI.NPC.gFSMManager.ActionDodge(1f);
     }
 }

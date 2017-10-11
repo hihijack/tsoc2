@@ -9,7 +9,7 @@ public class Hero : IActor
     public static Hero Inst;
     #region 成员属性
     public string nickname;
-    public int[] arrItemUesd = new int[3]; // 使用的道具id
+   
     public float speed = 10.0f;
 
     List<Enermy> targetEnermys = new List<Enermy>(4);
@@ -52,19 +52,18 @@ public class Hero : IActor
     public GameObject gobjWeapon2;
     public GameObject gobjWeaponTwoHand;
 
-    // 已装备的装备
-    public List<EquipItem> itemsHasEquip = new List<EquipItem>();
+    
+
     public int expCurLevel; // 当今等级经验
 
-    private int gold; // 金币
+  
     int bestTrial;
     /// <summary>
     /// 未分配技能点
     /// </summary>
     int g_SkillNeedAllot = 0;
     Avtoar2D avroar2D;
-    // 背包里的物品
-    public List<EquipItem> itemsInBag = new List<EquipItem>();
+   
     #endregion
 
     #region GeterAndSeter
@@ -100,24 +99,6 @@ public class Hero : IActor
         }
     }
 
-
-    public int _Gold
-    {
-        get { return gold; }
-        set
-        {
-            gold = value;
-            if (gold < 0)
-            {
-                gold = 0;
-            }
-            PlayerPrefs.SetInt(IConst.KEY_GOLD, gold);
-            UIManager.Inst.RefreshHeroBagGold();
-        }
-    }
-
-
-
     public int _BestTrial
     {
         get { return bestTrial; }
@@ -134,7 +115,7 @@ public class Hero : IActor
         set { g_SkillNeedAllot = value; GameManager.commonCPU.SaveSP(); }
     }
 
-    public Avtoar2D _Avroar2D
+    public Avtoar2D Avroar2D
     {
         get
         {
@@ -346,36 +327,14 @@ public class Hero : IActor
         enermysInAlterness.Clear();
     }
 
-    public void AddToItemsHasEquip(EquipItem ei) 
-    {
-        itemsHasEquip.Add(ei);
-    }
-
-    public void RemoveFromItemHasEquip(EquipItem ei) 
-    {
-        if (itemsHasEquip.Contains(ei))
-        {
-            itemsHasEquip.Remove(ei);
-        }
-    }
+   
 
     //public override int GetAtkPhy()
     //{
     //    return Mathf.RoundToInt(AtkWpon * (_Strength + 100) / 100f);
     //}
 
-    public void AddToItemsInBag(EquipItem ei) 
-    {
-        itemsInBag.Add(ei);
-    }
-
-    public void RemoveFromItemsInBag(EquipItem ei) 
-    {
-        if (itemsInBag.Contains(ei))
-        {
-            itemsInBag.Remove(ei);
-        }
-    }
+   
 
     private ManagerBattleState bsManager;
 
@@ -781,8 +740,8 @@ public class Hero : IActor
         string effName = "";
         int atkhand = 0;
         int handType = 1;   // 1单手，2双手
-        EquipItem eiHand1 = GameManager.gameView.GetEquipItemHasEquip(this, EEquipPart.Hand1);
-        EquipItem eiHand2 = GameManager.gameView.GetEquipItemHasEquip(this, EEquipPart.Hand2);
+        EquipItem eiHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
+        EquipItem eiHand2 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand2);
         if (eiHand1 != null && eiHand1.baseData.type == EEquipItemType.WeaponOneHand && eiHand2 != null && eiHand2.baseData.type == EEquipItemType.WeaponOneHand)
         {
             // 双持单手
@@ -1085,12 +1044,13 @@ public class Hero : IActor
     public override void OnLeaveAGrid(MapGrid grid)
     {
         UIManager.Inst.CloseUIChangeMapTip();
+        UIManager.Inst.ClseeUIMapTip();
     }
 
     /// <summary>
     /// 检测是否处于地图入出口
     /// </summary>
-    public bool CheckChangeMap()
+    public bool StandOnAGridHandler()
     {
         bool isInChange = false;
         MapGrid mg = GetCurMapGrid();
@@ -1113,6 +1073,10 @@ public class Hero : IActor
                     isInChange = true;
                     UIManager.Inst.ShowUIChangeMapTip(mapTarget, -1);
                 }
+            }
+            else if (mg.Type == EGridType.Tips)
+            {
+                UIManager.Inst.ShowUIComfirmMapTips(mg.tips);
             }
         }
         return isInChange;
@@ -1177,30 +1141,5 @@ public class Hero : IActor
         base.OnHurted(damage, damagetype, target, isDS);
         BsManager.ActionHurted(3f);
     }
-
-#region 装备
-    /// <summary>
-    /// 取背包里指定类型的装备
-    /// </summary>
-    /// <returns></returns>
-    public EquipItem GetEquipItemInBagById(int id)
-    {
-        EquipItem ei = null;
-        for (int i = 0; i < itemsInBag.Count; i++)
-        {
-            EquipItem eiItem = itemsInBag[i];
-            if (eiItem.baseData.id == id)
-            {
-                ei = eiItem;
-                break;
-            }
-        }
-        return ei;
-    }
-#endregion
-
-    public void SetItemUsed(int index, int eiId) 
-    {
-        arrItemUesd[index] = eiId;
-    }
+   
 }

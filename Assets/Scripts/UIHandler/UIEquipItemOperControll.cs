@@ -1,79 +1,143 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(UIButton))]
+[RequireComponent(typeof(UISprite))]
 public class UIEquipItemOperControll : MonoBehaviour
 {
-    public static GameObject mGobjDraggedItem;
+    [Tooltip("可以被拿起")]
+    public bool mCanDrop;
+    public static UIEquipItemOperControll curDropItem;
     GameView gameView;
     UIButton btn;
     UISprite curSprite;
 
     bool inSellGird = false;
 
+    public EquipItem mEquipItem;
+
+    public void Init(EquipItem ei, bool canDrop)
+    {
+        mEquipItem = ei;
+        mCanDrop = canDrop;
+    }
+
 	// Use this for initialization
 	void Awake () {
         gameView = GameObject.FindGameObjectWithTag("CPU").GetComponent<GameView>();
-        btn = GetComponent<UIButton>();
         curSprite = GetComponent<UISprite>();
-	}
+    }
 
     void OnPress(bool pressed)
     {
-        UIManager.Inst.OnBtnPress(btn,pressed);
-        if (!pressed)
+        if (UICamera.currentKey == KeyCode.Mouse0)
         {
-            OnDrop();
-        }
-    }
-
-    void Update() 
-    {
-        if (mGobjDraggedItem != null)
-        {
-            GameObject gobjTouch = UICamera.hoveredObject;
-            if (gobjTouch != null)
+            if (pressed)
             {
-                if (gobjTouch.CompareTag("SellGrid"))
+                if (curDropItem == null)
                 {
-                    if (!inSellGird)
+                    //拿起
+                    if (mCanDrop)
                     {
-                        inSellGird = true;
-                        OnToSellGrid();
+                        UIManager.Inst.HideEquipItemInfo();
+                        curDropItem = this;
+                        curSprite.alpha = 0.5f;
+                        UICursor.Set(curSprite.atlas, curSprite.spriteName);
+                        //背包中，显示可以装备格子
+                        UIHeroBag uiBag = UIManager.Inst.GetUIBag();
+                        if (uiBag != null)
+                        {
+                            uiBag.DisableGrid(mEquipItem);
+                        }
                     }
                 }
                 else
                 {
-                    if (inSellGird)
-                    {
-                        inSellGird = false;
-                        OnLeaveSellGrid();
-                    }
+                    UIManager.Inst.OnDropEquipItemTo(gameObject, true);
                 }
             }
-            else
+        }
+        else if (UICamera.currentKey == KeyCode.Mouse1)
+        {
+            if (pressed)
             {
-                if (inSellGird)
+                if (mEquipItem.IsInBag())
                 {
-                    inSellGird = false;
-                    OnLeaveSellGrid();
+                    //右键一个装备。使用道具
+                    GameView.Inst.OnStartUseItem(mEquipItem);
                 }
             }
+        }
+
+    }
+
+    /// <summary>
+    /// btn接口
+    /// </summary>
+    /// <param name="isOver"></param>
+    void OnHover(bool isOver)
+    {
+        if (mEquipItem == null)
+        {
+            return;
+        }
+
+        if (isOver)
+        {
+            UIManager.Inst.ShowEquipItemInfo(mEquipItem, NGUIToolsEx.GetUIPos(GameView.Inst.cameraUI.transform, transform));
         }
         else
         {
-            if (inSellGird)
-            {
-                inSellGird = false;
-                OnLeaveSellGrid();
-            }
+            UIManager.Inst.HideEquipItemInfo();
         }
     }
 
+    //void Update() 
+    //{
+        //if (curDropItem != null)
+        //{
+        //    GameObject gobjTouch = UICamera.hoveredObject;
+        //    if (gobjTouch != null)
+        //    {
+        //        if (gobjTouch.CompareTag("SellGrid"))
+        //        {
+        //            if (!inSellGird)
+        //            {
+        //                inSellGird = true;
+        //                OnToSellGrid();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (inSellGird)
+        //            {
+        //                inSellGird = false;
+        //                OnLeaveSellGrid();
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (inSellGird)
+        //        {
+        //            inSellGird = false;
+        //            OnLeaveSellGrid();
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    if (inSellGird)
+        //    {
+        //        inSellGird = false;
+        //        OnLeaveSellGrid();
+        //    }
+        //}
+    //}
+
     void OnToSellGrid() 
     {
-        UISellGrid usg = UIManager.Inst.GetUITrade().sellGrid;
-        usg.ShowInfo(true, gameView.GetEIDataInBtnGobj(mGobjDraggedItem));
+        //UISellGrid usg = UIManager.Inst.GetUITrade().sellGrid;
+        //usg.ShowInfo(true, gameView.GetEIDataInBtnGobj(mGobjDraggedItem));
     }
 
     void OnLeaveSellGrid() 
@@ -82,193 +146,13 @@ public class UIEquipItemOperControll : MonoBehaviour
         usg.ShowInfo(false, null);
     }
 
-    void OnDrop()
-    {
-        if (mGobjDraggedItem == null)
-        {
-            return;
-        }
-        // 取当前格子
-        GameObject gobjTouch = UICamera.hoveredObject;
-        if (gobjTouch != null)
-        {
-            if (gobjTouch.CompareTag("EIBagGrid"))
-            {
-                // 放置到背包空格中
-                mGobjDraggedItem.transform.parent = gobjTouch.transform;
-                mGobjDraggedItem.transform.localPosition = Vector3.zero;
-
-                EquipItem ei = gameView.GetEIDataInBtnGobj(mGobjDraggedItem);
-                int gridIdTo = int.Parse(gobjTouch.name);
-                gameView.MoveAEquipItemToBag(GameManager.hero, ei, gridIdTo);
-                GameManager.commonCPU.SaveEquipItems();
-                Recover();
-            }
-
-            else if (gobjTouch.CompareTag("EIEquipGrid"))
-            {
-                mGobjDraggedItem.transform.parent = gobjTouch.transform;
-                mGobjDraggedItem.transform.localPosition = Vector3.zero;
-
-                EquipItem ei = gameView.GetEIDataInBtnGobj(mGobjDraggedItem);
-                EEquipPart partTo = gobjTouch.GetComponent<HeroItemGrid>().part;
-
-                gameView.MoveAEquipItemToEquip(GameManager.hero, ei, partTo);
-                GameManager.commonCPU.SaveEquipItems();
-                Recover();
-            }
-            else if (gobjTouch.CompareTag("EquipItem"))
-            {
-                
-                if (gobjTouch != mGobjDraggedItem)
-                {
-
-                    EquipItem ei = gameView.GetEIDataInBtnGobj(mGobjDraggedItem);
-                    EquipItem eiTo = gameView.GetEIDataInBtnGobj(gobjTouch);
-
-                    bool succed = false;
-
-                    //gameView.
-                    // 装备移到背包
-                    if (ei._Part != EEquipPart.None && eiTo._Part == EEquipPart.None)
-                    {
-                        EEquipPart partOri = ei._Part;
-                        int gridIdTo = eiTo.bagGridId;
-                        if (gridIdTo > 0)
-                        {
-                            gameView.MoveAEquipItemToBag(GameManager.hero, ei, gridIdTo);
-                            gameView.MoveAEquipItemToEquip(GameManager.hero, eiTo, partOri);
-                            succed = true;
-                        }
-                       
-                    }
-                    // 背包移到背包
-                    else if (ei._Part == EEquipPart.None && eiTo._Part == EEquipPart.None)
-                    {
-                        int gridOri = ei.bagGridId;
-                        int gridIdTo = eiTo.bagGridId;
-                        if (gridOri > 0 && gridIdTo > 0)
-                        {
-                            gameView.MoveAEquipItemToBag(GameManager.hero, ei, gridIdTo);
-                            gameView.MoveAEquipItemToBag(GameManager.hero, eiTo, gridOri);
-                            succed = true;
-                        }
-                      
-                    }
-                    // 背包移到装备栏
-                    else if(ei._Part == EEquipPart.None && eiTo._Part != EEquipPart.None)
-                    {
-                        int gridOri = ei.bagGridId;
-                        EEquipPart partTo = eiTo._Part;
-                        gameView.MoveAEquipItemToBag(GameManager.hero, eiTo, gridOri);
-                        gameView.MoveAEquipItemToEquip(GameManager.hero, ei, partTo);
-                        succed = true;
-                    }
-                   
-                    if (succed)
-                    {
-                        // 互调位置
-                        Transform tfMDragParent = mGobjDraggedItem.transform.parent;
-                        mGobjDraggedItem.transform.parent = gobjTouch.transform.parent;
-                        gobjTouch.transform.parent = tfMDragParent;
-                        gobjTouch.transform.localPosition = Vector3.zero;
-                        mGobjDraggedItem.transform.localPosition = Vector3.zero;
-                        GameManager.commonCPU.SaveEquipItems();
-                    }
-
-                    Recover();
-                }
-                else
-                {
-                    Recover();
-                }
-            }
-            else if (gobjTouch.CompareTag("SellGrid"))
-            {
-                // 出售
-                EquipItem ei = gameView.GetEIDataInBtnGobj(mGobjDraggedItem);
-                
-                // UI背包移除
-                UIManager.Inst.GetUIBag().RemoveAEquipItem(ei);
-                // UI人物外观更新
-                GameManager.gameView.UpdateOnChangeEquip(ei, false);
-                // 添加金钱
-                int price = ei.GetTradePrice();
-                GameManager.hero._Gold += price;
-
-                // 移除装备数据
-                GameManager.gameView.RemoveEquipItem(ei);
-                // 保存装备信息
-                GameManager.commonCPU.SaveEquipItems();
-
-                // 回到原位
-                Recover();
-            }
-            else if (gobjTouch.CompareTag("DestroyGrid"))
-            {
-                // 摧毁
-                EquipItem ei = gameView.GetEIDataInBtnGobj(mGobjDraggedItem);
-                // UI背包移除
-                UIManager.Inst.GetUIBag().RemoveAEquipItem(ei);
-                // 移除装备数据
-                GameManager.gameView.RemoveEquipItem(ei);
-                // 移除配置
-                UIManager.Inst.uiMain.ClearItemUsed(ei);
-                // 保存装备信息
-                GameManager.commonCPU.SaveEquipItems();
-
-                // 回到原位
-                Recover();
-            }
-            else if (gobjTouch.CompareTag("UseGrid"))
-            {
-                // 配置道具
-                EquipItem ei = gameView.GetEIDataInBtnGobj(mGobjDraggedItem);
-                if (ei.baseData.useType != EEquipItemUseType.None)
-                {
-                    ItemUesdGrid iug = gobjTouch.GetComponent<ItemUesdGrid>();
-                    int index = iug.index;
-                    GameManager.hero.SetItemUsed(index, ei.baseData.id);
-                    GameManager.commonCPU.SaveItemUesd();
-                    iug.SetEquipItem(ei);
-                    // UI
-                    iug.RefershUI();
-                }
-
-                Recover();
-            }
-            else
-            {
-                // 回到原位
-                Recover();
-            }
-        }
-        else
-        {
-            // 回到原位
-            Recover();
-        }
-    }
-
-    // 回到原位
-    void Recover()
+    // 复原
+    public void Recover()
     {
         UICursor.Clear();
         curSprite.alpha = 1f;
-        mGobjDraggedItem = null;
+        curDropItem = null;
 
         UIManager.Inst.RecoverBagGridDisable();
     }
-
-    void OnDrag(Vector2 delta)
-    {
-        UIManager.Inst.HideEquipItemInfo();
-        mGobjDraggedItem = gameObject;
-        curSprite.alpha = 0.5f;
-        UICursor.Set(curSprite.atlas, curSprite.spriteName);
-    }
-
-    
-
-    
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class UISellGrid : MonoBehaviour {
 
@@ -8,6 +9,23 @@ public class UISellGrid : MonoBehaviour {
     public GameObject gobjInfo;
     public GameObject gobjTxtTip;
     public UILabel txtPrice;
+
+    UIEventTrigger et;
+
+    void Awake()
+    {
+        et = GetComponent<UIEventTrigger>();
+    }
+
+    void Start()
+    {
+        et.onPress.Add(new EventDelegate(OnPressEvent));
+    }
+
+    private void OnPressEvent()
+    {
+        UIManager.Inst.OnDropEquipItemTo(gameObject, true);
+    }
 
     private void ShowSellInfo(EquipItem ei) 
     {

@@ -44,7 +44,11 @@ public class MapGridEditor : Editor
 		{
             mg.toMapId = EditorGUILayout.IntField("目标地图", mg.toMapId);
             mg.toMapTargetGrid = EditorGUILayout.IntField("目标格子", mg.toMapTargetGrid);
-		}
+        }
+        else if (mg.Type == EGridType.Tips)
+        {
+            mg.tips = EditorGUILayout.TextField("提示", mg.tips);
+        }
 
         mg._surface = (EMGSurface)EditorGUILayout.EnumPopup("地表类型", mg._surface);
 
@@ -61,6 +65,15 @@ public class MapGridEditor : Editor
                 gobjBlock.layer = LayerMask.NameToLayer("MapGrid");
                 SpriteRenderer sr = gobjBlock.GetComponent<SpriteRenderer>();
                 sr.sortingLayerName = "mapitem";
+            }
+            else if (mg.Type == EGridType.Tips)
+            {
+                if (Tools.GetGameObjectInChildByPathSimple(mg.gameObject, "item") == null)
+                {
+                    GameObject gobjTip = Tools.LoadResourcesGameObject(IPath.MapItems + "item_tip", mg.gameObject);
+                    gobjTip.transform.localPosition = Vector3.zero;
+                    gobjTip.name = "item";
+                }
             }
 			EditorUtility.SetDirty(target);
 		}

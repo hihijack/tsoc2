@@ -9,6 +9,7 @@ using System.Collections.Generic;
 public class ItemNPC : MonoBehaviour {
 
     public int npcId;
+    public string strSells;
     public NPCBaseData npcData;
     public ENPCActionType[] arrActions;
     public List<EquipItem> sells = new List<EquipItem>();
@@ -21,6 +22,11 @@ public class ItemNPC : MonoBehaviour {
         {
             npcData = GameDatas.GetNPCBaseData(npcId);
             InitActionType();
+            InitSells();
+        }
+        else
+        {
+            //使用物体上的信息
             InitSells();
         }
     }
@@ -44,7 +50,7 @@ public class ItemNPC : MonoBehaviour {
         }
         else
         {
-            sdr = GameManager.dba.ExecuteQuery("select * from npc_words where npc_id = " + npcData.id + " and condition = 0");
+            sdr = GameManager.dba.ExecuteQuery("select * from npc_words where npc_id = " + npcData.id + " and condition = 0 order by random() limit 1");
             if (sdr.Read())
             {
                 words = sdr["content"].ToString();
@@ -69,11 +75,22 @@ public class ItemNPC : MonoBehaviour {
 
     void InitSells() 
     {
-        string strSells = npcData.sells;
-        if (!string.IsNullOrEmpty(strSells))
+        if (npcData != null)
         {
-           sells = GameManager.gameView.GetMonsterDropList(strSells);
+            string strSells = npcData.sells;
+            if (!string.IsNullOrEmpty(strSells))
+            {
+                sells = GameManager.gameView.GetMonsterDropList(strSells);
+            }
         }
+        else
+        {
+            if (!string.IsNullOrEmpty(strSells))
+            {
+                sells = GameManager.gameView.GetMonsterDropList(strSells);
+            }
+        }
+      
     }
 
     public void RemoveSells(EquipItem ei)

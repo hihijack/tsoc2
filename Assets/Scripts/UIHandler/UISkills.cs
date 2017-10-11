@@ -242,4 +242,9 @@ public class UISkills : MonoBehaviour
             dicModelViews.Add(id, obj);
         }
     }
+
+    public void Close()
+    {
+        UIManager.Inst.CloseUISkill();
+    }
 }

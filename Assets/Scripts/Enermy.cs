@@ -8,6 +8,10 @@ public class Enermy : IActor {
     Animator animtor;
     SpriteRenderer spriteRender;
     public int monsterId;
+    
+    [Tooltip("怪物是否会刷新")]
+    public bool refresh = true;
+
     private MonsterBaseData monsterBD;
     public Hero curBattleTarget;
     public int uiIndex; // 在战斗界面中的序列
@@ -37,6 +41,12 @@ public class Enermy : IActor {
 
     int gSkillIDCasting;
     IActor gSkillTargetCasting;
+
+    /// <summary>
+    /// 特别指定的掉落。设定时不使用基础掉落
+    /// </summary>
+    public string drops;
+
     #endregion
 
     #region GeterSeter
@@ -107,10 +117,18 @@ public class Enermy : IActor {
 		
 		isHero = false;
 
-        if (needInitInStart)
+        if (!refresh  && GameView.Inst.HasKilledRecord(this))
         {
-            MonsterBaseData mbd = GameDatas.GetMonsterBaseData(monsterId);
-            Init(mbd);
+            //有击杀记录且不刷新。自动销毁
+            DestroyObject(gameObject);
+        }
+        else
+        {
+            if (needInitInStart)
+            {
+                MonsterBaseData mbd = GameDatas.GetMonsterBaseData(monsterId);
+                Init(mbd);
+            }
         }
 	}
 
@@ -610,6 +628,12 @@ public class Enermy : IActor {
                 }
             }
         }
+
+        //不刷新的怪，保存击杀记录
+        if (!refresh)
+        {
+            GameView.Inst.SaveKillRecord(guid);
+        }
     }
 
     /// <summary>
@@ -1062,6 +1086,24 @@ public class Enermy : IActor {
             {
                 skill.StartEff(target);
             }
+        }
+    }
+
+    internal void ExitFromBattle()
+    {
+        _State = EActorState.Normal;
+        transform.localPosition = Vector3.zero;
+    }
+
+    internal string GetDrops()
+    {
+        if (!string.IsNullOrEmpty(drops))
+        {
+            return drops;
+        }
+        else
+        {
+            return _MonsterBD.drops;
         }
     }
 

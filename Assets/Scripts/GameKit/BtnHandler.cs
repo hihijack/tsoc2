@@ -13,6 +13,6 @@ public class BtnHandler : MonoBehaviour {
 
     void OnPress(bool pressed)
     {
-        UIManager.Inst.OnBtnPress(btn, pressed);
+        //UIManager.Inst.OnBtnPress(btn, pressed);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class UIHeroBag : MonoBehaviour {
 
@@ -30,16 +31,21 @@ public class UIHeroBag : MonoBehaviour {
     public GameObject gobjWin;
     bool isSettingItemUsed = false;
 
+    [NonSerialized]
+    public UIVisibleCtl vctl;
+
     public void Init(GameView gv) 
     {
         this.gameView = gv;
-        
+
+        vctl = GetComponent<UIVisibleCtl>();
+
         CreateBagGrid();
 
         // 英雄身上的装备
-        for (int i = 0; i < gameView._MHero.itemsHasEquip.Count; i++)
+        for (int i = 0; i < GameView.Inst.eiManager.itemsHasEquip.Count; i++)
         {
-            EquipItem ei = gameView._MHero.itemsHasEquip[i];
+            EquipItem ei = GameView.Inst.eiManager.itemsHasEquip[i];
             GameObject gobjPartToEquip = GetEquipItemPartGobj(ei._Part);
             GameObject gobjItem = NGUITools.AddChild(gobjPartToEquip, gobjPreEquipItem);
             // 图标
@@ -58,15 +64,44 @@ public class UIHeroBag : MonoBehaviour {
 
             UIButton btn = gobjItem.GetComponent<UIButton>();
             btn.data = ei;
+            UIEquipItemOperControll opCtl = gobjItem.GetComponent<UIEquipItemOperControll>();
+            opCtl.Init(ei, true);
         }
         // 背包里的物品
-        for (int i = 0; i < gameView._MHero.itemsInBag.Count; i++)
+        for (int i = 0; i < GameView.Inst.eiManager.itemsInBag.Count; i++)
         {
-            EquipItem eiInBag = gameView._MHero.itemsInBag[i];
+            EquipItem eiInBag = GameView.Inst.eiManager.itemsInBag[i];
             AddAEquipItemToAGrid(eiInBag);
         }
 
         RefreshGold();
+
+        //按键监听
+        EventDelegate onPress = new EventDelegate(OnPressItem);
+        foreach (Transform item in gobjHeroItemsRoot.transform)
+        {
+            AddEventTrigger(item.gameObject, onPress);
+        }
+    }
+
+    internal void RefreshAddAItem(EquipItem eiInBag)
+    {
+        if (eiInBag == null)
+        {
+            return;
+        }
+
+        if (!RefreshEquipItemCount(eiInBag))
+        {
+            //创建新物品
+            AddAEquipItemToAGrid(eiInBag);
+        }
+    }
+
+    private void AddEventTrigger(GameObject target, EventDelegate onPress)
+    {
+        UIEventTrigger et = target.GetComponent<UIEventTrigger>();
+        et.onPress.Add(onPress);
     }
 
     void BtnClick_ItemUsed() 
@@ -144,7 +179,7 @@ public class UIHeroBag : MonoBehaviour {
 
     public void AddAEquipItemToAGrid(EquipItem ei)
     {
-        int gridid = ei.bagGridId;
+        int gridid = ei.BagGridId;
         GameObject gobjGridToPut = Tools.GetGameObjectInChildByPathSimple(gobjGridBag, gridid.ToString());
         if (gobjGridToPut != null)
         {
@@ -170,6 +205,8 @@ public class UIHeroBag : MonoBehaviour {
 
             UIButton btn = gobjEI.GetComponent<UIButton>();
             btn.data = ei;
+            UIEquipItemOperControll operCtl = gobjEI.GetComponent<UIEquipItemOperControll>();
+            operCtl.Init(ei, true);
         }
     }
 
@@ -177,11 +214,13 @@ public class UIHeroBag : MonoBehaviour {
     /// 刷新堆叠个数
     /// </summary>
     /// <param name="ei"></param>
-    public void RefreshEquipItemCount(EquipItem ei) 
+    public bool RefreshEquipItemCount(EquipItem ei) 
     {
+        bool refrsh = false;
         GameObject gobjEI = GetGobjOfAEquipItem(ei);
         if (gobjEI != null)
         {
+            refrsh = true;
             UILabel txtCount = Tools.GetComponentInChildByPath<UILabel>(gobjEI, "txt_count");
             if (ei.count > 1)
             {
@@ -193,6 +232,7 @@ public class UIHeroBag : MonoBehaviour {
                 txtCount.gameObject.SetActive(false);
             }
         }
+        return refrsh;
     }
 
     /// <summary>
@@ -211,11 +251,11 @@ public class UIHeroBag : MonoBehaviour {
     public GameObject GetGobjOfAEquipItem(EquipItem ei) 
     {
         GameObject gobjEI = null;
-        if (ei.bagGridId > 0)
+        if (ei.BagGridId > 0)
         {
             // 在背包里
-            GameObject gobjGridToPut = Tools.GetGameObjectInChildByPathSimple(gobjGridBag, ei.bagGridId.ToString());
-            if (gobjGridToPut != null)
+            GameObject gobjGridToPut = Tools.GetGameObjectInChildByPathSimple(gobjGridBag, ei.BagGridId.ToString());
+            if (gobjGridToPut != null && gobjGridToPut.transform.childCount > 0)
             {
                 gobjEI = gobjGridToPut.transform.GetChild(0).gameObject;
             }
@@ -230,7 +270,7 @@ public class UIHeroBag : MonoBehaviour {
 
     public void RefreshGold()
     {
-        txtGold.text = gameView._MHero._Gold.ToString();
+        txtGold.text = GameView.Inst.eiManager._Gold.ToString();
     }
 
     protected void CreateBagGrid()
@@ -239,9 +279,16 @@ public class UIHeroBag : MonoBehaviour {
         {
             GameObject gobjGridItem = NGUITools.AddChild(gobjGridBag, gobjPreBagGridItem);
             gobjGridItem.name = i.ToString();
+            UIEventTrigger eT = gobjGridItem.GetComponent<UIEventTrigger>();
+            eT.onPress.Add(new EventDelegate(OnPressItem));
         }
         UIGrid ug = gobjGridBag.GetComponent<UIGrid>();
         ug.Reposition();
+    }
+
+    private void OnPressItem()
+    {
+        UIManager.Inst.OnDropEquipItemTo(UIEventTrigger.current.gameObject, true);
     }
 
     /// <summary>
@@ -291,7 +338,7 @@ public class UIHeroBag : MonoBehaviour {
                 break;
             case EEquipItemType.WeaponOneHand:
                 {
-                    EquipItem eiHasEquipInHand1 = gameView.GetEquipItemHasEquip(gameView._MHero, EEquipPart.Hand1);
+                    EquipItem eiHasEquipInHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
                     if (eiHasEquipInHand1 == null || eiHasEquipInHand1.baseData.type != EEquipItemType.WeaponTwoHand)
                     {
                         SetAGridEnable(gobjPartHand1, true);
@@ -301,8 +348,8 @@ public class UIHeroBag : MonoBehaviour {
                 break;
             case EEquipItemType.WeaponTwoHand:
                 {
-                    EquipItem eiHasEquipInHand1 = gameView.GetEquipItemHasEquip(gameView._MHero, EEquipPart.Hand1);
-                    EquipItem eiHasEquipInHand2 = gameView.GetEquipItemHasEquip(gameView._MHero, EEquipPart.Hand2);
+                    EquipItem eiHasEquipInHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
+                    EquipItem eiHasEquipInHand2 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand2);
                     if (eiHasEquipInHand1 == null && eiHasEquipInHand2 == null)
                     {
                         SetAGridEnable(gobjPartHand1, true);
@@ -322,12 +369,12 @@ public class UIHeroBag : MonoBehaviour {
         {
             // 遍历背包，过滤不可替换装备
             // 不同类型不可替换
-            for (int i = 0; i < gameView._MHero.itemsInBag.Count; i++)
+            for (int i = 0; i < GameView.Inst.eiManager.itemsInBag.Count; i++)
             {
-                EquipItem eiInBag = gameView._MHero.itemsInBag[i];
+                EquipItem eiInBag = GameView.Inst.eiManager.itemsInBag[i];
                 if (eiInBag.baseData.type != eiSelect.baseData.type)
                 {
-                    GameObject gobjGrid = Tools.GetGameObjectInChildByPathSimple(gobjGridBag, eiInBag.bagGridId.ToString());
+                    GameObject gobjGrid = Tools.GetGameObjectInChildByPathSimple(gobjGridBag, eiInBag.BagGridId.ToString());
                     SetAGridEnable(gobjGrid, false);
                 }
                 //if (!gameView.CanEquip(eiInBag, eiSelect._Part))
@@ -355,10 +402,10 @@ public class UIHeroBag : MonoBehaviour {
         SetAGridEnable(gobjPartShoe, true);
         SetAGridEnable(gobjPartShoulder, true);
 
-        for (int i = 0; i < gameView._MHero.itemsInBag.Count; i++)
+        for (int i = 0; i < GameView.Inst.eiManager.itemsInBag.Count; i++)
         {
-            EquipItem eiInBag = gameView._MHero.itemsInBag[i];
-            GameObject gobjGrid = Tools.GetGameObjectInChildByPathSimple(gobjGridBag, eiInBag.bagGridId.ToString());
+            EquipItem eiInBag = GameView.Inst.eiManager.itemsInBag[i];
+            GameObject gobjGrid = Tools.GetGameObjectInChildByPathSimple(gobjGridBag, eiInBag.BagGridId.ToString());
             SetAGridEnable(gobjGrid, true);
         }
 
@@ -404,5 +451,10 @@ public class UIHeroBag : MonoBehaviour {
     {
         GameObject gobjWin = Tools.GetGameObjectInChildByPathSimple(gameObject, "win");
         gobjWin.transform.localPosition = new Vector3(0f, 158f, 0f);
+    }
+
+    public void Close()
+    {
+        UIManager.Inst.CloseUIBag();
     }
 }

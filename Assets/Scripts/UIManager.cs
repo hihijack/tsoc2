@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class UIManager: MonoBehaviour {
 
@@ -18,12 +19,16 @@ public class UIManager: MonoBehaviour {
         set { g_GobjUIMain = value; }
     }
 
+    /// <summary>
+    /// 鼠标文本提示
+    /// </summary>
+    UILabel txtTipCursor;
+
     GameView gameView;
 
 
     GameObject gobjHeroInfo;
-    GameObject gobjHeroBag;
-    GameObject gobjEquipItemInfo;
+   
 
     private static UIManager instance;
 
@@ -48,7 +53,14 @@ public class UIManager: MonoBehaviour {
         g_UIRootMain = GameObject.Find("PanelMain");
         g_UIRootSecond = GameObject.Find("PanelSecond");
         g_UIRootDlg = GameObject.Find("PanelDlg");
-        
+
+        txtTipCursor = Tools.GetComponentInChildByPath<UILabel>(UICursor.instance.gameObject, "TxtTip");
+    }
+
+    public void ShowCursorTip(string tip, Color color)
+    {
+        txtTipCursor.text = tip;
+        txtTipCursor.color = color;
     }
 
     // 显示主界面
@@ -136,123 +148,94 @@ public class UIManager: MonoBehaviour {
             uiMain.RefreshExp(curVal, needVal);
         }
     }
-
+    #region 背包
+    UIHeroBag bag;
     //背包
     public void ToggleUI_Bag()
     {
-        if (gobjHeroBag != null)
+        bool showing = false;
+        if (bag != null && bag.vctl.showing)
         {
-            DestroyObject(gobjHeroBag);
+            showing = true;
+        }
+
+        if (showing)
+        {
+            //关闭
+            bag.vctl.SetVisible(false);
         }
         else
         {
-            CloseUISkill();
+            if (bag == null)
+            {
+                //显示
+                CloseUISkill();
 
-            CloseNPCWords();
-            CloseUINPCMutual();
+                CloseNPCWords();
+                CloseUINPCMutual();
 
-            CloseUIMission();
-            //CloseHeroInfo();
+                CloseUIMission();
 
-            gobjHeroBag = Tools.AddNGUIChild(g_UIRootSecond, IPath.UI + "ui_bag");
-            RefreshHeroBag();
+                GameObject gobjHeroBag = Tools.AddNGUIChild(g_UIRootSecond, IPath.UI + "ui_bag");
+                bag = gobjHeroBag.GetComponent<UIHeroBag>();
+                bag.Init(gameView);
+            }
+          
+            bag.vctl.SetVisible(true);
         }
     }
 
-    public void CloseUIBag() 
+    public void CloseUIBag()
     {
-        if (gobjHeroBag != null)
+        if (bag != null)
         {
-            DestroyObject(gobjHeroBag);
-        }
-    }
-
-    private void RefreshHeroBag()
-    {
-        if (gobjHeroBag != null)
-        {
-            UIHeroBag uhb = gobjHeroBag.GetComponent<UIHeroBag>();
-            uhb.Init(gameView);
+            bag.vctl.SetVisible(false);
         }
     }
 
     public UIHeroBag GetUIBag()
     {
-        UIHeroBag uhb = null;
-        if (gobjHeroBag != null)
-        {
-             uhb = gobjHeroBag.GetComponent<UIHeroBag>();
-        }
-        return uhb;
+        return bag;
     }
 
     public void RefreshHeroBagGold()
     {
-        if (gobjHeroBag != null)
+        if (bag != null)
         {
-            UIHeroBag uhb = gobjHeroBag.GetComponent<UIHeroBag>();
-            uhb.RefreshGold();
-        }
-    }
-
-    public void OnBtnPress(UIButton btn, bool pressed)
-    {
-        if (btn.CompareTag("EquipItem"))
-        {
-            // 按住一件装备
-            // 无论在哪个界面，都显示装备信息
-            // 如果在背包界面，显示可放置格子
-            if (pressed)
-            {
-                EquipItem ei = btn.data as EquipItem;
-                ShowEquipItemInfo(ei);
-
-                if (gobjHeroBag != null)
-                {
-                    UIHeroBag uhb = gobjHeroBag.GetComponent<UIHeroBag>();
-                    if (uhb != null)
-                    {
-                        uhb.DisableGrid(ei);
-                    }
-                }
-            }
-            else
-            {
-                HideEquipItemInfo();
-                if (gobjHeroBag != null)
-                {
-                    RecoverBagGridDisable();
-                }
-            }
+            bag.RefreshGold();
         }
     }
 
     public void RecoverBagGridDisable()
     {
-        UIHeroBag uhb = gobjHeroBag.GetComponent<UIHeroBag>();
-        uhb.RecoverGridDisable();
-    }
-
-    void ShowEquipItemInfo(EquipItem ei) 
-    {
-        if (gobjEquipItemInfo != null)
+        if (bag != null)
         {
-            DestroyObject(gobjEquipItemInfo);
+            bag.RecoverGridDisable();
         }
-        gobjEquipItemInfo = Tools.AddNGUIChild(g_UIRootDlg, IPath.UI + "ui_equipitem_info");
-        UIEquipItemInfo ueii = gobjEquipItemInfo.GetComponent<UIEquipItemInfo>();
-        ueii.Init(gameView, ei);
+    }
+    #endregion
+
+    #region 装备详情
+    UIEquipItemInfo _mEuqipItemInfo;
+    public void ShowEquipItemInfo(EquipItem ei, Vector2 uiPos)
+    {
+        if (_mEuqipItemInfo == null)
+        {
+            GameObject gobjEquipItemInfo = Tools.AddNGUIChild(g_UIRootDlg, IPath.UI + "ui_equipitem_info");
+            _mEuqipItemInfo = gobjEquipItemInfo.GetComponent<UIEquipItemInfo>();
+        }
+        _mEuqipItemInfo.vctl.SetVisible(true);
+        _mEuqipItemInfo.Refresh(ei, uiPos);
     }
 
     public void HideEquipItemInfo()
     {
-        if (gobjEquipItemInfo != null)
+        if (_mEuqipItemInfo != null)
         {
-            DestroyObject(gobjEquipItemInfo);
+            _mEuqipItemInfo.vctl.SetVisible(false);
         }
     }
-
-
+    #endregion
 
     public void GeneralTip(string txt, Color color)
     {
@@ -283,10 +266,18 @@ public class UIManager: MonoBehaviour {
     public bool HasUI()
     {
         bool has = false;
-        if (g_UIRootSecond.transform.childCount > 0)
+        foreach (Transform item in g_UIRootSecond.transform)
         {
-            has = true;
+            UIVisibleCtl vctl = item.gameObject.GetComponent<UIVisibleCtl>();
+            if (vctl == null || vctl.showing)
+            {
+                has = true;
+            }
         }
+        //if (g_UIRootSecond.transform.childCount > 0)
+        //{
+        //    has = true;
+        //}
         //else if (g_UIRootDlg.transform.GetChildCount() > 1)
         //{
         //    has = true;
@@ -326,8 +317,8 @@ public class UIManager: MonoBehaviour {
         UILabel uiTxt = Tools.GetComponentInChildByPath<UILabel>(gobj, "txt");
         uiTxt.text = txt;
         TweenPosition tp = uiTxt.GetComponent<TweenPosition>();
-        int rXTo = Random.Range(-100, -247);
-        int rYTo = Random.Range(-305, -200);
+        int rXTo = UnityEngine.Random.Range(-100, -247);
+        int rYTo = UnityEngine.Random.Range(-305, -200);
         tp.to = new Vector3(rXTo, rYTo, 0f);
         tp.PlayForward();
     }
@@ -368,8 +359,8 @@ public class UIManager: MonoBehaviour {
         UILabel uiTxt = Tools.GetComponentInChildByPath<UILabel>(gobj, "txt");
         uiTxt.text = txt;
         TweenPosition tp = uiTxt.GetComponent<TweenPosition>();
-        int rXTo = Random.Range(199, 340);
-        int rYTo = Random.Range(198, 253);
+        int rXTo = UnityEngine.Random.Range(199, 340);
+        int rYTo = UnityEngine.Random.Range(198, 253);
         tp.to = new Vector3(rXTo, rYTo, 0f);
         tp.PlayForward();
     }
@@ -380,8 +371,8 @@ public class UIManager: MonoBehaviour {
         UILabel uiTxt = Tools.GetComponentInChildByPath<UILabel>(gobj, "txt");
         uiTxt.text = "闪避";
         TweenPosition tp = uiTxt.GetComponent<TweenPosition>();
-        int rXTo = Random.Range(-100, -247);
-        int rYTo = Random.Range(-305, -200);
+        int rXTo = UnityEngine.Random.Range(-100, -247);
+        int rYTo = UnityEngine.Random.Range(-305, -200);
         tp.to = new Vector3(rXTo, rYTo, 0f);
         tp.PlayForward();
     }
@@ -392,8 +383,8 @@ public class UIManager: MonoBehaviour {
         UILabel uiTxt = Tools.GetComponentInChildByPath<UILabel>(gobj, "txt");
         uiTxt.text = "闪避";
         TweenPosition tp = uiTxt.GetComponent<TweenPosition>();
-        int rXTo = Random.Range(199, 340);
-        int rYTo = Random.Range(198, 253);
+        int rXTo = UnityEngine.Random.Range(199, 340);
+        int rYTo = UnityEngine.Random.Range(198, 253);
         tp.to = new Vector3(rXTo, rYTo, 0f);
         tp.PlayForward();
     }
@@ -535,7 +526,7 @@ public class UIManager: MonoBehaviour {
         gUISkill.Init();
     }
 
-    void CloseUISkill()
+    public void CloseUISkill()
     {
         if (gUISkill != null)
         {
@@ -610,6 +601,10 @@ public class UIManager: MonoBehaviour {
         for (int i = 0; i < skills.Length; i++)
         {
             IMonSkill itemSkill = skills[i];
+            if (itemSkill.skillBD.id == 27 || itemSkill.skillBD.id == 28)
+            {
+                continue;
+            }
             GameObject gobjItemSkill = Tools.AddNGUIChild(gridSkills.gameObject, IPath.UI + "item_skill_enermy");
             // icon
             UISprite icon = Tools.GetComponentInChildByPath<UISprite>(gobjItemSkill, "icon");
@@ -662,7 +657,7 @@ public class UIManager: MonoBehaviour {
         UILabel txtTipLostGold = Tools.GetComponentInChildByPath<UILabel>(gobjDieUI, "tip_lost_gold");
         txtTipLostGold.text = txtTipLostGold.text.Replace("&", lostGold.ToString());
 
-        gameView._MHero._Gold -= lostGold;
+        GameView.Inst.eiManager._Gold -= lostGold;
 
         UIButton btnComfirm = Tools.GetComponentInChildByPath<UIButton>(gobjDieUI, "btn_comfirm");
         btnComfirm.onClick.Add(new EventDelegate(BtnComfirm_DieUI));
@@ -759,4 +754,272 @@ public class UIManager: MonoBehaviour {
             DestroyObject(uiSmallBag.gameObject);
         }
     }
+
+    #region 传送站
+    UITransfer uiTransfer;
+    public UITransfer ShowUITransfer()
+    {
+        GameObject gobjUITransfer = Tools.AddNGUIChild(g_UIRootSecond, IPath.UI + "ui_transfer");
+        uiTransfer = gobjUITransfer.GetComponent<UITransfer>();
+        return uiTransfer;
+    }
+
+    public void CloseUITransfer()
+    {
+        if (uiTransfer != null)
+        {
+            DestroyObject(uiTransfer.gameObject);
+        }
+    }
+
+    #endregion
+
+    #region 地图提示
+    UIComfirmMapTip mComfirmMapTip;
+    internal void ShowUIComfirmMapTips(string tips)
+    {
+        GameObject gobjComfirmMapTip = Tools.AddNGUIChild(g_UIRootMain, IPath.UI + "ui_map_comfirm_tip");
+        mComfirmMapTip = gobjComfirmMapTip.GetComponent<UIComfirmMapTip>();
+        mComfirmMapTip.Init(tips);
+    }
+
+    internal void ClseeUIMapTip()
+    {
+        if (mComfirmMapTip != null)
+        {
+            DestroyObject(mComfirmMapTip.gameObject);
+        }
+    }
+    #endregion
+
+    #region 通用弹出框
+    UIDefaultDlg mDefDlg;
+    internal void ShowDefaultDlg(string tip, Action onComfirm)
+    {
+        GameObject gobj = Tools.AddNGUIChild(g_UIRootDlg, IPath.UI + "ui_def_dlg");
+        mDefDlg = gobj.GetComponent<UIDefaultDlg>();
+        mDefDlg.Init(tip, onComfirm);
+    }
+    #endregion
+
+    #region 装备操作
+    public void OnDropEquipItemTo(GameObject target, bool pressed)
+    {
+        if (UIEquipItemOperControll.curDropItem != null)
+        {
+            if (target.CompareTag("EIBagGrid"))
+            {
+                // 放置到背包空格中
+                OnDropToBagGrid(target);
+            }
+            else if (target.CompareTag("EquipItem"))
+            {
+                OnDropToOtherEuqipItem(target);
+            }
+            else if (target.CompareTag("EIEquipGrid"))
+            {
+                OnDropToEquipGrid(target);
+            }
+            else if (target.CompareTag("DestroyGrid"))
+            {
+                OnDropToDestroy(target);
+            }
+            else if (target.CompareTag("SellGrid"))
+            {
+                OnDropToSell(target);
+            }
+            else if (target.CompareTag("UseGrid"))
+            {
+                OnDropToUse(target);
+            }
+            else
+            {
+                //复原
+                UIEquipItemOperControll.curDropItem.Recover();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 配置道具
+    /// </summary>
+    /// <param name="target"></param>
+    private void OnDropToUse(GameObject target)
+    {
+        // 配置道具
+        EquipItem ei = UIEquipItemOperControll.curDropItem.mEquipItem;
+        if (ei.baseData.useType != EEquipItemUseType.None)
+        {
+            ItemUesdGrid iug = target.GetComponent<ItemUesdGrid>();
+            int index = iug.index;
+            GameView.Inst.eiManager.SetItemUsed(index, ei.baseData.id);
+            GameView.Inst.eiManager.SaveItemUesd();
+            iug.SetEquipItem(ei);
+            // UI
+            iug.RefershUI();
+        }
+
+        UIEquipItemOperControll.curDropItem.Recover();
+    }
+
+    /// <summary>
+    /// 出售
+    /// </summary>
+    /// <param name="target"></param>
+    private void OnDropToSell(GameObject target)
+    {
+        EquipItem ei = UIEquipItemOperControll.curDropItem.mEquipItem;
+
+        // UI背包移除
+        UIManager.Inst.GetUIBag().RemoveAEquipItem(ei);
+        // UI人物外观更新
+        GameManager.gameView.UpdateOnChangeEquip(ei, false);
+        // 添加金钱
+        int price = ei.GetTradePrice();
+        GameView.Inst.eiManager._Gold += price;
+
+        // 移除装备数据
+        GameView.Inst.eiManager.RemoveEquipItem(ei);
+        // 保存装备信息
+        GameView.Inst.eiManager.SaveEquipItems();
+
+        // 回到原位
+        UIEquipItemOperControll.curDropItem.Recover();
+    }
+
+    /// <summary>
+    /// 摧毁
+    /// </summary>
+    /// <param name="target"></param>
+    private void OnDropToDestroy(GameObject target)
+    {
+        EquipItem ei = UIEquipItemOperControll.curDropItem.mEquipItem;
+
+        // 移除装备数据
+        GameView.Inst.eiManager.RemoveEquipItem(ei);
+        // 保存装备信息
+        GameView.Inst.eiManager.SaveEquipItems();
+        
+        // UI背包移除
+        Inst.GetUIBag().RemoveAEquipItem(ei);
+        // UI人物外观更新
+        GameManager.gameView.UpdateOnChangeEquip(ei, false);
+        // 移除配置
+        Inst.uiMain.ClearItemUsed(ei);
+
+        // 回到原位
+        UIEquipItemOperControll.curDropItem.Recover();
+    }
+
+    private void OnDropToEquipGrid(GameObject target)
+    {
+        UIEquipItemOperControll.curDropItem.transform.parent = target.transform;
+        UIEquipItemOperControll.curDropItem.transform.localPosition = Vector3.zero;
+
+        EquipItem ei = UIEquipItemOperControll.curDropItem.mEquipItem;
+        EEquipPart partTo = target.GetComponent<HeroItemGrid>().part;
+
+        GameView.Inst.DoMoveAEquipItemToEquip(ei, partTo);
+
+        GameView.Inst.eiManager.SaveEquipItems();
+
+        UIEquipItemOperControll.curDropItem.Recover();
+    }
+
+    private void OnDropToOtherEuqipItem(GameObject target)
+    {
+        if (target == UIEquipItemOperControll.curDropItem.gameObject)
+        {
+            UIEquipItemOperControll.curDropItem.Recover();
+            return;
+        }
+
+        EquipItem ei = UIEquipItemOperControll.curDropItem.mEquipItem;
+        UIEquipItemOperControll operCtlOther = target.GetComponent<UIEquipItemOperControll>();
+        EquipItem eiTo = operCtlOther.mEquipItem;
+
+        bool succed = false;
+
+        //gameView.
+        // 装备移到背包
+        if (ei._Part != EEquipPart.None && eiTo._Part == EEquipPart.None)
+        {
+            EEquipPart partOri = ei._Part;
+            int gridIdTo = eiTo.BagGridId;
+            if (gridIdTo > 0)
+            {
+                GameView.Inst.DoMoveAEquipItemToBag(ei, gridIdTo);
+                GameView.Inst.DoMoveAEquipItemToEquip(eiTo, partOri);
+                succed = true;
+            }
+
+        }
+        // 背包移到背包
+        else if (ei._Part == EEquipPart.None && eiTo._Part == EEquipPart.None)
+        {
+            int gridOri = ei.BagGridId;
+            int gridIdTo = eiTo.BagGridId;
+            if (gridOri > 0 && gridIdTo > 0)
+            {
+                GameView.Inst.eiManager.MoveAEquipItemToBag(ei, gridIdTo);
+                GameView.Inst.eiManager.MoveAEquipItemToBag(eiTo, gridOri);
+                succed = true;
+            }
+
+        }
+        // 背包移到装备栏
+        else if (ei._Part == EEquipPart.None && eiTo._Part != EEquipPart.None)
+        {
+            int gridOri = ei.BagGridId;
+            EEquipPart partTo = eiTo._Part;
+
+            GameView.Inst.DoMoveAEquipItemToBag(eiTo, gridOri);
+            GameView.Inst.DoMoveAEquipItemToEquip(ei, partTo);
+            succed = true;
+        }
+
+        if (succed)
+        {
+            // 互调位置
+            Transform tfMDragParent = UIEquipItemOperControll.curDropItem.transform.parent;
+            UIEquipItemOperControll.curDropItem.transform.parent = target.transform.parent;
+            target.transform.parent = tfMDragParent;
+            target.transform.localPosition = Vector3.zero;
+            UIEquipItemOperControll.curDropItem.transform.localPosition = Vector3.zero;
+            GameView.Inst.eiManager.SaveEquipItems();
+        }
+
+        UIEquipItemOperControll.curDropItem.Recover();
+    }
+
+    private void OnDropToBagGrid(GameObject target)
+    {
+        UIEquipItemOperControll.curDropItem.transform.parent = target.transform;
+        UIEquipItemOperControll.curDropItem.transform.localPosition = Vector3.zero;
+
+        EquipItem ei = UIEquipItemOperControll.curDropItem.mEquipItem;
+        int gridIdTo = int.Parse(target.name);
+        GameView.Inst.DoMoveAEquipItemToBag(ei, gridIdTo);
+        GameView.Inst.eiManager.SaveEquipItems();
+        UIEquipItemOperControll.curDropItem.Recover();
+    }
+    #endregion
+
+    #region 少女提示
+    UIGirlTip girlTip;
+    public void ShowUIGirlTip(ItemGrilTip item)
+    {
+        GameObject gobjGirlTip = Tools.AddNGUIChild(g_UIRootSecond, IPath.UI + "ui_girltip");
+        girlTip = gobjGirlTip.GetComponent<UIGirlTip>();
+        girlTip.Init(item);
+    }
+
+    public void CloseUIGirlTip()
+    {
+        if (girlTip != null)
+        {
+            MonoKit.DestroyObject(girlTip.gameObject);
+        }
+    }
+    #endregion
 }

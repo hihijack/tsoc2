@@ -18,6 +18,13 @@
         {
             baseAtk = AtkBaseA;
         }
+        else
+        {
+            baseAtk = IConst.ATK_EMPTY;
+        }
+
+
+
         Atk = UnityEngine.Mathf.CeilToInt(
             (
                 (baseAtk * AtkParmaA + AtkParmaB) * (1 + Strength * IConst.ATK_PHY_PER_STR))

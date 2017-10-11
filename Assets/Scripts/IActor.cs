@@ -48,7 +48,7 @@ public enum ESpecBuffState
 }
 
 public class IActor : MonoBehaviour {
-    public int id;
+    public string guid;
 
     protected EActorState state;
 
@@ -741,5 +741,11 @@ public class IActor : MonoBehaviour {
             level = skill._Level;
         }
         return level;
+    }
+
+    [ContextMenu("GenGUID")]
+    public void GenGUID()
+    {
+        guid = Tools.GetGUID();
     }
 }

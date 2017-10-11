@@ -88,7 +88,23 @@ public class PropertyBase
     {
         get
         {
-            return parryDmgVigorBase * parryDmgVigorParamMul + parryDmgVigorParamAdd;
+            //如果副手有装备，取副手
+            //否则取主手
+            float baseVal = 0.1f;
+            EquipItem eiHand2 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand2);
+            if (eiHand2 != null)
+            {
+                baseVal = eiHand2.baseData.parryVigor;
+            }
+            else
+            {
+                EquipItem eiHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
+                if (eiHand1 != null)
+                {
+                    baseVal = eiHand1.baseData.parryVigor;
+                }
+            }
+            return baseVal * parryDmgVigorParamMul + parryDmgVigorParamAdd;
         }
     }
 
@@ -155,7 +171,23 @@ public class PropertyBase
     {
         get
         {
-            return (parryDamPerBase + parryDmgPerParamA) * parryDmbPerParamB;
+            //如果副手有装备，取副手
+            //否则取主手
+            float baseVal = 0f;
+            EquipItem eiHand2 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand2);
+            if (eiHand2 != null)
+            {
+                baseVal = eiHand2.baseData.parry * 0.01f;
+            }
+            else
+            {
+                EquipItem eiHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
+                if (eiHand1 != null)
+                {
+                    baseVal = eiHand1.baseData.parry * 0.01f;
+                }
+            }
+            return (baseVal + parryDmgPerParamA) * parryDmbPerParamB;
         }
     }
 

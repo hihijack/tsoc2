@@ -74,6 +74,8 @@ public class UIMain : MonoBehaviour {
 
     public GameObject energyPoints;
 
+    public UIVisibleCtl vctl;
+
     public void Init(GameView gameView)
     {
         this.gameView = gameView;
@@ -95,6 +97,9 @@ public class UIMain : MonoBehaviour {
         btnMission.onClick.Add(new EventDelegate(OnBtn_Mission));
         btnSkill.onClick.Add(new EventDelegate(OnBtn_ShowSkill));
         btnWait.onClick.Add(new EventDelegate(OnBtn_Wait));
+
+        vctl = GetComponent<UIVisibleCtl>();
+        vctl.SetVisible(true);
     }
 
     public void SetUIBtnsShow(bool isshow) 
@@ -183,15 +188,17 @@ public class UIMain : MonoBehaviour {
     /// </summary>
     void InitItemUsed() 
     {
-        for (int i = 0; i < GameManager.hero.arrItemUesd.Length; i++)
+        for (int i = 0; i < GameView.Inst.eiManager.arrItemUesd.Length; i++)
         {
             GameObject gobjSpell = Tools.GetGameObjectInChildByPathSimple(gobjGridItemUsed, "item" + i);
             ItemUesdGrid iug = gobjSpell.GetComponent<ItemUesdGrid>();
-            int idItemUsed = GameManager.hero.arrItemUesd[i];
+            UIEquipItemOperControll operCtl = gobjSpell.GetComponent<UIEquipItemOperControll>();
+            int idItemUsed = GameView.Inst.eiManager.arrItemUesd[i];
             if (idItemUsed > 0)
             {
-                EquipItem ei = GameManager.hero.GetEquipItemInBagById(idItemUsed);
+                EquipItem ei = GameView.Inst.eiManager.GetEquipItemInBagById(idItemUsed);
                 iug.SetEquipItem(ei);
+                operCtl.Init(ei, true);
                 iug.RefershUI();
             }
             else
@@ -219,11 +226,13 @@ public class UIMain : MonoBehaviour {
         foreach (Transform tfChild in gobjGridItemUsed.transform)
         {
             ItemUesdGrid iug = tfChild.GetComponent<ItemUesdGrid>();
+            UIEquipItemOperControll operCtl = tfChild.GetComponent<UIEquipItemOperControll>();
             EquipItem eiSettd = iug.GetEquipItem();
             if (eiSettd != null && eiSettd.id == ei.id)
             {
                 iug.SetEquipItem(null);
                 iug.RefershUI();
+                operCtl.Init(null, false);
             }
         }
     }
@@ -324,7 +333,7 @@ public class UIMain : MonoBehaviour {
     {
         SetUIBattleVisble(isshow);
 
-        gobjSkillTractics.SetActive(!isshow);
+        //gobjSkillTractics.SetActive(!isshow);
         SetUIBtnsShow(!isshow);
 
         if (isshow)
