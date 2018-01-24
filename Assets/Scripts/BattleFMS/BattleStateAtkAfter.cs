@@ -19,7 +19,7 @@
     {
         base.Update();
         durTime += UnityEngine.Time.deltaTime;
-        if (durTime >= managerBattleState.hero.AtkAnimTimeAfter)
+        if (durTime >= managerBattleState.hero.Prop.GetAtkTimeAfter())
         {
             managerBattleState.ActionAtkAfterTimeEnd();
         }

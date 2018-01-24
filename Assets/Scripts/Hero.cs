@@ -12,6 +12,16 @@ public class Hero : IActor
    
     public float speed = 10.0f;
 
+    /// <summary>
+    /// 上一次攻击主副手
+    /// </summary>
+    EEquipPart mLastAtkHand = EEquipPart.Hand1;
+
+    /// <summary>
+    /// 上次攻击动作序列，0,1轮流
+    /// </summary>
+    int mLastAtkHandIndex = 0;
+
     List<Enermy> targetEnermys = new List<Enermy>(4);
 
     public ISkill[] mSkills = new ISkill[4];
@@ -223,7 +233,8 @@ public class Hero : IActor
     /// </summary>
     internal void OnBSUpdatePowering()
     {
-        _PowerVal += Prop.PowerSpeed * Time.deltaTime;
+        EquipItem eiAtk = GetAtkWpon();
+        _PowerVal += Prop.GetPowerSpeed(eiAtk) * Time.deltaTime;
         UIManager.Inst.uiMain.uiBattle.UpdatePowerVal(_PowerVal);
     }
 
@@ -262,7 +273,7 @@ public class Hero : IActor
         {
             return;
         }
-        UIManager.Inst.uiMain.uiBattle.ToAfterPoint(AtkAnimTimeAfter);
+        UIManager.Inst.uiMain.uiBattle.ToAfterPoint(Prop.GetAtkTimeAfter());
     }
 
     /// <summary>
@@ -279,8 +290,9 @@ public class Hero : IActor
         //Prop.Vigor -= 10;
         //UIManager.Inst.uiMain.RefreshHeroVigor();
 
-        UIManager.Inst.uiMain.uiBattle.ToAtkPoint(AtkAnimTimeBefore);
+        UIManager.Inst.uiMain.uiBattle.ToAtkPoint(Prop.GetAtkTimeBefore());
         OnStartAAttack(curTarget);
+        curTarget.OnStartAtked(this);
     }
 
     internal void OnBSStartHit()
@@ -289,20 +301,29 @@ public class Hero : IActor
         {
             return;
         }
+        EquipItem eiAtk = GetAtkWpon();
+        int atkIndex = mLastAtkHandIndex == 0 ? 1 : 0;
         // 攻击特效
-        GameManager.commonCPU.CreateEffect(GetAtkEffName(), curTarget.transform.position, Color.white, -1f);
+        GameManager.commonCPU.CreateEffect(GetAtkEffName(eiAtk, atkIndex), curTarget.transform.position, Color.white, -1f);
 
         if (CheckHitTarget(curTarget))
         {
-            int atk = Prop.Atk;
-            // 攻击伤害
-            OnAttackHit(curTarget, atk);
-            curTarget.OnAttackedHit(this, atk);
-            DamageTarget(atk, curTarget);
-            DamageTarget(Prop.AtkFire, curTarget, EDamageType.Fire);
-            DamageTarget(Prop.AtkThunder, curTarget, EDamageType.Lighting);
-            DamageTarget(Prop.AtkPoison, curTarget, EDamageType.Poison);
-            DamageTarget(Prop.AtkIce, curTarget, EDamageType.Forzen);
+            int powerLevel = GetPowerLevel();
+            DmgData dmgData = new DmgData();
+            dmgData.dmgPhy = Prop.GetPowerAtk(eiAtk, powerLevel);
+            dmgData.dmgFire = Prop.GetAtkFire(eiAtk);
+            dmgData.dmgLighting = Prop.GetAtkThunder(eiAtk);
+            dmgData.dmgPoison = Prop.GetAtkPoison(eiAtk);
+            dmgData.dmgForzen = Prop.GetAtkIce(eiAtk);
+            dmgData.isDS = false;
+            dmgData.enableDS = true;
+            dmgData.dp = Prop.GetPowerDP(eiAtk, powerLevel);
+            dmgData.force = Prop.GetPowerForce(eiAtk, powerLevel);
+
+            DamageTarget(curTarget, dmgData);
+
+            OnAttackHit(curTarget, dmgData.TotalDmg());
+            curTarget.OnAttackedHit(this, dmgData.TotalDmg());
         }
         else
         {
@@ -311,6 +332,27 @@ public class Hero : IActor
             OnAttackLost(curTarget);
             curTarget.OnAttackedLost(this);
         }
+
+        mLastAtkHand = eiAtk.Part;
+        mLastAtkHandIndex = atkIndex;
+    }
+
+    private int GetPowerLevel()
+    {
+        int r = 0;
+        if (_PowerVal >= 3)
+        {
+            r = 3;
+        }
+        else if (_PowerVal >= 2)
+        {
+            r = 2;
+        }
+        else if (_PowerVal >= 1)
+        {
+            r = 1;
+        }
+        return r;
     }
     #endregion
 
@@ -394,9 +436,9 @@ public class Hero : IActor
         Prop.Tenacity = IConst.BASE_TEN;
         Prop.Stamina = IConst.BASE_STA;
         Prop.Endurance = IConst.BASE_END;
-        Prop.PowerSpeed = IConst.BASE_POWERSPEED;
         Prop.MoveSpeedBase = IConst.BASE_MOVESPEED;
         Prop.EngRecoverSpeedBase = IConst.BASE_ENG_RECOVER;
+
     }
 
     public void InitWeapon()
@@ -647,154 +689,166 @@ public class Hero : IActor
        
     }
 
-	// 不停自动攻击目标，直到目标死亡
-	IEnumerator CoStartAttackCurTarget(){
-		while(curTarget._State != EActorState.Dead){
-            if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
-            {
-                break;
-            }
-			if(IsSkilling){
-				yield return 1;
-				continue;
-			}
-            PlayAnimAttack();
+    // 不停自动攻击目标，直到目标死亡
+    //IEnumerator CoStartAttackCurTarget(){
+    //while(curTarget._State != EActorState.Dead){
+    //          if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+    //          {
+    //              break;
+    //          }
+    //	if(IsSkilling){
+    //		yield return 1;
+    //		continue;
+    //	}
+    //          PlayAnimAttack();
 
-            UIManager.Inst.uiMain._AtkBar.ReStart();
-            
-            OnStartAAttack(curTarget);
-			// 攻击前摇
-            yield return 1;
-            UIManager.Inst.uiMain._AtkBar.ToAtkPoint(AtkAnimTimeBefore);
-            yield return new WaitForSeconds(AtkAnimTimeBefore);
+    //          UIManager.Inst.uiMain._AtkBar.ReStart();
 
-            if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
-            {
-                UIManager.Inst.uiMain._AtkBar.ReStart();
-                break;
-            }
+    //          OnStartAAttack(curTarget);
+    //	// 攻击前摇
+    //          yield return 1;
+    //          UIManager.Inst.uiMain._AtkBar.ToAtkPoint(AtkAnimTimeBefore);
+    //          yield return new WaitForSeconds(AtkAnimTimeBefore);
 
-			if(IsSkilling){
-				yield return 1;
-				continue;
-			}
-			
-			if(_State == EActorState.Dead){
-                UIManager.Inst.uiMain._AtkBar.ReStart();
-				break;
-			}
+    //          if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+    //          {
+    //              UIManager.Inst.uiMain._AtkBar.ReStart();
+    //              break;
+    //          }
 
-            // 攻击特效
-            GameManager.commonCPU.CreateEffect(GetAtkEffName(), curTarget.transform.position, Color.white, -1f);
+    //	if(IsSkilling){
+    //		yield return 1;
+    //		continue;
+    //	}
 
-            if (CheckHitTarget(curTarget))
-            {
-                int atk = Prop.Atk;
-                // 攻击伤害
-                OnAttackHit(curTarget, atk);
-                curTarget.OnAttackedHit(this, atk);
-                DamageTarget(atk, curTarget);
-                DamageTarget(Prop.AtkFire, curTarget, EDamageType.Fire);
-                DamageTarget(Prop.AtkThunder, curTarget, EDamageType.Lighting);
-                DamageTarget(Prop.AtkPoison, curTarget, EDamageType.Poison);
-                DamageTarget(Prop.AtkIce, curTarget, EDamageType.Forzen);
-            }
-            else
-            {
-                // 攻击被躲闪
-                UIManager.Inst.ShowTargetBattleStateInfo("闪避");
-                OnAttackLost(curTarget);
-                curTarget.OnAttackedLost(this);
-            }
-		
-			// 攻击后摇
-            yield return 1;
-            UIManager.Inst.uiMain._AtkBar.ToAfterPoint(AtkAnimTimeAfter);
-			yield return new WaitForSeconds(AtkAnimTimeAfter);
-            if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
-            {
-                UIManager.Inst.uiMain._AtkBar.ReStart();
-                break;
-            }
+    //	if(_State == EActorState.Dead){
+    //              UIManager.Inst.uiMain._AtkBar.ReStart();
+    //		break;
+    //	}
 
-			if(IsSkilling){
-				yield return 1;
-				continue;
-			}
-            
-            PlayAnimReady();
-			// 攻击间隔
-            yield return 1;
-            UIManager.Inst.uiMain._AtkBar.ToEnd(AtkTimeInterval);
-			yield return new WaitForSeconds(AtkTimeInterval);
-		}
-	}
+    //          // 攻击特效
+    //          GameManager.commonCPU.CreateEffect(GetAtkEffName(), curTarget.transform.position, Color.white, -1f);
 
-    int lastAtkHand = 0;// 0主手，1副手
+    //          if (CheckHitTarget(curTarget))
+    //          {
+    //              int atk = Prop.Atk;
+    //              // 攻击伤害
+    //              OnAttackHit(curTarget, atk);
+    //              curTarget.OnAttackedHit(this, atk);
+    //              DamageTarget(atk, curTarget);
+    //              DamageTarget(Prop.AtkFire, curTarget, EDamageType.Fire);
+    //              DamageTarget(Prop.AtkThunder, curTarget, EDamageType.Lighting);
+    //              DamageTarget(Prop.AtkPoison, curTarget, EDamageType.Poison);
+    //              DamageTarget(Prop.AtkIce, curTarget, EDamageType.Forzen);
+    //          }
+    //          else
+    //          {
+    //              // 攻击被躲闪
+    //              UIManager.Inst.ShowTargetBattleStateInfo("闪避");
+    //              OnAttackLost(curTarget);
+    //              curTarget.OnAttackedLost(this);
+    //          }
+
+    //	// 攻击后摇
+    //          yield return 1;
+    //          UIManager.Inst.uiMain._AtkBar.ToAfterPoint(AtkAnimTimeAfter);
+    //	yield return new WaitForSeconds(AtkAnimTimeAfter);
+    //          if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
+    //          {
+    //              UIManager.Inst.uiMain._AtkBar.ReStart();
+    //              break;
+    //          }
+
+    //	if(IsSkilling){
+    //		yield return 1;
+    //		continue;
+    //	}
+
+    //          PlayAnimReady();
+    //	// 攻击间隔
+    //          yield return 1;
+    //          UIManager.Inst.uiMain._AtkBar.ToEnd(AtkTimeInterval);
+    //	yield return new WaitForSeconds(AtkTimeInterval);
+    //}
+    //}
+
+
     /// <summary>
     /// 获取攻击特效名称
+    /// atkIndex:攻击动画序列，0主手，1副手
     /// </summary>
     /// <returns></returns>
-    string GetAtkEffName() 
+    string GetAtkEffName(EquipItem ei, int atkIndex) 
     {
         string effName = "";
-        int atkhand = 0;
-        int handType = 1;   // 1单手，2双手
+
+        if (ei.baseData.type == EEquipItemType.WeaponOneHand)
+        {
+            if (atkIndex == 0)
+            {
+                effName = "eff_hand_one_1";
+            }
+            else if (atkIndex == 1)
+            {
+                effName = "eff_hand_one_2";
+            }
+        }
+        else if (ei.baseData.type == EEquipItemType.WeaponTwoHand)
+        {
+            if (atkIndex == 0)
+            {
+                effName = "eff_hand_two_1";
+            }
+            else if (atkIndex == 1)
+            {
+                effName = "eff_hand_two_2";
+            }
+        }
+        return effName;
+    }
+
+    /// <summary>
+    /// 攻击生效的武器
+    /// 双持，左右手轮流攻击
+    /// 双手，主手
+    /// </summary>
+    /// <returns></returns>
+    public EquipItem GetAtkWpon()
+    {
+        EquipItem r = null;
+        //主手装备
         EquipItem eiHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
+        //副手装备
         EquipItem eiHand2 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand2);
+
         if (eiHand1 != null && eiHand1.baseData.type == EEquipItemType.WeaponOneHand && eiHand2 != null && eiHand2.baseData.type == EEquipItemType.WeaponOneHand)
         {
             // 双持单手
-            atkhand = (lastAtkHand == 0 ? 1 : 0);
-            lastAtkHand = atkhand;
-            handType = 1;
+            if (mLastAtkHand == EEquipPart.Hand1)
+            {
+                r = eiHand2;
+            }
+            else if (mLastAtkHand == EEquipPart.Hand2)
+            {
+                r = eiHand1;
+            }
         }
         else if (eiHand1 != null && eiHand1.baseData.type == EEquipItemType.WeaponOneHand)
         {
             // 单持主手
-            atkhand = 0;
-            lastAtkHand = atkhand;
-            handType = 1;
+            r = eiHand1;
         }
         else if (eiHand2 != null && eiHand2.baseData.type == EEquipItemType.WeaponOneHand)
         {
             // 单持副手
-            atkhand = 1;
-            lastAtkHand = atkhand;
-            handType = 1;
+            r = eiHand2;
         }
         else if (eiHand1 != null && eiHand1.baseData.type == EEquipItemType.WeaponTwoHand)
         {
             // 双手
-            atkhand = (lastAtkHand == 0 ? 1 : 0);
-            lastAtkHand = atkhand;
-            handType = 2;
+            r = eiHand1;
         }
-
-        if (handType == 1)
-        {
-            if (atkhand == 0)
-            {
-                effName = "eff_hand_one_2";
-            }
-            else 
-            {
-                effName = "eff_hand_one_1";
-            }
-        }
-        else if (handType == 2)
-        {
-            if (atkhand == 0)
-            {
-                effName = "eff_hand_two_2";
-            }
-            else
-            {
-                effName = "eff_hand_two_1";
-            }
-        }
-
-        return effName;
+        return r;
     }
 
 	public void RecoverHp(int hp){
@@ -827,18 +881,19 @@ public class Hero : IActor
     public int GetVigorCostDodge()
     {
         int cost = 0;
-        if (Prop.Load <= 15)
-        {
-            cost = 10;
-        }
-        else if (cost <= 25)
-        {
-            cost = 30;
-        }
-        else
-        {
-            cost = 60;
-        }
+        //if (Prop.Load <= 15)
+        //{
+        //    cost = 5;
+        //}
+        //else if (cost <= 25)
+        //{
+        //    cost = 15;
+        //}
+        //else
+        //{
+        //    cost = 30;
+        //}
+        cost = Mathf.RoundToInt(Prop.Load * IConst.VogprCostPerLoad);
         return cost;
     }
 
@@ -883,6 +938,7 @@ public class Hero : IActor
     //}
 
 	#region buff
+  
 	#endregion
 
     public override void OnTryToAGrid(MapGrid mgTo)
@@ -1136,10 +1192,25 @@ public class Hero : IActor
        
     }
 
-    public override void OnHurted(int damage, EDamageType damagetype, IActor target, bool isDS)
+    public override void OnHurted(IActor target, DmgData dmgData)
     {
-        base.OnHurted(damage, damagetype, target, isDS);
+        base.OnHurted(target, dmgData);
         BsManager.ActionHurted(3f);
     }
    
+
+    /// <summary>
+    /// 可以被发现
+    /// </summary>
+    /// <returns></returns>
+    public bool CanFinded()
+    {
+        return !HasBuff<Buff_Hide>();
+    }
+
+    public override void OnMoveEnd()
+    {
+        base.OnMoveEnd();
+        GameView.Inst.PlayerActionEnd();
+    }
 }

@@ -15,10 +15,10 @@ public class MonShanDianZhiLi : IMonSkill
         this.val = skillBD.GetIntVal(level, "val");
     }
 
-    public override void OnHurt(IActor damager, int damage, EDamageType damageType, bool isDS)
+    public override void OnHurt(IActor damager, DmgData dmgData)
     {
-        base.OnHurt(damager, damage, damageType, isDS);
-        if (damageType == EDamageType.Lighting)
+        base.OnHurt(damager, dmgData);
+        if (dmgData.HasEleDmg(EDamageType.Lighting))
         {
             _ECur.Prop.AtkParmaD += val;
         }

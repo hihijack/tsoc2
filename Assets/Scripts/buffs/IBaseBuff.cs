@@ -45,7 +45,7 @@ public class IBaseBuff : MonoBehaviour {
     int startRound;
     public virtual void StartRoundCD() 
     {
-        startRound = GameManager.gameView._CurRound;
+        startRound = GameView.Inst.GRoundCount;
         EventsMgr.GetInstance().AttachEvent(eEventsKey.RoundChange, OnRoundChange);
         
     }

@@ -98,7 +98,39 @@ public class UIHeroInfo : MonoBehaviour {
     void RefreshStrAndProp()
     {
         txtStr.text = Hero.Inst.Prop.Strength.ToString();
-        txtAtkPhy.text = Hero.Inst.Prop.Atk.ToString();
+
+        string desc = "";
+        //主手装备
+        EquipItem eiHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
+        //副手装备
+        EquipItem eiHand2 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand2);
+
+        if (eiHand1 != null && eiHand1.baseData.type == EEquipItemType.WeaponOneHand && eiHand2 != null && eiHand2.baseData.type == EEquipItemType.WeaponOneHand)
+        {
+            // 双持单手
+            desc = string.Format("主手攻击力:{0}\n\n副手攻击力:{1}", Hero.Inst.Prop.GetAtk(eiHand1), Hero.Inst.Prop.GetAtk(eiHand2));
+        }
+        else if (eiHand1 != null && eiHand1.baseData.type == EEquipItemType.WeaponOneHand)
+        {
+            // 单持主手
+            desc = string.Format("主手攻击力:{0}\n\n副手攻击力:{1}", Hero.Inst.Prop.GetAtk(eiHand1), Hero.Inst.Prop.GetAtk(null));
+        }
+        else if (eiHand2 != null && eiHand2.baseData.type == EEquipItemType.WeaponOneHand)
+        {
+            // 单持副手
+            desc = string.Format("主手攻击力:{0}\n\n副手攻击力:{1}", Hero.Inst.Prop.GetAtk(null), Hero.Inst.Prop.GetAtk(eiHand2));
+        }
+        else if (eiHand1 != null && eiHand1.baseData.type == EEquipItemType.WeaponTwoHand)
+        {
+            // 双手
+            desc = string.Format("双手攻击力:{0}", Hero.Inst.Prop.GetAtk(eiHand1));
+        }
+        else
+        {
+            //空手
+            desc = string.Format("主手攻击力:{0}\n\n副手攻击力:{1}", Hero.Inst.Prop.GetAtk(null), Hero.Inst.Prop.GetAtk(null));
+        }
+        txtAtkPhy.text = desc;
     }
 
     void RefreshAgiAndProp() 

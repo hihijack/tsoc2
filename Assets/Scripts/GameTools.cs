@@ -3,6 +3,7 @@
 public static class GameTools{
 
 	// 属性描述
+    [System.Obsolete]
     public static string Prop2Desc(EEquipItemProperty property)
     {
         string desc = "";
@@ -20,7 +21,7 @@ public static class GameTools{
             case EEquipItemProperty.Sta:
                 desc = "体能";
                 break;
-            case EEquipItemProperty.Arm:
+            case EEquipItemProperty.ArmAdd:
                 desc = "护甲";
                 break;
             case EEquipItemProperty.IAS:
@@ -42,7 +43,19 @@ public static class GameTools{
                 desc = "致命一击";
                 break;
             case EEquipItemProperty.ParryDamage:
-                desc = "格挡强化";
+                desc = "物理格挡强化";
+                break;
+            case EEquipItemProperty.ParryFire:
+                desc = "火焰格挡强化";
+                break;
+            case EEquipItemProperty.ParryLighting:
+                desc = "闪电格挡强化";
+                break;
+            case EEquipItemProperty.ParryPoison:
+                desc = "毒素格挡强化";
+                break;
+            case EEquipItemProperty.ParryFrozen:
+                desc = "冰冷格挡强化";
                 break;
             case EEquipItemProperty.FireDamage:
                 desc = "火焰伤害";
@@ -62,9 +75,9 @@ public static class GameTools{
             case EEquipItemProperty.Weight:
                 desc = "重量";
                 break;
-            case EEquipItemProperty.MoveSpeed:
-                desc = "移动速度";
-                break;
+            //case EEquipItemProperty.MoveSpeed:
+            //    desc = "移动速度";
+            //    break;
             case EEquipItemProperty.AddDamage:
                 desc = "伤害";
                 break;

@@ -4,6 +4,7 @@ using System.Collections;
 public class CMDHandler : MonoBehaviour
 {
     string txtGetEI = "";
+    string txtToMap = "";
     void OnGUI()
     {
         if (!Application.isEditor)
@@ -27,10 +28,17 @@ public class CMDHandler : MonoBehaviour
                 }
             }
         }
-
-        if (GUILayout.Button("设置负重"))
+        txtToMap = GUILayout.TextField(txtToMap);
+        if (GUILayout.Button("前往地图"))
         {
-            Hero.Inst.Prop.LoadIncrease(30);
+            if (!string.IsNullOrEmpty(txtToMap))
+            {
+                string[] sT = txtToMap.Split('_');
+                int mapId = int.Parse(sT[0]);
+                int gridId = int.Parse(sT[1]);
+                GameMapBaseData mapTarget = GameDatas.GetGameMapBD(mapId);
+                GameView.Inst.PlayerToMap(mapTarget, gridId);
+            }
         }
 
         if (GUILayout.Button("test"))

@@ -301,7 +301,7 @@ public class UIManager: MonoBehaviour {
             case EDamageType.Poison:
                 txt += "!毒素伤害";
                 break;
-            case EDamageType.Forzen:
+            case EDamageType.Frozen:
                 txt += "!冰冻伤害";
                 break;
             default:
@@ -343,7 +343,7 @@ public class UIManager: MonoBehaviour {
             case EDamageType.Poison:
                 txt += "!毒素伤害";
                 break;
-            case EDamageType.Forzen:
+            case EDamageType.Frozen:
                 txt += "!冰冻伤害";
                 break;
             default:
@@ -942,9 +942,9 @@ public class UIManager: MonoBehaviour {
 
         //gameView.
         // 装备移到背包
-        if (ei._Part != EEquipPart.None && eiTo._Part == EEquipPart.None)
+        if (ei.Part != EEquipPart.None && eiTo.Part == EEquipPart.None)
         {
-            EEquipPart partOri = ei._Part;
+            EEquipPart partOri = ei.Part;
             int gridIdTo = eiTo.BagGridId;
             if (gridIdTo > 0)
             {
@@ -955,7 +955,7 @@ public class UIManager: MonoBehaviour {
 
         }
         // 背包移到背包
-        else if (ei._Part == EEquipPart.None && eiTo._Part == EEquipPart.None)
+        else if (ei.Part == EEquipPart.None && eiTo.Part == EEquipPart.None)
         {
             int gridOri = ei.BagGridId;
             int gridIdTo = eiTo.BagGridId;
@@ -968,10 +968,10 @@ public class UIManager: MonoBehaviour {
 
         }
         // 背包移到装备栏
-        else if (ei._Part == EEquipPart.None && eiTo._Part != EEquipPart.None)
+        else if (ei.Part == EEquipPart.None && eiTo.Part != EEquipPart.None)
         {
             int gridOri = ei.BagGridId;
-            EEquipPart partTo = eiTo._Part;
+            EEquipPart partTo = eiTo.Part;
 
             GameView.Inst.DoMoveAEquipItemToBag(eiTo, gridOri);
             GameView.Inst.DoMoveAEquipItemToEquip(ei, partTo);

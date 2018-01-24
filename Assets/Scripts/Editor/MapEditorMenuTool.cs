@@ -91,20 +91,20 @@ public class MapEditorMenuTool
         foreach (GameObject item in Selection.gameObjects)
         {
             MapGrid grid = item.GetComponent<MapGrid>();
-            if (grid != null)
+            Transform tfItem = grid.transform.FindChild("item");
+            if (grid != null && tfItem == null)
             {
                 grid.Type = EGridType.Block;
                 GameObject gobjBlock = new GameObject("item", typeof(SpriteRenderer));
-                gobjBlock.transform.parent = item.transform;
+                gobjBlock.transform.parent = grid.transform;
                 gobjBlock.transform.localPosition = Vector3.zero;
                 gobjBlock.tag = "MapItem";
                 gobjBlock.layer = LayerMask.NameToLayer("MapGrid");
                 SpriteRenderer sr = gobjBlock.GetComponent<SpriteRenderer>();
                 sr.sortingLayerName = "mapitem";
-                Debug.LogError("add item");//#######
             }
-            EditorUtility.SetDirty(item);
         }
+       
     }
 
     [MenuItem("GameObject/Map/设为NoneBlock", false, 2)]
@@ -145,6 +145,13 @@ public class MapEditorMenuTool
             }
             Selection.objects = selects.ToArray();
         }
+    }
+
+    [MenuItem("Assets/添加到格子")]
+    static void AddToGrid()
+    {
+        //GameObject prefSelect = GameObject.Instantiate(Selection.activeObject) as GameObject;
+        //prefSelect.transform.parent 
     }
 }
 

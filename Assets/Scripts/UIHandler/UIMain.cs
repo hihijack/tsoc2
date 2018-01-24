@@ -446,6 +446,14 @@ public class UIMain : MonoBehaviour {
             // 数据绑定
             BindData(enermyItem.GetInstanceID(), gobjUIEnermyItem);
             BindData(gobjUIEnermyItem.GetInstanceID(), enermyItem);
+
+            //初始化buff
+            IBaseBuff[] buffs = enermyItem.GetBuffs();
+            for (int buffIndex = 0; buffIndex < buffs.Length; buffIndex++)
+            {
+                IBaseBuff buff = buffs[buffIndex];
+                AddABuffToTarget(enermyItem, buff);
+            }
         }
     }
 
@@ -501,6 +509,11 @@ public class UIMain : MonoBehaviour {
         }
         else
         {
+            if (buff.baseData == null)
+            {
+                return;
+            }
+
             GameObject gobjUIEnermyItem = dicModelViews[actor.GetInstanceID()] as GameObject;
             if (gobjUIEnermyItem != null)
             {

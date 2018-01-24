@@ -17,6 +17,6 @@ public class DuSuQiangHua : IMonSkill {
     public override void OnAttackHit(IActor target, int attack)
     {
         Enermy curE = GetCurEnermy();
-        curE.DamageTarget(dam, target, EDamageType.Poison);
+        curE.DamageTarget(target, new DmgData(dam, EDamageType.Poison));
     }
 }

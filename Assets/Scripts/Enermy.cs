@@ -16,6 +16,8 @@ public class Enermy : IActor {
     public Hero curBattleTarget;
     public int uiIndex; // 在战斗界面中的序列
 
+    
+
     public bool needInitInStart = false; // 需要自动初始化
 
     public IMonSkill[] monSkills;
@@ -24,7 +26,7 @@ public class Enermy : IActor {
 
     public float dropCashOffet = 1f; // 金钱掉落倍数
 
-    public bool isTierBoss = false; // 是否是试炼塔boss
+    public bool isSummedBoss = false; // 是否召唤的精英怪
 
     private EAIState aiState = EAIState.Normal;//AI状态
 
@@ -47,6 +49,12 @@ public class Enermy : IActor {
     /// </summary>
     public string drops;
 
+    public bool mToBattle = false;
+
+    /// <summary>
+    /// 受到有冲击力的伤害时间
+    /// </summary>
+    private float _lastHurtWithForce;
     #endregion
 
     #region GeterSeter
@@ -160,12 +168,15 @@ public class Enermy : IActor {
         this.Prop.resPoision = mbd.respoison;
         this.Prop.resThunder = mbd.reslighting;
 
-        this.atkAnimTimeBeforeBase = mbd.atkTimeBefore;
-        this.atkAnimTimeAfterBase = mbd.atkTimeAfter;
+        //this.atkAnimTimeBeforeBase = mbd.atkTimeBefore;
+        //this.atkAnimTimeAfterBase = mbd.atkTimeAfter;
        
         this._CurGridid = transform.parent.GetComponent<MapGrid>().g_Id;
         this.Prop.DeadlyStrike = 0.05f;
 
+        this.Prop.maxTenactiyUCtl = mbd.tenacity;
+        this.Prop.tenacityLevel = mbd.tenLevel;
+        this.Prop.TenacityUCtl = this.Prop.maxTenactiyUCtl;
         // 初始化技能
         if (!string.IsNullOrEmpty(_MonsterBD.skills))
         {
@@ -183,13 +194,14 @@ public class Enermy : IActor {
 
         RefreshSpeedFlag();
 
-        Prop.AtkBaseA = mbd.atkMin;
-        Prop.BaseWeaponIAS = mbd.ias;
+        //Prop.BaseWeaponIAS = mbd.ias;
 
         GameView.Inst.AddToListEnermy(this);
 
         AI = GetComponent<IAI>();
         AI.Init(this);
+
+        actorName = mbd.name;
 
         gFSMManager = new ManagerBattleStateNPC(this);
 
@@ -432,6 +444,27 @@ public class Enermy : IActor {
                     mah.Init(level);
                 }
                 break;
+            case 30:
+                {
+                    //火焰防护
+                    MoFaHuZhao mfhz = gameObject.AddComponent<MoFaHuZhao>();
+                    mfhz.Init(level);
+                }
+                break;
+            case 31:
+                {
+                    //死灵支配
+                    SiLingZhiPei slzp = gameObject.AddComponent<SiLingZhiPei>();
+                    slzp.Init(level);
+                }
+                break;
+            case 32:
+                {
+                    //愤怒攻击
+                    MonAtkFury furyAtk = gameObject.AddComponent<MonAtkFury>();
+                    furyAtk.Init(level);
+                }
+                break;
             default:
                 break;
         }
@@ -446,6 +479,12 @@ public class Enermy : IActor {
             AI.DoUpdate();
             gFSMManager.Update();
         }
+
+        //韧性受击N秒后恢复
+        if (Time.time - _lastHurtWithForce > IConst.TenRecoverTimeForNPC)
+        {
+            Prop.TenacityUCtl = Prop.maxTenactiyUCtl;
+        }
 	}
 
     public void RecoverHp(int hp)
@@ -458,16 +497,21 @@ public class Enermy : IActor {
         UIManager.Inst.uiMain.RefreshTargetHP(this);
     }
 
-    public void StartAttack()
+    internal IBaseBuff[] GetBuffs()
     {
-        StartCoroutine(CoStartAttackCurTarget());
+        return GetComponents<IBaseBuff>();
     }
 
-    public void PlayAnimAtk() 
-    {
-        Anim.speed = animRate;
-        Anim.Play("enermy_atk");
-    }
+    //public void StartAttack()
+    //{
+    //    StartCoroutine(CoStartAttackCurTarget());
+    //}
+
+    //public void PlayAnimAtk() 
+    //{
+    //    Anim.speed = animRate;
+    //    Anim.Play("enermy_atk");
+    //}
 
     public void ShankColor(Color toColor) 
     {
@@ -485,46 +529,46 @@ public class Enermy : IActor {
     }
 
     // 不停自动攻击目标，直到目标死亡
-    IEnumerator CoStartAttackCurTarget()
-    {
-        while (curBattleTarget._State != EActorState.Dead)
-        {
-            PlayAnimAtk();
-            SpRender.color = Color.red;
-            // 攻击前摇
-            yield return new WaitForSeconds(this.AtkAnimTimeBefore);
+    //IEnumerator CoStartAttackCurTarget()
+    //{
+    //    while (curBattleTarget._State != EActorState.Dead)
+    //    {
+    //        PlayAnimAtk();
+    //        SpRender.color = Color.red;
+    //        // 攻击前摇
+    //        yield return new WaitForSeconds(this.AtkAnimTimeBefore);
 
-            if (_State == EActorState.Dead)
-            {
-                break;
-            }
+    //        if (_State == EActorState.Dead)
+    //        {
+    //            break;
+    //        }
 
-            // 攻击伤害
-            if (CheckHitTarget(curBattleTarget))
-            {
-                int atk = Prop.Atk;
-                OnAttackHit(curBattleTarget, atk);
-                curBattleTarget.OnAttackedHit(this, atk);
-                DamageTarget(atk, curBattleTarget);
-                UIManager.Inst.uiMain.RefreshHeroHP();
-            }
-            else
-            {
-                // 攻击被躲闪
-                UIManager.Inst.ShowBattleStateInfo("闪避");
-                OnAttackLost(curBattleTarget);
-                curBattleTarget.OnAttackedLost(this);
-            }
+    //        // 攻击伤害
+    //        if (CheckHitTarget(curBattleTarget))
+    //        {
+    //            int atk = Prop.GetAtk(null);
+    //            OnAttackHit(curBattleTarget, atk);
+    //            curBattleTarget.OnAttackedHit(this, atk);
+    //            DamageTarget(atk, curBattleTarget);
+    //            UIManager.Inst.uiMain.RefreshHeroHP();
+    //        }
+    //        else
+    //        {
+    //            // 攻击被躲闪
+    //            UIManager.Inst.ShowBattleStateInfo("闪避");
+    //            OnAttackLost(curBattleTarget);
+    //            curBattleTarget.OnAttackedLost(this);
+    //        }
 
-            SpRender.color = Color.white;
-            // 攻击后摇
-            yield return new WaitForSeconds(AtkAnimTimeAfter);
+    //        SpRender.color = Color.white;
+    //        // 攻击后摇
+    //        yield return new WaitForSeconds(AtkAnimTimeAfter);
 
-            float ranTime = UnityEngine.Random.Range(0.5f, 1.5f);
-            // 攻击间隔
-            yield return new WaitForSeconds(AtkTimeInterval * ranTime);
-        }
-    }
+    //        float ranTime = UnityEngine.Random.Range(0.5f, 1.5f);
+    //        // 攻击间隔
+    //        yield return new WaitForSeconds(AtkTimeInterval * ranTime);
+    //    }
+    //}
 
 
     public override void OnIntoAGrid(MapGrid grid)
@@ -668,9 +712,14 @@ public class Enermy : IActor {
         }
     }
 
-    public override void OnHurted(int damage, EDamageType type, IActor target, bool isDS)
+    public override void OnHurted(IActor target, DmgData dmgData)
     {
         ShankColor(Color.red);
+
+        if (dmgData.force > 0)
+        {
+            _lastHurtWithForce = Time.time;
+        }
 
         if (monSkills != null)
         {
@@ -678,28 +727,59 @@ public class Enermy : IActor {
             for (int i = 0; i < monSkills.Length; i++)
             {
                 IMonSkill skill = monSkills[i];
-                skill.OnHurt(target, damage, type, isDS);
+                skill.OnHurt(target, dmgData);
+            }
+        }
+
+        //韧性处理
+        if (!gFSMManager.InUnControl())
+        {
+            if (dmgData.force > Prop.tenacityLevel)
+            {
+                //直接硬直
+                gFSMManager.ActionUnControl(GetUCtrlTimeByFore(dmgData.force));
+            }
+            else
+            {
+                //造成削韧
+                Prop.TenacityUCtl -= dmgData.dp;
+                if (Prop.TenacityUCtl <= 0)
+                {
+                    gFSMManager.ActionUnControl(GetUCtrlTimeByFore(dmgData.force));
+                }
             }
         }
     }
 
-    public override void OnDamageTarget(int damage, IActor target, bool isDS)
+    /// <summary>
+    /// 根据冲击力获得硬直时间
+    /// </summary>
+    /// <param name="force"></param>
+    /// <returns></returns>
+    private float GetUCtrlTimeByFore(int force)
     {
-        base.OnDamageTarget(damage, target, isDS);
+        float r = 0f;
+        r = force * 0.8f;
+        return r;
+    }
+
+    public override void OnDamageTarget(IActor target, DmgData dmgData)
+    {
+        base.OnDamageTarget(target,dmgData);
         if (monSkills != null)
         {
             // 技能触发检测
             for (int i = 0; i < monSkills.Length; i++)
             {
                 IMonSkill skill = monSkills[i];
-                skill.OnDamageTarget(target, damage, isDS);
+                skill.OnDamageTarget(target, dmgData.TotalDmg(), dmgData.isDS);
             }
         }
       
     }
 
     public override void OnAttackLost(IActor target)
-    {
+     {
         base.OnAttackLost(target);
         if (monSkills != null)
         {
@@ -710,6 +790,7 @@ public class Enermy : IActor {
                 skill.OnAtkLost(target);
             }
         }
+        AI.OnAtkMiss();
     }
 
     public override void OnAttackedLost(IActor atker)
@@ -755,78 +836,191 @@ public class Enermy : IActor {
         }
     }
 
-    internal IEnumerator CoAIAction()
+    public void AIAction()
     {
         MapGrid mgHero = Hero.Inst.GetCurMapGrid();
         MapGrid mgCur = GetCurMapGrid();
         int dis = MapGrid.GetDis(mgHero, mgCur);
-        //int readDis = MapGrid.GetDis(mgHero, mgCur);
 
         if (enableAction)
         {
-            bool toBattle = false;//进入近战战斗
             if (_AIState == EAIState.Normal)
             {
-                if (dis <= monsterBD.view)
+                if (dis <= monsterBD.view && Hero.Inst.CanFinded())
                 {
                     //发现敌人
                     OnFindTarget();
                 }
+                AIActionEnd();
             }
             else if (_AIState == EAIState.FindTarget)
             {
-                if (_AIState == EAIState.FindTarget)
+                if (Hero.Inst.CanFinded())
                 {
                     //处于攻击位置
                     bool canIntoBattle = CanIntoBattle();
                     //在近战范围内，进入近战战斗
                     if (dis == 1)
                     {
-                        toBattle = true;
+                        StartToBattle();
                     }
-                    else if(!canIntoBattle)
+                    else if (!canIntoBattle)
                     {
                         //不在攻击位置，追击
                         MapGrid mgEnermyTo = PathToTarget(mgHero);
-                    
-                        if (mgEnermyTo != null)
+
+                        if (mgEnermyTo != null && mgEnermyTo.IsEnablePass())
                         {
-                           yield return StartCoroutine(CoMoveToAGrid(mgEnermyTo));
-                            //追击移动后
-                            mgCur = GetCurMapGrid();
-                            dis = MapGrid.GetDis(mgHero, mgCur);
-                            //在近战范围内
-                            if (dis == 1)
-                            {
-                                toBattle = true;
-                            }
+                            MoveToAGrid(mgEnermyTo);
                         }
                         else
                         {
                             _AIState = EAIState.Normal;
+                            AIActionEnd();
                         }
                     }
-                    else if(canIntoBattle)
+                    else if (canIntoBattle)
                     {
                         // 距离不等于1且在攻击位置
                         //远程怪物发动攻击
-                        yield return StartCoroutine(CoAtkInLongRange());
+                        //yield return StartCoroutine(CoAtkInLongRange());
+                        AtkInLongRange();
                     }
                 }
-            }
-            //进入近战战斗
-            if (toBattle)
-            {
-                //隐匿现身攻击
-                if (HasBuff<Buff_Hiding>())
+                else
                 {
-                    yield return StartCoroutine(CoAtkInHiding());
+                    LostTarget();
+                    AIActionEnd();
                 }
-                OnToBattle();
             }
         }
-        yield return 0;
+        else
+        {
+            AIActionEnd();
+        }
     }
+
+    private void StartToBattle()
+    {
+        if (HasBuff<Buff_Hiding>())
+        {
+            AtkInHiding();
+        }
+        else
+        {
+            OnToBattle();
+        }
+    }
+
+    private void AtkInHiding()
+    {
+        RefreshHiding(false);
+        int atk = 3 * Prop.GetAtk(null);
+        OnAttackHit(Hero.Inst, atk);
+        Hero.Inst.OnAttackedHit(this, atk);
+        DamageTarget(Hero.Inst, new DmgData(atk, EDamageType.Phy));
+        UIManager.Inst.uiMain.RefreshHeroHP();
+        Invoke("AtkInHidingEnd", 1f);
+    }
+
+    void AtkInHidingEnd()
+    {
+        OnToBattle();
+    }
+
+    public override void OnMoveEnd()
+    {
+        base.OnMoveEnd();
+        int dis = MapGrid.GetDis(Hero.Inst.GetCurMapGrid(), GetCurMapGrid());
+        //在近战范围内
+        if (dis == 1)
+        {
+            StartToBattle();
+        }
+        else
+        {
+            AIActionEnd();
+        }
+    }
+
+    //internal IEnumerator CoAIAction()
+    //{
+    //    MapGrid mgHero = Hero.Inst.GetCurMapGrid();
+    //    MapGrid mgCur = GetCurMapGrid();
+    //    int dis = MapGrid.GetDis(mgHero, mgCur);
+    //    //int readDis = MapGrid.GetDis(mgHero, mgCur);
+
+    //    if (enableAction)
+    //    {
+    //        bool toBattle = false;//进入近战战斗
+    //        if (_AIState == EAIState.Normal)
+    //        {
+    //            if (dis <= monsterBD.view && Hero.Inst.CanFinded())
+    //            {
+    //                //发现敌人
+    //                OnFindTarget();
+    //            }
+    //        }
+    //        else if (_AIState == EAIState.FindTarget)
+    //        {
+    //            if (Hero.Inst.CanFinded())
+    //            {
+    //                //处于攻击位置
+    //                bool canIntoBattle = CanIntoBattle();
+    //                //在近战范围内，进入近战战斗
+    //                if (dis == 1)
+    //                {
+    //                    toBattle = true;
+    //                }
+    //                else if(!canIntoBattle)
+    //                {
+    //                    Debug.LogError(name);//#####
+    //                    //不在攻击位置，追击
+    //                    MapGrid mgEnermyTo = PathToTarget(mgHero);
+                    
+    //                    if (mgEnermyTo != null && mgEnermyTo.IsEnablePass())
+    //                    {
+    //                        Debug.LogError("move to" + mgEnermyTo);//########
+    //                        yield return StartCoroutine(CoMoveToAGrid(mgEnermyTo));
+    //                        //追击移动后
+    //                        mgCur = GetCurMapGrid();
+    //                        dis = MapGrid.GetDis(mgHero, mgCur);
+    //                        //在近战范围内
+    //                        if (dis == 1)
+    //                        {
+    //                            toBattle = true;
+    //                        }
+    //                    }
+    //                    else
+    //                    {
+    //                        _AIState = EAIState.Normal;
+    //                    }
+    //                }
+    //                else if(canIntoBattle)
+    //                {
+    //                    // 距离不等于1且在攻击位置
+    //                    //远程怪物发动攻击
+    //                    yield return StartCoroutine(CoAtkInLongRange());
+    //                }
+    //            }
+    //            else
+    //            {
+    //                LostTarget();
+    //            }
+    //        }
+    //        //进入近战战斗
+    //        if (toBattle)
+    //        {
+    //            //隐匿现身攻击
+    //            if (HasBuff<Buff_Hiding>())
+    //            {
+    //                yield return StartCoroutine(CoAtkInHiding());
+    //            }
+    //            OnToBattle();
+    //        }
+    //    }
+    //    yield return 0;
+    //}
 
     /// <summary>
     /// 开始战斗AI
@@ -835,43 +1029,42 @@ public class Enermy : IActor {
     {
         AI.DoStart();
     }
-
-    //发动一次远程攻击
-    private IEnumerator CoAtkInLongRange()
+    
+    void AtkInLongRange()
     {
         GameObject gobjArrow = Instantiate(Resources.Load<GameObject>("Prefabs/Effects/eff_arrow"));
         gobjArrow.transform.position = GetPos();
         ProjCtl projCtl = ProjCtl.ProjAGobj(gobjArrow);
         projCtl.SetProjMode(new ProjModeToPosInV(6f, Hero.Inst.GetPos(), OnLongRangeAtkHero));
-        while (projCtl != null)
-        {
-            yield return 1;
-        }
     }
+
+    //发动一次远程攻击
+    //private IEnumerator CoAtkInLongRange()
+    //{
+    //    GameObject gobjArrow = Instantiate(Resources.Load<GameObject>("Prefabs/Effects/eff_arrow"));
+    //    gobjArrow.transform.position = GetPos();
+    //    ProjCtl projCtl = ProjCtl.ProjAGobj(gobjArrow);
+    //    projCtl.SetProjMode(new ProjModeToPosInV(6f, Hero.Inst.GetPos(), OnLongRangeAtkHero));
+    //    while (projCtl != null)
+    //    {
+    //        yield return 1;
+    //    }
+    //}
 
     private void OnLongRangeAtkHero(ProjCtl ctl)
     {
-        int atk = Prop.Atk;
+        int atk = Prop.GetAtk(null);
         OnAttackHit(Hero.Inst, atk);
         Hero.Inst.OnAttackedHit(this, atk);
-        DamageTarget(atk, Hero.Inst);
+        DamageTarget(Hero.Inst, new DmgData(atk, EDamageType.Phy));
         UIManager.Inst.uiMain.RefreshHeroHP();
         DestroyObject(ctl.gameObject);
+        AIActionEnd();
     }
 
-    /// <summary>
-    /// 现身并伤害玩家
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator CoAtkInHiding()
+    private void AIActionEnd()
     {
-        RefreshHiding(false);
-        int atk = 3 * Prop.Atk;
-        OnAttackHit(Hero.Inst, atk);
-        Hero.Inst.OnAttackedHit(this, atk);
-        DamageTarget(atk, Hero.Inst, EDamageType.Phy, false);
-        UIManager.Inst.uiMain.RefreshHeroHP();
-        yield return new WaitForSeconds(1f);
+        GameView.Inst.OnAAIActionEnd(this);
     }
 
     /// <summary>
@@ -880,6 +1073,7 @@ public class Enermy : IActor {
     private void OnToBattle()
     {
         _AIState = EAIState.Battle;
+        AIActionEnd();
     }
 
     /// <summary>
@@ -945,6 +1139,7 @@ public class Enermy : IActor {
         //起始格加到开启列表
         openList.Add(mgStart);
         MapGrid mgCur = null;
+        bool findPath = false;
         while (openList.Count != 0)
         {
             //找出F值最小的点
@@ -962,10 +1157,12 @@ public class Enermy : IActor {
             mgCur = minFGrid;
             //F值最低点放到关闭列表
             openList.Remove(minFGrid);
+
             closeList.Add(minFGrid);
 
             if (closeList.Contains(mgTarget))
             {
+                findPath = true;
                 //路径被找到
                 break;
             }
@@ -999,16 +1196,24 @@ public class Enermy : IActor {
             }
         }
 
-        List<MapGrid> path = new List<MapGrid>();
-        path.Add(mgTarget);
-        MapGrid parentOfLast = path[path.Count - 1].pathData.parent;
-       
-        while (parentOfLast != null)
+        if (findPath)
         {
-            path.Add(parentOfLast);
-            parentOfLast = parentOfLast.pathData.parent;
+            List<MapGrid> path = new List<MapGrid>();
+            path.Add(mgTarget);
+            MapGrid parentOfLast = path[path.Count - 1].pathData.parent;
+
+            while (parentOfLast != null)
+            {
+                path.Add(parentOfLast);
+                parentOfLast = parentOfLast.pathData.parent;
+            }
+
+            if (path.Count >= 2)
+            {
+                next = path[path.Count - 2];
+            }
         }
-        next = path[path.Count - 2];
+       
         return next;
     }
 
@@ -1027,29 +1232,67 @@ public class Enermy : IActor {
                 enermy.OnFindTarget();
             }
         }
+        GameView.Inst.AddToEnermysFindTargetInCurRound(this);
     }
 
-    internal T GetBuff<T>() where T : IBaseBuff
+    /// <summary>
+    /// 丢失目标
+    /// </summary>
+    void LostTarget()
     {
-        T r = null;
-        r = GetComponent<T>();
-        return r;
-    }
-
-    internal bool HasBuff<T>() where T : IBaseBuff
-    {
-        bool hasBuff = false;
-        if (GetComponent<T>() != null)
-        {
-            hasBuff = true;
-        }
-        return hasBuff;
+        _AIState = EAIState.Normal;
+        enableAction = false;
     }
 
     #region 战斗状态
+    public override EBattleState _BattleState
+    {
+        get
+        {
+            return gFSMManager.CurState.StateType;
+        }
+    }
+
+    internal void OnBSStartDodge()
+    {
+        Anim.Play("dodge");
+        CommonCPU.Inst.CreateEffect("eff_dodge", GetPos(), Color.white, -1, false);
+    }
+
+    internal void OnBSEndDodge()
+    {
+       
+    }
+
+
     internal void OnBSStartIdle()
     {
         Anim.Play("idle");
+    }
+
+    internal void OnBSStartDef()
+    {
+        CommonCPU.Inst.CreateEffAtGobj("eff_shield", gameObject, Vector3.zero, new Color32(118, 118, 118, 255), 0);
+    }
+
+    public void OnBSStartUnCtl()
+    {
+        Anim.Play("stiff");
+        CommonCPU.Inst.CreateEffAtGobj("eff_stun", gameObject, Vector3.zero, Color.white, 0);
+        //恢复韧性
+        Prop.TenacityUCtl = Prop.maxTenactiyUCtl;
+    }
+
+    public void OnBSEndUnCtl()
+    {
+        GameObject eff = Tools.GetGameObjectInChildByPathSimple(gameObject, "eff_stun");
+        CommonCPU.Inst.RemoveEff(eff);
+    }
+
+    internal void OnBSEndDef()
+    {
+        GameObject eff = Tools.GetGameObjectInChildByPathSimple(gameObject, "eff_shield");
+        CommonCPU.Inst.RemoveEff(eff);
     }
 
     /// <summary>
@@ -1089,6 +1332,21 @@ public class Enermy : IActor {
         }
     }
 
+    internal void OnBSEndAtkAfter(int skillId, IActor target)
+    {
+        if (_State != EActorState.Dead)
+        {
+            //技能结束触发效果
+            IMonSkill skill = GetSkillById(skillId);
+            if (skill != null)
+            {
+                skill.OnAtkEnd();
+            }
+        }
+    }
+
+    #endregion 战斗状态
+
     internal void ExitFromBattle()
     {
         _State = EActorState.Normal;
@@ -1107,5 +1365,26 @@ public class Enermy : IActor {
         }
     }
 
-    #endregion
+    /// <summary>
+    /// 检测技能触发 - 当发现目标
+    /// </summary>
+    internal void SkillCheckOnFindTarget()
+    {
+        if (monSkills != null)
+        {
+            // 技能触发检测
+            for (int i = 0; i < monSkills.Length; i++)
+            {
+                IMonSkill skill = monSkills[i];
+                skill.OnFindTarget();
+            }
+        }
+    }
+
+    public override void OnStartAtked(IActor atker)
+    {
+        base.OnStartAtked(atker);
+        //AI检测
+        AI.OnAtked(atker);
+    }
 }

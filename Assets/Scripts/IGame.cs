@@ -62,10 +62,10 @@ public class MonsterBaseData
     public int atkMax;
 	public int hp;
 	public int level;
-    public float atkTimeBefore;
-    public float atkTimeAfter;
+    //public float atkTimeBefore;
+    //public float atkTimeAfter;
     //public float atkTimeInterval;
-    public float ias; // 每秒攻击次数
+    //public float ias; // 每秒攻击次数
 
     public int arm; // 护甲
     public int hit; //命中
@@ -87,18 +87,8 @@ public class MonsterBaseData
 
     public string proj;//远程攻击投射物模型
 
-	public MonsterBaseData(JSONNode data)
-	{
-		this.id = data["id"].AsInt;
-		this.name = data["name"];
-		this.model = data["model"];
-		this.atkMin = data["atk"].AsInt;
-        this.atkTimeBefore = data["atktimebefore"].AsFloat;
-        this.atkTimeAfter = data["atktimeafter"].AsFloat;
-        //this.atkTimeInterval = data["atktimeinterval"].AsFloat;
-		this.hp = data["hp"].AsInt;
-		this.level = data["level"].AsInt;
-	}
+    public int tenacity;//韧性
+    public int tenLevel;//霸体等级
 
     public MonsterBaseData(SqliteDataReader sdr) 
     {
@@ -109,10 +99,10 @@ public class MonsterBaseData
         this.atkMax = (int)sdr["atk_max"];
         this.hp = (int)sdr["hp"];
         this.level = (int)sdr["level"];
-        this.atkTimeBefore = float.Parse(sdr["atktimebefore"].ToString());
+        //this.atkTimeBefore = float.Parse(sdr["atktimebefore"].ToString());
         //this.atkTimeInterval = float.Parse(sdr["atktimeinterval"].ToString());
-        this.atkTimeAfter = float.Parse(sdr["atktimeafter"].ToString());
-        this.ias = float.Parse(sdr["ias"].ToString());
+        //this.atkTimeAfter = float.Parse(sdr["atktimeafter"].ToString());
+        //this.ias = float.Parse(sdr["ias"].ToString());
         this.drops = sdr["drops"].ToString();
         this.arm = (int)sdr["arm"];
         this.hit = (int)sdr["hit"];
@@ -126,6 +116,9 @@ public class MonsterBaseData
         view = (int)sdr["view"];
         atkrange = (int)sdr["atkrange"];
         proj = sdr["proj"].ToString();
+
+        tenacity = (int)sdr["tenacity"];
+        tenLevel = (int)sdr["tenlevel"];
     }
 }
 
@@ -214,7 +207,10 @@ public enum EEquipItemType
     ResPoiPotion = 22,         // 毒抗药水
     Torch = 23,
     Core = 24,                   //升级核心
-    CoreDebris = 25
+    CoreDebris = 25,
+    Keys = 26,  //钥匙
+    HidePotion = 27, //隐匿药水
+    FireWpon = 30  //火焰附魔
 }
 
 /// <summary>
@@ -310,7 +306,12 @@ public class EquipItemBaseData
     public int atk;
     public float ias;
     public int parry;//除以100
+    public int parryFire;
+    public int parryLighting;
+    public int parryPoison;
+    public int parryForzen;
     public int parryVigor;//每点精力格挡伤害
+    public float powerspeed;//蓄力速度
     public int weight;
     public int movespeed;
     public string model;
@@ -320,6 +321,19 @@ public class EquipItemBaseData
     public int pile; //堆叠上限
     public string data;
     public string desc;//描述
+
+    public float poweratk_1;//一段蓄力伤害
+    public float poweratk_2;//二段蓄力伤害
+    public float poweratk_3;//三段蓄力伤害
+
+    public int atkForce;//冲击力
+    public int atkForce1;//1级蓄力冲击力
+    public int atkForce2;//2级蓄力冲击力
+    public int atkForce3;//3级蓄力冲击力
+    public int dp;//削韧
+    public int dp1;//1级蓄力削韧
+    public int dp2;
+    public int dp3;
 
     public EquipItemBaseData(SqliteDataReader sdr)
     {
@@ -333,6 +347,10 @@ public class EquipItemBaseData
         this.atk = (int)sdr["atk"];
         this.ias = float.Parse(sdr["ias"].ToString());
         parry = (int)sdr["parry"];
+        parryFire = (int)sdr["parryfire"];
+        parryLighting = (int)sdr["parrylighting"];
+        parryPoison = (int)sdr["parrypoison"];
+        parryForzen = (int)sdr["parryforzen"];
         parryVigor = (int)sdr["parry_vigor"];
         weight = (int)sdr["weight"];
         movespeed = (int)sdr["movespeed"];
@@ -343,6 +361,35 @@ public class EquipItemBaseData
         this.pile = (int)sdr["pile"];
         this.data = sdr["data"].ToString();
         desc = sdr["desc"].ToString();
+        desc = desc.Replace("\\n", "\n");
+        powerspeed = float.Parse(sdr["powerspeed"].ToString());
+
+        string strT = sdr["poweratk1"].ToString();
+        if (!string.IsNullOrEmpty(strT))
+        {
+            poweratk_1 = float.Parse(strT);
+        }
+
+        strT = sdr["poweratk2"].ToString();
+        if (!string.IsNullOrEmpty(strT))
+        {
+            poweratk_2 = float.Parse(strT);
+        }
+
+        strT = sdr["poweratk3"].ToString();
+        if (!string.IsNullOrEmpty(strT))
+        {
+            poweratk_3 = float.Parse(strT);
+        }
+
+        atkForce = (int)sdr["atkforce"];
+        atkForce1 = (int)sdr["atkforce1"];
+        atkForce2 = (int)sdr["atkforce2"];
+        atkForce3 = (int)sdr["atkforce3"];
+        dp = (int)sdr["dp"];
+        dp1 = (int)sdr["dp1"];
+        dp2 = (int)sdr["dp2"];
+        dp3 = (int)sdr["dp3"];
     }
 
     public int GetIntData(string key)
@@ -399,25 +446,29 @@ public enum EEquipItemProperty
     Agi = 2,    // 敏捷
     Ten = 3,    // 坚韧
     Sta = 4,    // 体能
-    Arm = 8,         // 护甲
-    IAS = 9,        // 攻速
+    ArmAdd = 8,         // 护甲增加
+    IAS = 9,        // 攻速全装备共享
     ResFire = 10,   // 火抗
     ResThunder = 11,    // 电抗
     ResPoison = 12,     // 毒抗
     ResFrozen = 13,     // 冰抗
-    CriticalStrike = 14,    // 致命一击
-    ParryDamage = 18,     // 格挡伤害
-    FireDamage = 19,      // 火焰伤害
-    ThunderDamage = 20,   // 闪电伤害
-    PoisonDamage = 21,             // 毒素伤害
-    ForzenDamage = 22,            // 冰冷伤害
-    AddDamagePercent = 23,   //伤害增强百分比
+    CriticalStrike = 14,    // 致命一击。全装备共享
+    ParryDamage = 18,     // 格挡物理伤害/格挡值增加。单装备
+    FireDamage = 19,      // 火焰伤害。单装备
+    ThunderDamage = 20,   // 闪电伤害。单装备
+    PoisonDamage = 21,             // 毒素伤害。单装备
+    ForzenDamage = 22,            // 冰冷伤害。单装备
+    AddDamagePercent = 23,   //伤害增强百分比。单装备
     Weight = 24,
-    MoveSpeed = 25,
-    AddDamage = 26,          // 增强伤害
+    //MoveSpeed = 25,
+    AddDamage = 26,          // 增强伤害。单装备
     ArmPercent = 27, //护甲强化
-    PowerDmg = 28,  // 蓄力伤害
-    PowerSpeed = 29 // 蓄力速度
+    PowerDmg = 28,  // 蓄力伤害。单装备
+    PowerSpeed = 29, // 蓄力速度。单装备
+    ParryFire = 30,//火焰格挡率
+    ParryLighting = 31,//闪电格挡率
+    ParryPoison = 32,//毒素格挡率
+    ParryFrozen = 33//冰冷格挡率
 }
 
 /// <summary>
@@ -473,7 +524,7 @@ public enum EDamageType
     Fire = 2,   // 火
     Lighting = 3, // 电
     Poison = 4,     // 毒
-    Forzen = 5      // 冰冻
+    Frozen = 5      // 冰冻
 }
 
 public class SkillBD
@@ -703,7 +754,7 @@ public class EquipItemWord
             case EEquipItemProperty.Sta:
                 desc = string.Format("体能+{0}", val);
                 break;
-            case EEquipItemProperty.Arm:
+            case EEquipItemProperty.ArmAdd:
                 desc = string.Format("护甲+{0}", val);
                 break;
             case EEquipItemProperty.IAS:
@@ -725,7 +776,19 @@ public class EquipItemWord
                 desc = string.Format("致命一击几率提升{0}%", val);
                 break;
             case EEquipItemProperty.ParryDamage:
-                desc = string.Format("格挡强化{0}%", val);
+                desc = string.Format("物理格挡强化+{0}", val);
+                break;
+            case EEquipItemProperty.ParryFire:
+                desc = string.Format("火焰格挡强化+{0}", val);
+                break;
+            case EEquipItemProperty.ParryLighting:
+                desc = string.Format("闪电格挡强化+{0}", val);
+                break;
+            case EEquipItemProperty.ParryPoison:
+                desc = string.Format("毒素格挡强化+{0}", val);
+                break;
+            case EEquipItemProperty.ParryFrozen:
+                desc = string.Format("冰冷格挡强化+{0}", val);
                 break;
             case EEquipItemProperty.FireDamage:
                 desc = string.Format("火焰伤害+", val);
@@ -744,9 +807,6 @@ public class EquipItemWord
                 break;
             case EEquipItemProperty.Weight:
                 desc = string.Format("重量+{0}", val);
-                break;
-            case EEquipItemProperty.MoveSpeed:
-                desc = string.Format("移动速度+{0}", val);
                 break;
             case EEquipItemProperty.AddDamage:
                 desc = string.Format("伤害+{0}", val);
@@ -789,12 +849,12 @@ public class EquipItem
     public List<EquipItemWord> words; // 词缀列表
 
     private int _bagGridId;   // 在背包中的位置
-    private EEquipPart part = EEquipPart.None;     // 装备的部位
+    private EEquipPart _part = EEquipPart.None;     // 装备的部位
 
-    public EEquipPart _Part
+    public EEquipPart Part
     {
-        get { return part; }
-        set { part = value;}
+        get { return _part; }
+        set { _part = value;}
     }
 
     public int BagGridId
@@ -812,6 +872,88 @@ public class EquipItem
 
     public int count = 1;   // 堆叠
 
+    #region 最终属性
+    public int atk;
+    public int atkFire;
+    public int atkThunder;
+    public int atkPoison;
+    public int atkIce;
+    public int arm;
+    public float powerSpeed;
+    public float powerDmg = 1f;//蓄力伤害提升百分比
+    public float parry;
+    public float parryFire;
+    public float parryLighting;
+    public float parryPoison;
+    public float parryFrozen;
+    #endregion
+
+    /// <summary>
+    /// 初始化最终属性
+    /// </summary>
+    public void InitProp()
+    {
+        atk = baseData.atk;
+        arm = baseData.arm;
+        powerSpeed = baseData.powerspeed;
+        parry = baseData.parry * 0.01f;
+        powerDmg = 1f;
+        for (int i = 0; i < words.Count; i++)
+        {
+            EquipItemWord word = words[i];
+            int val = word.val;
+            switch (word.wordBaseData.propertyType)
+            {
+                case EEquipItemProperty.ParryDamage:
+                    parry = baseData.parry * 0.01f + val * 0.01f;
+                    break;
+                case EEquipItemProperty.ParryFire:
+                    parryFire = baseData.parryFire * 0.01f + val * 0.01f;
+                    break;
+                case EEquipItemProperty.ParryLighting:
+                    parryLighting = baseData.parryLighting * 0.01f + val * 0.01f;
+                    break;
+                case EEquipItemProperty.ParryPoison:
+                    parryPoison = baseData.parryPoison * 0.01f + val * 0.01f;
+                    break;
+                case EEquipItemProperty.ParryFrozen:
+                    break;
+                case EEquipItemProperty.FireDamage:
+                    atkFire = val;
+                    break;
+                case EEquipItemProperty.ThunderDamage:
+                    atkThunder = val;
+                    break;
+                case EEquipItemProperty.PoisonDamage:
+                    atkPoison = val;
+                    break;
+                case EEquipItemProperty.ForzenDamage:
+                    atkIce = val;
+                    break;
+                case EEquipItemProperty.AddDamagePercent:
+                    atk =  Mathf.CeilToInt(atk * (1 + val * 0.01f));
+                    break;
+                case EEquipItemProperty.AddDamage:
+                    atk += val;
+                    break;
+                case EEquipItemProperty.ArmAdd:
+                    arm += val;
+                    break;
+                case EEquipItemProperty.ArmPercent:
+                    arm = Mathf.CeilToInt(arm * (1 + val * 0.01f));
+                    break;
+                case EEquipItemProperty.PowerDmg:
+                    powerDmg *= (1 + val * 0.01f);
+                    break;
+                case EEquipItemProperty.PowerSpeed:
+                    powerSpeed *= (1 + val * 0.01f);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     public bool IsInBag()
     {
         return BagGridId > 0;
@@ -819,7 +961,7 @@ public class EquipItem
 
     public bool IsInEquip()
     {
-        return part != EEquipPart.None;
+        return _part != EEquipPart.None;
     }
 
     public string GetIcon()
@@ -941,7 +1083,34 @@ public class EquipItem
         {
             ei.words[i] = words[i].Clone();
         }
+        ei.InitProp();
         return ei;
+    }
+
+    public float GetParry(EDamageType dmgType)
+    {
+        float r = 0f;
+        switch (dmgType)
+        {
+            case EDamageType.Phy:
+                r = parry;
+                break;
+            case EDamageType.Fire:
+                r = parryFire;
+                break;
+            case EDamageType.Lighting:
+                r = parryLighting;
+                break;
+            case EDamageType.Poison:
+                r = parryPoison;
+                break;
+            case EDamageType.Frozen:
+                r = parryFrozen;
+                break;
+            default:
+                break;
+        }
+        return r;
     }
 }
 
@@ -979,6 +1148,10 @@ public static class IConst
     public static readonly float BaseDS = 0.05f; //基础致命一击几率
 
     public const int ATK_EMPTY = 1;//空手攻击力
+    public const float POWER_SPEED_EMPTY = 1;//空手蓄力速度
+    public const float Power1DamPer_EMPTY = 4f;//空手一段蓄力伤害
+    public const float Power2DamPer_EMPTY = 8f;//空手二段蓄力伤害
+    public const float Power3DamPer_EMPTY = 16f;//空手三段蓄力伤害
 
     public const float Power1DamPer = 4f;//一段蓄力伤害
     public const float Power2DamPer = 8f;//二段蓄力伤害
@@ -986,7 +1159,7 @@ public static class IConst
 
     public const string KEY_HASALLOT_STR = "strallot";     // 已分配的力量点
     public const string KEY_HASALLOT_AGI = "agiallot";     // 已分配的敏捷点
-    public const string KEY_HASALLOT_INT = "intallot";     // 已分配的精神力点
+    public const string KEY_HASALLOT_TEN = "intallot";     // 已分配的精神力点
     public const string KEY_HASALLOT_STA = "staallot";      // 已分配的体能点
     public const string KEY_HASALLOT_END = "endallot";  //已分配的持久力
     public const string KEY_NEED_ALLOT = "noallot";         // 还未分配的属性点
@@ -1005,6 +1178,14 @@ public static class IConst
     internal static readonly string KEY_CHEST_OPENED = "checsopened";
     internal static readonly string KEY_DOOR_OPEND = "dooropend";
     internal static readonly string KEY_GIRLTIP;
+    /// <summary>
+    /// 精力消耗：每负重
+    /// </summary>
+    internal static readonly float VogprCostPerLoad = 1.5f;
+    /// <summary>
+    /// 韧性自动回复时间
+    /// </summary>
+    internal static float TenRecoverTimeForNPC = 8f;
 }
 
 /// <summary>
@@ -1055,6 +1236,14 @@ public class BuffBaseData
     }
 }
 
+
+public enum EMapType
+{
+    Field = 0,//野外
+    Home = 1,//城镇
+    CampsiteOfDemo = 2,//怪物营地
+    Tirel = 3   //试塔
+}
 /// <summary>
 /// 游戏地图
 /// </summary>
@@ -1068,7 +1257,7 @@ public class GameMapBaseData
     public int minLevel;
     public int maxLevel;
     public int monsterCount;
-    public bool isHome; // 是否城镇。城镇不会生成怪物
+    public EMapType type; // 类型
     public int tier; // 层
     public int bossId; // 出现的boss
 
@@ -1082,7 +1271,7 @@ public class GameMapBaseData
         minLevel = (int)sdr["minlevel"];
         maxLevel = (int)sdr["maxlevel"];
         monsterCount = (int)sdr["monstercount"];
-        isHome = (bool)sdr["ishome"];
+        type = (EMapType)sdr["type"];
         tier = (int)sdr["tier"];
         bossId = (int)sdr["boss"];
     }
@@ -1134,3 +1323,242 @@ public class ComparMissionByStep : IComparer<MissionBD>
     }
 }
 #endregion
+
+/// <summary>
+/// 一次攻击数据
+/// </summary>
+public struct DmgData
+{
+    public int dmgPhy;
+    public int dmgFire;
+    public int dmgLighting;
+    public int dmgPoison;
+    public int dmgForzen;
+    public bool enableDS;//允许致命一击
+    public int dp;//削韧
+    public int force;//冲击力
+    public bool isDS;//是否致命一击
+    public int power;//蓄力等级
+
+    public DmgData(int val, EDamageType damageType) : this()
+    {
+        switch (damageType)
+        {
+            case EDamageType.Phy:
+                dmgPhy = val;
+                break;
+            case EDamageType.Fire:
+                dmgFire = val;
+                break;
+            case EDamageType.Lighting:
+                dmgLighting = val;
+                break;
+            case EDamageType.Poison:
+                dmgPoison = val;
+                break;
+            case EDamageType.Frozen:
+                dmgForzen = val;
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    public bool HasDmg()
+    {
+        return dmgPhy > 0 || dmgFire > 0 || dmgLighting > 0 || dmgPoison > 0 || dmgForzen > 0;
+    }
+
+    public int TotalDmg()
+    {
+        return dmgPhy + dmgFire + dmgLighting + dmgPoison + dmgForzen;
+    }
+
+    internal void ApplyPower()
+    {
+        //蓄力
+        if (power >= 1 && power < 2)
+        {
+            //一段蓄力
+            if (dmgPhy > 0)
+            {
+                dmgPhy = Mathf.CeilToInt(IConst.Power1DamPer * dmgPhy);
+            }
+            if (dmgLighting > 0)
+            {
+                dmgLighting = Mathf.CeilToInt(IConst.Power1DamPer * dmgLighting);
+            }
+            if (dmgFire > 0)
+            {
+                dmgFire = Mathf.CeilToInt(IConst.Power1DamPer * dmgFire);
+            }
+            if (dmgPoison > 0)
+            {
+                dmgPoison = Mathf.CeilToInt(IConst.Power1DamPer * dmgPoison);
+            }
+            if (dmgForzen > 0)
+            {
+                dmgForzen = Mathf.CeilToInt(IConst.Power1DamPer * dmgForzen);
+            }
+        }
+        else if (power >= 2 && power < 3)
+        {
+            //二段蓄力
+            if (dmgPhy > 0)
+            {
+                dmgPhy = Mathf.CeilToInt(IConst.Power2DamPer * dmgPhy);
+            }
+            if (dmgLighting > 0)
+            {
+                dmgLighting = Mathf.CeilToInt(IConst.Power2DamPer * dmgLighting);
+            }
+            if (dmgFire > 0)
+            {
+                dmgFire = Mathf.CeilToInt(IConst.Power2DamPer * dmgFire);
+            }
+            if (dmgPoison > 0)
+            {
+                dmgPoison = Mathf.CeilToInt(IConst.Power2DamPer * dmgPoison);
+            }
+            if (dmgForzen > 0)
+            {
+                dmgForzen = Mathf.CeilToInt(IConst.Power2DamPer * dmgForzen);
+            }
+        }
+        else if (power >= 3)
+        {
+            //三段蓄力
+            if (dmgPhy > 0)
+            {
+                dmgPhy = Mathf.CeilToInt(IConst.Power3DamPer * dmgPhy);
+            }
+            if (dmgLighting > 0)
+            {
+                dmgLighting = Mathf.CeilToInt(IConst.Power3DamPer * dmgLighting);
+            }
+            if (dmgFire > 0)
+            {
+                dmgFire = Mathf.CeilToInt(IConst.Power3DamPer * dmgFire);
+            }
+            if (dmgPoison > 0)
+            {
+                dmgPoison = Mathf.CeilToInt(IConst.Power3DamPer * dmgPoison);
+            }
+            if (dmgForzen > 0)
+            {
+                dmgForzen = Mathf.CeilToInt(IConst.Power3DamPer * dmgForzen);
+            }
+        }
+    }
+
+    internal void ApplyParry(float parryPercentPhy, float parryPercentFire, float parryPercentLighting, float parryPercentPoison, float parryPercentFrozen)
+    {
+        dmgPhy = Mathf.RoundToInt(dmgPhy * (1 - parryPercentPhy));
+        dmgFire = Mathf.RoundToInt(dmgFire * (1 - parryPercentFire));
+        dmgLighting = Mathf.RoundToInt(dmgLighting * (1 - parryPercentLighting));
+        dmgPoison = Mathf.RoundToInt(dmgPoison *(1 - parryPercentPoison));
+        dmgForzen = Mathf.RoundToInt(dmgForzen * (1 - parryPercentFrozen));
+    }
+
+    internal void ApplyRes(int arm, int resFire, int resThunder, int resPoision, int resForzen)
+    {
+        dmgPhy = CalRes(dmgPhy, arm);
+        dmgFire = CalRes(dmgFire, resFire);
+        dmgLighting = CalRes(dmgLighting, resThunder);
+        dmgPoison = CalRes(dmgPoison, resPoision);
+        dmgForzen = CalRes(dmgForzen, resForzen);
+    }
+
+    /// <summary>
+    /// 计算经过抗性后的伤害
+    /// </summary>
+    /// <returns></returns>
+    int CalRes(int val, int res)
+    {
+        if (val == 0)
+        {
+            return 0;
+        }
+
+        int damage = 0;
+        if (res >= 0)
+        {
+            int damgeOffset = (int)(val * (res * 0.03 / (res * 0.03f + 1)));
+            damage = val - damgeOffset;
+        }
+        else
+        {
+            int N = Mathf.Abs(res);
+            float damgeAddPercent = 2 - Mathf.Pow(0.94f, N);
+            damage = (int)(val * damgeAddPercent);
+        }
+        return damage;
+    }
+
+    internal void ApplyDS(float ds)
+    {
+        isDS = true;
+        dmgPhy = Mathf.RoundToInt(dmgPhy * ds);
+        dmgFire = Mathf.RoundToInt(dmgFire * ds);
+        dmgLighting = Mathf.RoundToInt(dmgLighting * ds);
+        dmgPoison = Mathf.RoundToInt(dmgPoison * ds);
+        dmgForzen = Mathf.RoundToInt(dmgForzen * ds);
+    }
+
+    public EDamageType GetEleDmgType()
+    {
+        if (dmgFire > 0)
+        {
+            return EDamageType.Fire;
+        }
+
+        if (dmgLighting > 0)
+        {
+            return EDamageType.Lighting;
+        }
+
+        if (dmgPoison > 0)
+        {
+            return EDamageType.Poison;
+        }
+
+        if (dmgForzen > 0)
+        {
+            return EDamageType.Frozen;
+        }
+
+        return EDamageType.Phy;
+    }
+
+    /// <summary>
+    /// 是否包含属性伤害
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public bool HasEleDmg(EDamageType type)
+    {
+        bool r = false;
+        switch (type)
+        {
+            case EDamageType.Phy:
+                r = dmgPhy > 0;
+                break;
+            case EDamageType.Fire:
+                r = dmgFire > 0;
+                break;
+            case EDamageType.Lighting:
+                r = dmgLighting > 0;
+                break;
+            case EDamageType.Poison:
+                r = dmgPoison > 0;
+                break;
+            case EDamageType.Frozen:
+                r = dmgForzen > 0;
+                break;
+            default:
+                break;
+        }
+        return r;
+    }
+}

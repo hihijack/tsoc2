@@ -41,8 +41,8 @@ public class MortalStrike : ISkill{
             // 特效
             GameManager.commonCPU.CreateEffect("eff_hand_two_2", target.transform.position, new Color(150f/255, 246f/255, 1f), -1f);
 
-            int damage = (int)(caster.Prop.Atk * damageRate);
-			caster.DamageTarget(damage, target);
+            int damage = (int)(caster.Prop.GetAtk(Hero.Inst.GetAtkWpon()) * damageRate);
+			caster.DamageTarget(target, new DmgData(damage, EDamageType.Phy));
 			
 			// 施法后摇
 			yield return new WaitForSeconds(0.5f);

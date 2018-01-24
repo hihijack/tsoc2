@@ -15,6 +15,6 @@ public class MonQiangDian : IMonSkill{
     public override void OnAttackedHit(IActor atker, int attack)
     {
         base.OnAttackedHit(atker, attack);
-        _ECur.DamageTarget(val, atker, EDamageType.Lighting, false);
+        _ECur.DamageTarget(atker, new DmgData(val, EDamageType.Lighting));
     }
 }

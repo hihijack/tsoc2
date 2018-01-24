@@ -19,7 +19,7 @@ public class EditorTreasureChest : Editor
         }
         EditorGUILayout.LabelField("掉落");
 
-        item.drop = EditorGUILayout.TextArea(item.drop);   
+        item.drop = EditorGUILayout.TextArea(item.drop);
 
         if (EditorGUI.EndChangeCheck())
         {

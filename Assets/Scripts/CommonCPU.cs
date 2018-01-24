@@ -7,7 +7,12 @@ using SimpleJSON;
 
 public class CommonCPU : MonoBehaviour
 {
+    public static CommonCPU Inst;
 
+    void Awake()
+    {
+        Inst = this;
+    }
 
     /// <summary>
     /// 保存玩家技能配置
@@ -195,10 +200,32 @@ public class CommonCPU : MonoBehaviour
     /// <param name="pos"></param>
     /// <param name="color"></param>
     /// <param name="dur">-1:表示仅播放一次。时间使用特效配置的时间</param>
-    public void CreateEffect(string effName, Vector3 pos, Color color, float dur) 
+    public void CreateEffect(string effName, Vector3 pos, Color color, float dur, bool comstColor = true) 
     {
         GameObject gobjEff = Tools.LoadResourcesGameObject(IPath.Effects + effName);
+        gobjEff.name = effName;
         gobjEff.transform.position = pos;
+        SpriteEffect se = gobjEff.GetComponent<SpriteEffect>();
+        if (se != null && comstColor)
+        {
+            se.SetColor(color);
+        }
+        GObjLife gl = gobjEff.AddComponent<GObjLife>();
+        if (dur < 0)
+        {
+            // 仅播放一次。时间使用特效配置的时间
+            dur = se.durTime;
+        }
+        gl.lifeTime = dur;
+
+    }
+
+    public void CreateEffAtGobj(string effName, GameObject target, Vector3 offset, Color color, float dur)
+    {
+        GameObject gobjEff = Tools.LoadResourcesGameObject(IPath.Effects + effName);
+        gobjEff.name = effName;
+        gobjEff.transform.parent = target.transform;
+        gobjEff.transform.localPosition = offset;
         SpriteEffect se = gobjEff.GetComponent<SpriteEffect>();
         if (se != null)
         {
@@ -211,7 +238,28 @@ public class CommonCPU : MonoBehaviour
             dur = se.durTime;
         }
         gl.lifeTime = dur;
+    }
 
+    public void RemoveEff(GameObject gobjEff)
+    {
+        if (gobjEff != null)
+        {
+            DestroyObject(gobjEff);
+        }
+    }
+
+    public bool ContainDirs(EDirection[] dirs, EDirection dir)
+    {
+        bool contain = false;
+        for (int i = 0; i < dirs.Length; i++)
+        {
+            if (dirs[i] == dir)
+            {
+                contain = true;
+                break;
+            }
+        }
+        return contain;
     }
 #endregion
 }

@@ -22,6 +22,7 @@ public class UIComfirmMapTip : MonoBehaviour
     private void OnBtn_MapTipComfirm()
     {
         UIManager.Inst.ShowDefaultDlg(tip, null);
+        Close();
     }
 
     private void Close()

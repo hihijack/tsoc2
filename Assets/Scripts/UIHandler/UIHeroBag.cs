@@ -46,7 +46,7 @@ public class UIHeroBag : MonoBehaviour {
         for (int i = 0; i < GameView.Inst.eiManager.itemsHasEquip.Count; i++)
         {
             EquipItem ei = GameView.Inst.eiManager.itemsHasEquip[i];
-            GameObject gobjPartToEquip = GetEquipItemPartGobj(ei._Part);
+            GameObject gobjPartToEquip = GetEquipItemPartGobj(ei.Part);
             GameObject gobjItem = NGUITools.AddChild(gobjPartToEquip, gobjPreEquipItem);
             // 图标
             UISprite icon = gobjItem.GetComponent<UISprite>();
@@ -263,7 +263,7 @@ public class UIHeroBag : MonoBehaviour {
         else
         {
             // 在身上
-            gobjEI = GetEquipItemPartGobj(ei._Part).transform.GetChild(0).gameObject;
+            gobjEI = GetEquipItemPartGobj(ei.Part).transform.GetChild(0).gameObject;
         }
         return gobjEI;
     }
@@ -358,14 +358,20 @@ public class UIHeroBag : MonoBehaviour {
                 
                 break;
             case EEquipItemType.Shield:
-                SetAGridEnable(gobjPartHand2, true);
+                {
+                    EquipItem eiHasEquipInHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
+                    if (eiHasEquipInHand1 == null || eiHasEquipInHand1.baseData.type != EEquipItemType.WeaponTwoHand)
+                    {
+                        SetAGridEnable(gobjPartHand2, true);
+                    }
+                }
                 break;
             default:
                 break;
         }
         //如果从装备栏中选中-->背包里不可替换装备禁用
 
-        if (eiSelect._Part != EEquipPart.None)
+        if (eiSelect.Part != EEquipPart.None)
         {
             // 遍历背包，过滤不可替换装备
             // 不同类型不可替换

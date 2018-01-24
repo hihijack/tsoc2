@@ -663,9 +663,36 @@ public class MapGrid : MonoBehaviour {
     public bool IsEnablePass()
     {
         bool enable = true;
-        if (Type == EGridType.Block || GetItemGobj() != null)
+        ItemDirBlock dirBlock = GetItem<ItemDirBlock>();
+        if (dirBlock != null)
         {
-            enable = false;
+            EDirection dirToHero = GetDirToOther(Hero.Inst.GetCurMapGrid());
+            if (!CommonCPU.Inst.ContainDirs(dirBlock.dirs, dirToHero))
+            {
+                enable = false;
+            }
+        }
+        else
+        {
+            ItemDoor door = GetItem<ItemDoor>();
+            if (door != null)
+            {
+                if (!door.opened)
+                {
+                    enable = false;
+                }
+            }
+            else
+            {
+                ItemTransfer transfer = GetItem<ItemTransfer>();
+                if (transfer == null)
+                {
+                    if (Type == EGridType.Block || GetItemGobj() != null)
+                    {
+                        enable = false;
+                    }
+                }
+            }
         }
         return enable;
     }

@@ -19,6 +19,6 @@ public class JianCiWaike : IMonSkill {
     {
         base.OnAttackedHit(atker, attack);
         Enermy eCur = GetCurEnermy();
-        eCur.DamageTarget(dam, atker, EDamageType.Phy, false);
+        eCur.DamageTarget(atker, new DmgData(dam, EDamageType.Phy));
     }
 }

@@ -11,7 +11,11 @@ using System.Collections.Generic;
 
 public enum eEventsKey
 {
-   RoundChange
+   RoundChange,
+   /// <summary>
+   /// bool是否打开;string打开的门的guid
+   /// </summary>
+   OpenDoor
 }
 
 
@@ -53,7 +57,6 @@ public class EventsMgr
     /// </summary>
     private void AddDelegate(eEventsKey key)
     {
-        //Debug.Log(" 添加一个回调 : "+ key);
         m_dicEvents.Add(key, delegate(object data) { });
     }
 

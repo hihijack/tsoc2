@@ -75,6 +75,11 @@ public class ManagerBattleStateNPC
         return CurState == bsUnControl;
     }
 
+    public bool InIdle()
+    {
+        return CurState == bsIdle;
+    }
+
     //仅战斗中执行
     internal void Update()
     {

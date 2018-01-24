@@ -254,6 +254,8 @@ public class EquipItemManager
             }
         }
 
+        ei.InitProp();
+
         string desc = "生成装备:" + qlevel + eibd.name + "，护甲:" + eibd.arm + "，攻击力:" + eibd.atk + "攻击速度:" + eibd.ias + ",";
         for (int i = 0; i < ei.words.Count; i++)
         {
@@ -374,7 +376,7 @@ public class EquipItemManager
         if (eiInThisPart != null)
         {
             // 将装备移到背包
-            eiInThisPart._Part = EEquipPart.None;
+            eiInThisPart.Part = EEquipPart.None;
             int toBagGridId = eiToEquip.BagGridId;
             if (toBagGridId == 0)
             {
@@ -385,7 +387,7 @@ public class EquipItemManager
 
         // 装备装备到指定部位
         AddToItemsHasEquip(eiToEquip);
-        eiToEquip._Part = partToEquip;
+        eiToEquip.Part = partToEquip;
         eiToEquip.BagGridId = 0;
     }
 
@@ -400,7 +402,7 @@ public class EquipItemManager
         for (int i = 0; i < itemsHasEquip.Count; i++)
         {
             EquipItem eiHasEquip = itemsHasEquip[i];
-            if (eiHasEquip._Part == part)
+            if (eiHasEquip.Part == part)
             {
                 ei = eiHasEquip;
                 break;
@@ -483,7 +485,7 @@ public class EquipItemManager
             moveFromEQ = true;
             // 卸下装备
             RemoveFromItemHasEquip(ei);
-            ei._Part = EEquipPart.None;
+            ei.Part = EEquipPart.None;
             AddToItemsInBag(ei);
             ei.BagGridId = gridid;
             GameView.Inst.RemoveEquipItemPropFromHero(ei);
@@ -514,7 +516,7 @@ public class EquipItemManager
             }
 
             AddToItemsHasEquip(ei);
-            ei._Part = part;
+            ei.Part = part;
             ei.BagGridId = 0;
 
             GameView.Inst.AddEuqipItemPrpToHero(ei);
@@ -522,7 +524,7 @@ public class EquipItemManager
         else
         {
             fromBag = false;
-            ei._Part = part;
+            ei.Part = part;
             ei.BagGridId = 0;
         }
         return fromBag;
@@ -667,7 +669,7 @@ public class EquipItemManager
         // 描述
         if (!string.IsNullOrEmpty(ei.baseData.desc))
         {
-            desc.Append(ei.baseData.desc);
+            desc.Append("\n" + ei.baseData.desc);
         }
 
         // 特殊描述

@@ -7,6 +7,8 @@
         dur = 0f;
     }
 
+    public virtual void OnUpdate() { }
+
     public IAIState(IAI AI)
     {
         this.AI = AI;

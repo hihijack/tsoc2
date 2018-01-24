@@ -18,6 +18,6 @@ public class BingLengQiangHua : IMonSkill {
     public override void OnAttackHit(IActor target, int attack)
     {
         Enermy curE = GetCurEnermy();
-        curE.DamageTarget(dam, target, EDamageType.Forzen);
+        curE.DamageTarget(target, new DmgData(dam, EDamageType.Frozen));
     }
 }

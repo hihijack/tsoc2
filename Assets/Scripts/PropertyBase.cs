@@ -21,11 +21,6 @@ public class PropertyBase
     private float iasParmaA;
     private float iasParmaB = 1f;
     private float iasParmaC;
-    private int atkBaseA;//主手基础攻击
-    private int atkBaseB;//副手基础攻击
-    private int atk;//最终攻击
-    private float atkParmaA = 1f;//增伤词缀A
-    private int atkParmaB;//增伤词缀B
     private float atkParmaC = 1f;//技能buff增伤
     private int atkParmaD;//技能buff增伤
     public int resFire;//火抗
@@ -50,9 +45,8 @@ public class PropertyBase
     public int wardOffBlows;    // 招架
     public float parry;       // 格挡几率[0~1]
     public int parryDamage; // 格挡伤害
-    public float parryDmgPerParamA = 0f;//格挡伤害百分比参数A
-    public float parryDmbPerParamB = 1f;//格挡伤害百分比参数B
-    public float parryDamPerBase; //格挡伤害百分比基础。
+    public float parryDmgPerParamAdd = 0f;//格挡伤害百分比参数A
+    public float parryDmbPerParamDot = 1f;//格挡伤害百分比参数B
     public float parryDmgVigorBase = 0f;//格挡值基础
     public float parryDmgVigorParamMul = 1f;
     public float parryDmgVigorParamAdd = 0f;
@@ -66,9 +60,11 @@ public class PropertyBase
     public float atkIceParmaDot = 1f;   // 额外的冰冷伤害参数B
     private float deadlyStrikeDamage = 2f; //致命一击倍率
 
+    public float powerSpeedParamAdd = 0f; //蓄力速度提升
+    public float powerSpeedParamDot = 1f; //蓄力速度提升百分百
+
     [System.Obsolete]
     private int energyPoint;
-    float powerSpeed;//蓄力速度
     int loadPramaA;
     float loadPramaB = 1f;
     private int _loadBase;//负重
@@ -78,9 +74,26 @@ public class PropertyBase
     private int _engRecoverSpeedBase;
     private float _engRecoverSpeedParmPercent = 1f;
     private int _engRecoveSpeedParmAdd = 0;
+
+    private int _tenacityUCtl;//韧性
+    public int maxTenactiyUCtl;
+    public int tenacityLevel;//霸体等级
     #endregion
 
     #region GeterAndSeter
+
+    public int TenacityUCtl
+    {
+        get
+        {
+            return _tenacityUCtl;
+        }
+        set
+        {
+            _tenacityUCtl = Mathf.Clamp(value, 0, maxTenactiyUCtl);
+        }
+    }
+
     /// <summary>
     /// 格挡值。每点精力格挡伤害
     /// </summary>
@@ -165,70 +178,40 @@ public class PropertyBase
     }
 
     /// <summary>
-    /// 格挡伤害百分百
+    /// 当韧性被清空
     /// </summary>
-    public float ParryDamPercent
+    public virtual void OnTenacityUCtlToZero()
     {
-        get
-        {
-            //如果副手有装备，取副手
-            //否则取主手
-            float baseVal = 0f;
-            EquipItem eiHand2 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand2);
-            if (eiHand2 != null)
-            {
-                baseVal = eiHand2.baseData.parry * 0.01f;
-            }
-            else
-            {
-                EquipItem eiHand1 = GameView.Inst.eiManager.GetEquipItemHasEquip(EEquipPart.Hand1);
-                if (eiHand1 != null)
-                {
-                    baseVal = eiHand1.baseData.parry * 0.01f;
-                }
-            }
-            return (baseVal + parryDmgPerParamA) * parryDmbPerParamB;
-        }
+
     }
 
     /// <summary>
-    /// 火焰攻击
+    /// 格挡伤害百分比
     /// </summary>
-    public int AtkFire
+    public virtual float ParryDamPercent(EDamageType dmgType)
     {
-        get
-        {
-            return Mathf.RoundToInt(atkFireParamAdd * atkFireParamDot);
-        }
+        return 0f;
     }
 
-    /// <summary>
-    /// 闪电攻击
-    /// </summary>
-    public int AtkThunder
+    public virtual int GetAtkFire(EquipItem ei)
     {
-        get
-        {
-            return Mathf.RoundToInt(atkThunderParamAdd * atkThunderParamDot);
-        }
+        return 0;
     }
 
-    /// <summary>
-    /// 毒素攻击
-    /// </summary>
-    public int AtkPoison
+    public virtual int GetAtkThunder(EquipItem ei)
     {
-        get { return Mathf.RoundToInt(atkPoisonParamAdd * atkPoisonParamDot); }
+        return 0;
     }
 
-    /// <summary>
-    /// 冰冷攻击
-    /// </summary>
-    public int AtkIce
+    public virtual int GetAtkPoison(EquipItem ei)
     {
-        get { return Mathf.RoundToInt(atkIceParamAdd * atkIceParmaDot); }
+        return 0;
     }
 
+    public virtual int GetAtkIce(EquipItem ei)
+    {
+        return 0;
+    }
 
     public int ResFire
     {
@@ -301,17 +284,36 @@ public class PropertyBase
             _vigor = Mathf.Clamp(_vigor, 0, VigorMax);
         }
     }
-    public float PowerSpeed
-    {
-        get
-        {
-            return powerSpeed;
-        }
 
-        set
-        {
-            powerSpeed = value;
-        }
+    /// <summary>
+    /// 取蓄力速度
+    /// </summary>
+    /// <param name="ei"></param>
+    /// <returns></returns>
+    public virtual float GetPowerSpeed(EquipItem ei)
+    {
+        return 0f;
+    }
+
+    /// <summary>
+    /// 取蓄力伤害
+    /// </summary>
+    /// <param name="ei"></param>
+    /// <param name="power"></param>
+    /// <returns></returns>
+    public virtual int GetPowerAtk(EquipItem ei, int power)
+    {
+        return 0;
+    }
+
+    public virtual int GetPowerDP(EquipItem ei, int power)
+    {
+        return 0;
+    }
+
+    public virtual int GetPowerForce(EquipItem ei, int power)
+    {
+        return 0;
     }
 
     public float DeadlyStrikeDamage
@@ -498,7 +500,7 @@ public class PropertyBase
         set
         {
             strength = value;
-            CalAtk();
+            //CalAtk();
         }
     }
 
@@ -519,89 +521,12 @@ public class PropertyBase
         }
     }
 
-
-    /// <summary>
-    /// 主手基础攻击力
-    /// </summary>
-    public int AtkBaseA
-    {
-        get
-        {
-            return atkBaseA;
-        }
-
-        set
-        {
-            atkBaseA = value;
-            CalAtk();
-        }
-    }
-
-    /// <summary>
-    /// 副手基础攻击力
-    /// </summary>
-    public int AtkBaseB
-    {
-        get
-        {
-            return atkBaseB;
-        }
-
-        set
-        {
-            atkBaseB = value;
-            CalAtk();
-        }
-    }
-
     /// <summary>
     /// 最终攻击力
     /// </summary>
-    public int Atk
+    public virtual int GetAtk(EquipItem ei)
     {
-        get
-        {
-            return atk;
-        }
-
-        set
-        {
-            atk = value;
-        }
-    }
-
-    /// <summary>
-    /// 增伤词缀A
-    /// </summary>
-    public float AtkParmaA
-    {
-        get
-        {
-            return atkParmaA;
-        }
-
-        set
-        {
-            atkParmaA = value;
-            CalAtk();
-        }
-    }
-
-    /// <summary>
-    /// 增伤词缀B
-    /// </summary>
-    public int AtkParmaB
-    {
-        get
-        {
-            return atkParmaB;
-        }
-
-        set
-        {
-            atkParmaB = value;
-            CalAtk();
-        }
+        return 0;
     }
 
     /// <summary>
@@ -617,7 +542,7 @@ public class PropertyBase
         set
         {
             atkParmaC = value;
-            CalAtk();
+            //CalAtk();
         }
     }
 
@@ -634,7 +559,7 @@ public class PropertyBase
         set
         {
             atkParmaD = value;
-            CalAtk();
+            //CalAtk();
         }
     }
 
@@ -683,6 +608,7 @@ public class PropertyBase
         }
     }
     #endregion
+
     public void CalLoad()
     {
         _load = Mathf.FloorToInt((LoadBase + loadPramaA) * loadPramaB);
@@ -794,6 +720,16 @@ public class PropertyBase
 
     public void PowerSpeedIncrease(float val)
     {
-        powerSpeed *= val;
+       
+    }
+
+    public virtual float GetAtkTimeBefore()
+    {
+        return 0f;
+    }
+
+    public virtual float GetAtkTimeAfter()
+    {
+        return 0f;
     }
 }

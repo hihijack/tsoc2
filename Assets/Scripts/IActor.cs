@@ -82,46 +82,39 @@ public class IActor : MonoBehaviour {
     public float animRate;
 
     // 动画时间1秒。攻速不会超过1
-    [System.Obsolete]
-    public void SetAnimRateByIAS()
-    {
+    //public virtual void SetAnimRateByIAS()
+    //{
         // 根据动画时间和攻速设置实际时间
-        float atkTimeOri = atkAnimTimeBeforeBase + atkAnimTimeAfterBase;
-        float atkTime = 1 / Prop.IAS;
+        //float atkTimeOri = atkAnimTimeBeforeBase + atkAnimTimeAfterBase;
+        //float atkTime = 1 / Prop.IAS;
 
-        if (atkTime >= atkTimeOri)
-        {
-            // 填补攻击间隔时间
-            atkTimeInterval = atkTime - atkTimeOri;
-            animRate = 1;
-            atkAnimTimeBefore = atkAnimTimeBeforeBase;
-            atkAnimTimeAfter = atkAnimTimeAfterBase;
-        }
-        else if (atkTime < atkTimeOri)
-        {
-            // 压缩动画时间
-            float rate = atkTime / atkTimeOri;
-            atkTimeInterval = 0f;
-            animRate = 1 / rate;
-            atkAnimTimeBefore = atkAnimTimeBeforeBase * rate;
-            atkAnimTimeAfter = atkAnimTimeAfterBase * rate;
-        }
-    }
-
-
+        //if (atkTime >= atkTimeOri)
+        //{
+        //    // 填补攻击间隔时间
+        //    atkTimeInterval = atkTime - atkTimeOri;
+        //    animRate = 1;
+        //    atkAnimTimeBefore = atkAnimTimeBeforeBase;
+        //    atkAnimTimeAfter = atkAnimTimeAfterBase;
+        //}
+        //else if (atkTime < atkTimeOri)
+        //{
+        //    // 压缩动画时间
+        //    float rate = atkTime / atkTimeOri;
+        //    atkTimeInterval = 0f;
+        //    animRate = 1 / rate;
+        //    atkAnimTimeBefore = atkAnimTimeBeforeBase * rate;
+        //    atkAnimTimeAfter = atkAnimTimeAfterBase * rate;
+        //}
+    //}
 
     public float atkAnimTimeBeforeBase; // 基础攻击前摇时间
     public float atkAnimTimeAfterBase; //  基础攻击后摇时间
-
-    private float atkAnimTimeBefore; // 攻击前摇时间
-    private float atkAnimTimeAfter; //  攻击后摇时间
-    private float atkTimeInterval; // 攻击间隔时间
 
     public List<ESpecBuffState> buffStates = new List<ESpecBuffState>();
     #endregion
 
     #region 属性GeterAndSeter
-    public EBattleState _BattleState
+    public virtual EBattleState _BattleState
     {
         get
         {
@@ -165,45 +158,6 @@ public class IActor : MonoBehaviour {
         }
         set {
             _isSkilling = value;
-        }
-    }
-
-    public float AtkAnimTimeBefore
-    {
-        get
-        {
-            return atkAnimTimeBefore;
-        }
-
-        set
-        {
-            atkAnimTimeBefore = value;
-        }
-    }
-
-    public float AtkAnimTimeAfter
-    {
-        get
-        {
-            return atkAnimTimeAfter;
-        }
-
-        set
-        {
-            atkAnimTimeAfter = value;
-        }
-    }
-
-    public float AtkTimeInterval
-    {
-        get
-        {
-            return atkTimeInterval;
-        }
-
-        set
-        {
-            atkTimeInterval = value;
         }
     }
 
@@ -256,45 +210,34 @@ public class IActor : MonoBehaviour {
     //    }
     //}
 
-    public int GetDamgerToOther(int damageOri, IActor other, EDamageType damageType = EDamageType.Phy) {
+    internal T GetBuff<T>() where T : IBaseBuff
+    {
+        T r = null;
+        r = GetComponent<T>();
+        return r;
+    }
+
+    internal T AddBuff<T>() where T : IBaseBuff
+    {
+        T r = null;
+        r = gameObject.AddComponent<T>();
+        return r;
+    }
+
+    internal bool HasBuff<T>() where T : IBaseBuff
+    {
+        bool hasBuff = false;
+        if (GetComponent<T>() != null)
+        {
+            hasBuff = true;
+        }
+        return hasBuff;
+    }
+
+    public int GetDamgerToOther(DmgData dmgData, IActor other) {
         int damage = 0;
-        int atk = damageOri;
-
-        int armOther = 0;
-        switch (damageType)
-        {
-            case EDamageType.Phy:
-                armOther = other.Prop.Arm;
-                break;
-            case EDamageType.Fire:
-                armOther = other.Prop.ResFire;
-                break;
-            case EDamageType.Lighting:
-                armOther = other.Prop.ResThunder;
-                break;
-            case EDamageType.Poison:
-                armOther = other.Prop.ResPoision;
-                break;
-            case EDamageType.Forzen:
-                armOther = other.Prop.ResForzen;
-                break;
-            default:
-                break;
-        }
-
-
-        if (armOther >= 0)
-        {
-            int damgeOffset = (int)(atk * (armOther * 0.03 / (armOther * 0.03f + 1)));
-            damage = atk - damgeOffset;
-        }
-        else
-        {
-            int N = Mathf.Abs(armOther);
-            float damgeAddPercent = 2 - Mathf.Pow(0.94f, N);
-            damage = (int)(atk * damgeAddPercent);
-        }
-
+        dmgData.ApplyRes(other.Prop.Arm, other.Prop.ResFire, other.Prop.ResThunder, other.Prop.ResPoision, other.Prop.ResForzen);
+        damage = dmgData.TotalDmg();
         return damage;
     }
 
@@ -305,9 +248,11 @@ public class IActor : MonoBehaviour {
     /// <param name="target"></param>
     /// <param name="damageType">伤害类型</param>
     /// <param name="canDS">能否造成致命一击</param>
-    public void DamageTarget(int damageOri, IActor target, EDamageType damageType = EDamageType.Phy, bool canDS = true) {
+    /// <param name="dp">削韧</param>
+    /// <param name="force">冲击力</param>
+    public void DamageTarget(IActor target, DmgData dmgData) {
 
-        if (damageOri <= 0 || target._State == EActorState.Dead)
+        if (!dmgData.HasDmg() || target._State == EActorState.Dead)
         {
             return;
         }
@@ -323,30 +268,18 @@ public class IActor : MonoBehaviour {
             {
                 UIManager.Inst.ShowEnermyDodgeTip();
             }
+            OnAttackLost(target);
             return;
-        }
-
-        //蓄力
-        if (_PowerVal >= 1 && _PowerVal < 2)
-        {
-            //一段蓄力
-            damageOri = Mathf.CeilToInt(IConst.Power1DamPer * damageOri);
-        }
-        else if (_PowerVal >= 2 && _PowerVal < 3)
-        {
-            //二段蓄力
-            damageOri = Mathf.CeilToInt(IConst.Power2DamPer * damageOri);
-        }
-        else if (_PowerVal >= 3)
-        {
-            //三段蓄力
-            damageOri = Mathf.CeilToInt(IConst.Power3DamPer * damageOri);
         }
 
         // 格挡
         bool isParry = false;
         int damParry = 0;
-        float parryPercent = target.Prop.ParryDamPercent;
+        float parryPercentPhy = target.Prop.ParryDamPercent(EDamageType.Phy);
+        float parryPercentFire = target.Prop.ParryDamPercent(EDamageType.Fire);
+        float parryPercentLighting = target.Prop.ParryDamPercent(EDamageType.Lighting);
+        float parryPercentPoison = target.Prop.ParryDamPercent(EDamageType.Poison);
+        float parryPercentFrozen = target.Prop.ParryDamPercent(EDamageType.Frozen);
         if (target._BattleState == EBattleState.Defing)
         {
             if (target.isHero)
@@ -354,13 +287,18 @@ public class IActor : MonoBehaviour {
                 int vigorCost = target.Prop.VigorMax;
                 if (target.Prop.ParryDmgVigor > 0)
                 {
-                    vigorCost = Mathf.CeilToInt(damageOri / target.Prop.ParryDmgVigor);
+                    vigorCost = Mathf.CeilToInt(dmgData.TotalDmg() / target.Prop.ParryDmgVigor);
                 }
 
                 if (target.Prop.Vigor < vigorCost)
                 {
                     //精力不足于完全格挡
-                    parryPercent = target.Prop.Vigor / vigorCost;
+                    float p = target.Prop.Vigor / vigorCost;
+                    parryPercentPhy *= p;
+                    parryPercentFire *= p;
+                    parryPercentLighting *= p;
+                    parryPercentPoison *= p;
+                    parryPercentFrozen *= p;
                 }
 
                 //精力消耗
@@ -374,30 +312,38 @@ public class IActor : MonoBehaviour {
             }
            
 
-            damParry = Mathf.RoundToInt(damageOri * parryPercent);
+            damParry = Mathf.RoundToInt(dmgData.dmgPhy * parryPercentPhy) 
+                + Mathf.RoundToInt(dmgData.dmgFire * parryPercentFire)
+                + Mathf.RoundToInt(dmgData.dmgLighting * parryPercentLighting)
+                + Mathf.RoundToInt(dmgData.dmgPoison * parryPercentPoison)
+                + Mathf.RoundToInt(dmgData.dmgForzen * parryPercentFrozen);
             //格挡百分百伤害
-            target.OnParry(damParry, damageOri);
-            damageOri -= damParry;
+            target.OnParry(damParry, dmgData.TotalDmg());
+            //应用格挡
+            dmgData.ApplyParry(parryPercentPhy, parryPercentFire, parryPercentLighting, parryPercentPoison, parryPercentFrozen);
             isParry = true;
         }
-        
-        int damage = GetDamgerToOther(damageOri, target, damageType);
+
         bool isDs = false;// 是否致命一击
-                          // 致命一击
-        if (canDS && Tools.IsHitOdds(Prop.DeadlyStrike)) {
-            damage = (int)(damage * Prop.DeadlyStrikeDamage);
+        // 致命一击
+        if (dmgData.enableDS && Tools.IsHitOdds(Prop.DeadlyStrike)) {
+            dmgData.ApplyDS(Prop.DeadlyStrikeDamage);
             isDs = true;
         }
 
-        //坚韧
-        damage = Mathf.CeilToInt(damage * (1 - Prop.DamReduce));
+        //抗性计算
+        dmgData.ApplyRes(target.Prop.Arm, target.Prop.ResFire, target.Prop.ResThunder, target.Prop.ResPoision, target.Prop.ResForzen);
+        
+        //伤害减免
+        //damage = Mathf.CeilToInt(damage * (1 - Prop.DamReduce));
 
-        target.OnHurted(damage, damageType, this, isDs);
-        OnDamageTarget(damage, target, isDs);
+        target.OnHurted(this, dmgData);
+        OnDamageTarget(target, dmgData);
 
         int oriTargetHP = target.Prop.Hp;
 
-        target.Prop.Hp -= damage;
+        int totalDmg = dmgData.TotalDmg();
+        target.Prop.Hp -= totalDmg;
         if (target.Prop.Hp <= 0) {
             target.Prop.Hp = 0;
             target._State = EActorState.Dead;
@@ -409,8 +355,6 @@ public class IActor : MonoBehaviour {
             else
             {
                 GameManager.gameView.OnEnermyDie(target as Enermy);
-                //curTarget.updataState(EFSMAction.NPC_DIE);
-                //updataState(EFSMAction.HERO_RUN);
                 if (GameManager.gameView._RoundLogicState == GameRoundLogicState.Battle)
                 {
                     GameManager.gameView.OnKillCurTarget();
@@ -421,7 +365,9 @@ public class IActor : MonoBehaviour {
         {
             target.OnHPChange(oriTargetHP, target.Prop.Hp);
         }
-        if (!target.isHero) {
+        if (!target.isHero)
+        {
+            //玩家攻击怪物
             UIManager.Inst.uiMain.RefreshTargetHP(target as Enermy);
 
             if (isDs)
@@ -431,17 +377,17 @@ public class IActor : MonoBehaviour {
                 {
                     strParryDesc = string.Format("(格挡{0})", damParry);
                 }
-                UIManager.Inst.ShowDSDamageTxt(damage.ToString() + strParryDesc);
+                UIManager.Inst.ShowDSDamageTxt(totalDmg.ToString() + strParryDesc);
             }
             else
             {
-                UIManager.Inst.ShowDamageTxt(damage, damageType, damParry);
+                UIManager.Inst.ShowDamageTxt(totalDmg, dmgData.GetEleDmgType(), damParry);
             }
         }
         else
         {
             UIManager.Inst.uiMain.RefreshHeroHP();
-            UIManager.Inst.ShowHurtedTxt(damage, damageType, damParry);
+            UIManager.Inst.ShowHurtedTxt(totalDmg, dmgData.GetEleDmgType(), damParry);
         }
     }
 
@@ -468,19 +414,6 @@ public class IActor : MonoBehaviour {
         //}
         //return ishit;
         return true;
-    }
-
-    public void Hurted(int damageOri) {
-        int damage = GetDamgerToOther(damageOri, this);
-
-        Prop.Hp -= damage;
-        if (Prop.Hp <= 0) {
-            Prop.Hp = 0;
-        }
-        if (isHero) {
-            UIManager.Inst.uiMain.RefreshHeroHP();
-            GameManager.gameView.UIShowHurt(damage);
-        }
     }
 
     public Vector3 GetPos() {
@@ -516,6 +449,12 @@ public class IActor : MonoBehaviour {
     //当尝试对目标进行一次攻击
     public virtual void OnStartAAttack(IActor target) { }
 
+    /// <summary>
+    /// 当目标尝试对自己进行攻击
+    /// </summary>
+    /// <param name="atker"></param>
+    public virtual void OnStartAtked(IActor atker) { }
+
     //当一次普通攻击命中
     public virtual void OnAttackHit(IActor target, int atkOri) { }
 
@@ -527,7 +466,7 @@ public class IActor : MonoBehaviour {
     public virtual void OnAttackedHit(IActor atker, int atkOri) { }
 
     // 当受到伤害
-    public virtual void OnHurted(int damage, EDamageType type, IActor target, bool isDS) { }
+    public virtual void OnHurted(IActor atker, DmgData dmgData) { }
 
     //当进入战斗
     public virtual void OnEnterBattle() { }
@@ -541,7 +480,7 @@ public class IActor : MonoBehaviour {
     /// <param name="target"></param>
     /// <param name="damage"></param>
     /// <param name="isDS"></param>
-    public virtual void OnDamageTarget(int damage, IActor target, bool isDS) { }
+    public virtual void OnDamageTarget(IActor target, DmgData dmgData) { }
 
     /// <summary>
     /// 当攻击被闪避
@@ -575,7 +514,10 @@ public class IActor : MonoBehaviour {
     //    yield return new WaitForSeconds(time);
     //}
 
-    public virtual void OnMoveEnd() { }
+    public virtual void OnMoveEnd()
+    {
+        transform.parent = GetCurMapGrid().transform;
+    }
 
 
     public void MoveByGrids(List<MapGrid> mgs, bool includeStart = true)
@@ -658,16 +600,11 @@ public class IActor : MonoBehaviour {
     /// <param name="mgNext"></param>
     public void MoveToAGrid(MapGrid mgNext)
     {
-        StartCoroutine(CoMoveToAGrid(mgNext));
-    }
-
-    public IEnumerator CoMoveToAGrid(MapGrid mgNext)
-    {
         float timePerGrid = 0.15f;
 
         _State = EActorState.Move;
 
-        if (mgNext.GetItemGobj() == null && _State == EActorState.Move)
+        if (_State == EActorState.Move)
         {
             MapGrid mgCur = GetCurMapGrid();
             if (isHero)
@@ -685,24 +622,8 @@ public class IActor : MonoBehaviour {
 
             OnTryToAGrid(mgNext);
 
-            iTween.MoveTo(gameObject, iTween.Hash("position", mgNext.transform.position, "time", timePerGrid, "easetype", iTween.EaseType.linear));
+            iTween.MoveTo(gameObject, iTween.Hash("position", mgNext.transform.position, "time", timePerGrid, "easetype", iTween.EaseType.linear, "oncomplete", "OnMoveEnd", "oncompletetarget", gameObject));
 
-            yield return new WaitForSeconds(timePerGrid);
-
-            // 每次移动消耗怒气
-            //if (isHero)
-            //{
-            //    _Prop.EnergyPoint--;
-            //    UIManager._Instance.uiMain.RefreshHeroMP();
-            //}
-
-            transform.parent = GetCurMapGrid().transform;
-
-            if (isHero)
-            {
-                GameView.Inst.PlayerActionEnd();
-            }
-            
         }
 
         if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)
@@ -710,6 +631,11 @@ public class IActor : MonoBehaviour {
             _State = EActorState.Normal;
         }
     }
+
+    //public IEnumerator CoMoveToAGrid(MapGrid mgNext)
+    //{
+    
+    //}
 
     public MapGrid GetCurMapGrid()
     {

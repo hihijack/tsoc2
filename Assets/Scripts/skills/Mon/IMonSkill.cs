@@ -71,7 +71,7 @@ public class IMonSkill : MonoBehaviour
     /// <param name="damager"></param>
     /// <param name="damage"></param>
     /// <param name="isDS"></param>
-    public virtual void OnHurt(IActor damager, int damage, EDamageType damageType, bool isDS) { }
+    public virtual void OnHurt(IActor damager, DmgData dmgData) { }
 
     /// <summary>
     /// 当攻击被闪避
@@ -86,6 +86,13 @@ public class IMonSkill : MonoBehaviour
     public virtual void OnAtkedLost(IActor atker) { }
 
     public virtual void OnHPChange(int hpBefore, int hpCur) { }
+
+    public virtual void OnFindTarget() { }
+    
+    /// <summary>
+    /// 当一次攻击结束
+    /// </summary>
+    public virtual void OnAtkEnd() { }
 
     /// <summary>
     /// 主动技能生效

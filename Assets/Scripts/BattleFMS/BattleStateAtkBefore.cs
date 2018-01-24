@@ -20,7 +20,7 @@
     {
         base.Update();
         durTime += UnityEngine.Time.deltaTime;
-        if (durTime >= manager.hero.AtkAnimTimeBefore)
+        if (durTime >= manager.hero.Prop.GetAtkTimeBefore())
         {
             manager.ActionAtkBeforeTimeEnd();
         }

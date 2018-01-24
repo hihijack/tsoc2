@@ -18,7 +18,7 @@ class PlayerMoveCtl
         if (hero._State == EActorState.Normal && !UIManager.Inst.HasUI())
         {
             MapGrid mgNext = hero.GetCurMapGrid().GetNextGrid(dir);
-            if (mgNext != null)
+            if (mgNext != null && mgNext.IsEnablePass())
             {
                 hero.MoveToAGrid(mgNext);
             }

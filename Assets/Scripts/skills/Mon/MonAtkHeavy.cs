@@ -13,9 +13,9 @@
     public override void StartEff(IActor target)
     {
         base.StartEff(target);
-        int atk = UnityEngine.Mathf.CeilToInt(_ECur.Prop.Atk * percent);
+        int atk = UnityEngine.Mathf.CeilToInt(_ECur.Prop.GetAtk(null) * percent);
         _ECur.OnAttackHit(target, atk);
         target.OnAttackedHit(_ECur, atk);
-        _ECur.DamageTarget(atk, target, EDamageType.Phy);
+        _ECur.DamageTarget(target,new DmgData(atk, EDamageType.Phy));
     }
 }

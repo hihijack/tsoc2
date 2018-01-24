@@ -25,7 +25,7 @@ public class ZiBao : IMonSkill {
             IActor temp = acs[i];
             if (temp._State != EActorState.Dead)
             {
-                curE.DamageTarget(dam, temp, EDamageType.Fire);
+                curE.DamageTarget(temp, new DmgData(dam, EDamageType.Fire));
             }
         }
     }

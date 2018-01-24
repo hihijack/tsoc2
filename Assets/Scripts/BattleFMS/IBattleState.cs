@@ -30,6 +30,9 @@ public class IBattleState
     {
     }
 
+    /// <summary>
+    /// 不能再开始/结束时切换状态机
+    /// </summary>
     public virtual void End()
     {
 

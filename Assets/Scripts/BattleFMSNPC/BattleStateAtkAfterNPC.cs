@@ -12,7 +12,18 @@
 
     public override IBattleState ActionAtkAfterTimeEnd()
     {
-        return manager.bsIdle;
+        if (skillId == 32)
+        {
+            //愤怒攻击，特殊处理
+            MonSkillBD skill = GameDatas.GetMonSkillBD(skillId);
+            float stiff = skill.GetFloatVal(1, "stiff");
+            manager.bsUnControl.dur = stiff;
+            return manager.bsUnControl;
+        }
+        else
+        {
+            return manager.bsIdle;
+        }
     }
 
     public override IBattleState ActionUnControl(float dur)
@@ -25,5 +36,11 @@
     {
         base.Start();
         manager.npc.OnBSStartAtkAfter(skillId, target);
+    }
+
+    public override void End()
+    {
+        base.End();
+        manager.npc.OnBSEndAtkAfter(skillId, target);
     }
 }

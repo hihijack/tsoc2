@@ -24,6 +24,7 @@ public class Avtoar2D : MonoBehaviour {
 
     static Dictionary<string, Sprite> dicSprites = new Dictionary<string, Sprite>();
 
+    public float alpha = 1;
 
     public void SetDicSpriteNode(NodeSprite ns) 
     {
@@ -123,7 +124,10 @@ public class Avtoar2D : MonoBehaviour {
                 sr.sprite = GetSprite(ns.spName, animName, curAnimIndex);
                 sr.sortingOrder = ns.layer;
                 sr.sortingLayerName = "actor";
-                sr.color = ns.color;
+                Color c = ns.color;
+                c.a = alpha;
+                sr.color = c;
+                
             }
 
             //curAnimIndex++;

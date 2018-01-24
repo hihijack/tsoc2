@@ -95,6 +95,9 @@ public class UINPCMutual : MonoBehaviour {
                 case ENPCActionType.TouchGirlTip:
                     strDesc = "触碰印记";
                     break;
+                case ENPCActionType.OpenDoor:
+                    strDesc = "打开";
+                    break;
                 default:
                     break;
             }

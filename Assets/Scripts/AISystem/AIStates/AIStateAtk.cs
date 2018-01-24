@@ -12,6 +12,6 @@
     public override void OnInto()
     {
         base.OnInto();
-        AI.NPC.gFSMManager.ActionAtk(skillId, target);
+        AI.NPC.gFSMManager.ActionAtk(skillId, AI.NPC.curBattleTarget);
     }
 }

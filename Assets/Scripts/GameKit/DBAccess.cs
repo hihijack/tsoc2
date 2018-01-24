@@ -29,15 +29,19 @@ public class DbAccess
     {
         try
         {
+            Debug.Log("Start Connected to db:" + connectionString);
+
             dbConnection = new SqliteConnection(connectionString);
 
             dbConnection.Open();
 
-            Debug.Log("Connected to db");
+            Debug.Log("Connected to db Success");
+
         }
         catch (Exception e)
         {
             string temp1 = e.ToString();
+            Debug.Log("Connected to db Error！！");
             Debug.Log(temp1);
         }
 
