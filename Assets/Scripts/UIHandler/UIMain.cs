@@ -290,13 +290,21 @@ public class UIMain : MonoBehaviour {
 
     public void RefreshHeroVigor()
     {
-        // 魔法值
+        // 精力
         float curMP = Hero.Inst.Prop.Vigor;
         int maxMP = Hero.Inst.Prop.VigorMax;
         float mpVal = curMP / maxMP;
         heroMP.value = mpVal;
         txtHeroMP.text = curMP.ToString("0") + "/" + maxMP;
-
+        //闪避消耗提示
+        if (Hero.Inst.Prop.Vigor < Hero.Inst.GetVigorCostDodge())
+        {
+            heroMP.foregroundWidget.color = new Color32(0, 86, 47, 255);
+        }
+        else
+        {
+            heroMP.foregroundWidget.color = new Color32(0, 255, 139, 255);
+        }
         //RefreshHeroEnergy();
     }
 
@@ -351,11 +359,12 @@ public class UIMain : MonoBehaviour {
                 int index = 0;
                 for (int i = 0; i < skills.Length; i++)
                 {
+                    GameObject gobjSkill = Tools.GetGameObjectInChildByPathSimple(gobjGridSkills, "spell" + index);
+                    index++;
+
                     ISkill skill = skills[i];
                     if (skill != null && skill.GetBaseData().type == ESkillType.Battle)
                     {
-                        GameObject gobjSkill = Tools.GetGameObjectInChildByPathSimple(gobjGridSkills, "spell" + index);
-                        index++;
                         UISprite spriteSkill = gobjSkill.GetComponent<UISprite>();
 
                         if (skill != null)

@@ -115,7 +115,7 @@ public class UIBattle : MonoBehaviour
 
     internal void ToAfterPoint(float time)
     {
-        progBar.foregroundWidget.color = Color.yellow;
+        progBar.foregroundWidget.color = Color.gray;
         utp.enableAct = true;
         utp.ResetToBeginning();
         utp.from = 0.5f;

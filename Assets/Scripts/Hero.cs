@@ -24,7 +24,7 @@ public class Hero : IActor
 
     List<Enermy> targetEnermys = new List<Enermy>(4);
 
-    public ISkill[] mSkills = new ISkill[4];
+    public ISkill[] mSkills = new ISkill[3];
 
     /// <summary>
     /// 处于警觉中的敌人
@@ -162,11 +162,27 @@ public class Hero : IActor
         return skill;
     }
 
+    internal int GetSkillHasAllotIndex(int id)
+    {
+        int r = -1;
+        for (int i = 0; i < mSkills.Length; i++)
+        {
+            if (mSkills[i] != null && mSkills[i].GetBaseData().id == id)
+            {
+                r = i;
+                break;
+            }
+        }
+        return r;
+    }
+
     #region 战斗状态逻辑
     internal void OnBSEndDodge()
     {
         UIManager.Inst.uiMain.uiBattle.RefreshUIDodge(false);
     }
+
+
 
     internal void OnBSStartDodge(float dur)
     {
@@ -293,6 +309,27 @@ public class Hero : IActor
         UIManager.Inst.uiMain.uiBattle.ToAtkPoint(Prop.GetAtkTimeBefore());
         OnStartAAttack(curTarget);
         curTarget.OnStartAtked(this);
+        
+        if (GetPowerLevel() > 0)
+        {
+            CommonCPU.Inst.PlayerAudio("76");
+        }
+        else
+        {
+            int rI = UnityEngine.Random.Range(1, 3);
+            if (rI == 1)
+            {
+                CommonCPU.Inst.PlayerAudio("25");
+            }
+            else if (rI == 2)
+            {
+                CommonCPU.Inst.PlayerAudio("26");
+            }
+            else if (rI == 3)
+            {
+                CommonCPU.Inst.PlayerAudio("27");
+            }
+        }
     }
 
     internal void OnBSStartHit()
@@ -305,7 +342,6 @@ public class Hero : IActor
         int atkIndex = mLastAtkHandIndex == 0 ? 1 : 0;
         // 攻击特效
         GameManager.commonCPU.CreateEffect(GetAtkEffName(eiAtk, atkIndex), curTarget.transform.position, Color.white, -1f);
-
         if (CheckHitTarget(curTarget))
         {
             int powerLevel = GetPowerLevel();
@@ -319,7 +355,7 @@ public class Hero : IActor
             dmgData.enableDS = true;
             dmgData.dp = Prop.GetPowerDP(eiAtk, powerLevel);
             dmgData.force = Prop.GetPowerForce(eiAtk, powerLevel);
-
+            dmgData.power = powerLevel;
             DamageTarget(curTarget, dmgData);
 
             OnAttackHit(curTarget, dmgData.TotalDmg());
@@ -528,12 +564,16 @@ public class Hero : IActor
 	}
 
     /// <summary>
-    /// 设置技能等级
+    /// 设置技能等级;index:新增技能时才有作用
     /// </summary>
     /// <param name="skillId"></param>
     /// <param name="level"></param>
-    public void SetBattleSkillLevel(int skillId, int level) 
+    public void SetBattleSkillLevel(int skillId, int level, int index = -1) 
     {
+        if (skillId == 0)
+        {
+            return;
+        }
         ISkill skill = GetSkillHasAllot(skillId);
         if (skill != null)
         {
@@ -557,14 +597,22 @@ public class Hero : IActor
                 // 新配技能
                 ISkill skillNew = CreateSkillById(skillId, level);
                 skillNew.StartEff();
-                for (int i = 0; i < mSkills.Length; i++)
+                if (index >= 0)
                 {
-                    if (mSkills[i] == null)
+                    mSkills[index] = skillNew;
+                }
+                else
+                {
+                    for (int i = 0; i < mSkills.Length; i++)
                     {
-                        mSkills[i] = skillNew;
-                        break;
+                        if (mSkills[i] == null)
+                        {
+                            mSkills[i] = skillNew;
+                            break;
+                        }
                     }
                 }
+              
             }
         }
     }
@@ -1196,9 +1244,10 @@ public class Hero : IActor
     {
         base.OnHurted(target, dmgData);
         BsManager.ActionHurted(3f);
+
+        iTween.ShakePosition(GameView.Inst.cameraUI.gameObject, new Vector3(0.05f, 0.02f, 0f), 0.15f);
     }
    
-
     /// <summary>
     /// 可以被发现
     /// </summary>

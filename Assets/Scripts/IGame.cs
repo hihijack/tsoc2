@@ -90,6 +90,9 @@ public class MonsterBaseData
     public int tenacity;//韧性
     public int tenLevel;//霸体等级
 
+    public string soundFind;
+    public string soundDie;
+
     public MonsterBaseData(SqliteDataReader sdr) 
     {
         this.id = (int)sdr["id"];
@@ -119,6 +122,9 @@ public class MonsterBaseData
 
         tenacity = (int)sdr["tenacity"];
         tenLevel = (int)sdr["tenlevel"];
+
+        soundFind = sdr["sound_find"].ToString();
+        soundDie = sdr["sound_die"].ToString();
     }
 }
 
@@ -210,7 +216,8 @@ public enum EEquipItemType
     CoreDebris = 25,
     Keys = 26,  //钥匙
     HidePotion = 27, //隐匿药水
-    FireWpon = 30  //火焰附魔
+    FireWpon = 30,  //火焰附魔
+    Skill = 31  //技能石
 }
 
 /// <summary>
@@ -334,6 +341,7 @@ public class EquipItemBaseData
     public int dp1;//1级蓄力削韧
     public int dp2;
     public int dp3;
+    private string v;
 
     public EquipItemBaseData(SqliteDataReader sdr)
     {
@@ -390,6 +398,23 @@ public class EquipItemBaseData
         dp1 = (int)sdr["dp1"];
         dp2 = (int)sdr["dp2"];
         dp3 = (int)sdr["dp3"];
+    }
+
+    public EquipItemBaseData(SqliteDataReader sdr, string tableName)
+    {
+        if (tableName == DBTableNames.TABLE_ITEMOTHER)
+        {
+            this.id = (int)sdr["id"];
+            this.icon = sdr["icon"].ToString();
+            this.name = sdr["name"].ToString();
+            this.price = (int)sdr["price"];
+            desc = sdr["desc"].ToString();
+            desc = desc.Replace("\\n", "\n");
+            this.useType = (EEquipItemUseType)sdr["use"];
+            this.pile = (int)sdr["pile"];
+            this.data = sdr["data"].ToString();
+            this.type = (EEquipItemType)sdr["type"];
+        }
     }
 
     public int GetIntData(string key)
@@ -465,10 +490,10 @@ public enum EEquipItemProperty
     ArmPercent = 27, //护甲强化
     PowerDmg = 28,  // 蓄力伤害。单装备
     PowerSpeed = 29, // 蓄力速度。单装备
-    ParryFire = 30,//火焰格挡率
-    ParryLighting = 31,//闪电格挡率
-    ParryPoison = 32,//毒素格挡率
-    ParryFrozen = 33//冰冷格挡率
+    ParryFire = 30,//火焰格挡率。单装备
+    ParryLighting = 31,//闪电格挡率。单装备
+    ParryPoison = 32,//毒素格挡率。单装备
+    ParryFrozen = 33//冰冷格挡率。单装备
 }
 
 /// <summary>
@@ -709,6 +734,7 @@ public class MonSkillBD
 public static class DBTableNames
 {
     public static string TABLE_ITEMBASE = "item_base";  // 物品基础表
+    public static string TABLE_ITEMOTHER = "item_other";//其他物品表
     public static string TABLE_ITEMLEGEND = "item_legend";  // 传奇物品表
     public static string TABLE_PROPERTYS = "item_propertys";    // 物品属性表
     public static string TABLE_ITEMWORDS = "item_words";    // 物品词缀表
@@ -791,16 +817,16 @@ public class EquipItemWord
                 desc = string.Format("冰冷格挡强化+{0}", val);
                 break;
             case EEquipItemProperty.FireDamage:
-                desc = string.Format("火焰伤害+", val);
+                desc = string.Format("火焰伤害+{0}", val);
                 break;
             case EEquipItemProperty.ThunderDamage:
-                desc = string.Format("闪电伤害+", val);
+                desc = string.Format("闪电伤害+{0}", val);
                 break;
             case EEquipItemProperty.PoisonDamage:
-                desc = string.Format("毒素伤害+", val);
+                desc = string.Format("毒素伤害+{0}", val);
                 break;
             case EEquipItemProperty.ForzenDamage:
-                desc = string.Format("冰冷伤害+", val);
+                desc = string.Format("冰冷伤害+{0}", val);
                 break;
             case EEquipItemProperty.AddDamagePercent:
                 desc = string.Format("伤害强化{0}%", val);
@@ -1124,7 +1150,7 @@ public static class IConst
     public const int BASE_AGI = 10; // 基础敏捷
     public const int BASE_TEN = 10; // 基础坚韧
     public const int BASE_STA = 10; // 基础体能
-    public const int BASE_END = 10; //基础持久力
+    public const int BASE_END = 20; //基础持久力
     public const int BASE_MOVESPEED = 5;// 基础移动速度
     public const int BASE_ENG_RECOVER = 10;//基础精力恢复速度。点/秒
     public const float BASE_POWERSPEED = 1.5f;//基础蓄力速度
@@ -1145,7 +1171,7 @@ public static class IConst
     public const int EXP_MON_K = 10;
     public const int LOST_GOLD_LEVEL = 300; // 死亡损失金钱
     public const float VIGOR_RECOVE_SPEED_RATE = 5f;//硬直状态精力恢复速度
-    public static readonly float BaseDS = 0.05f; //基础致命一击几率
+    public static readonly float BaseDS = 0.08f; //基础致命一击几率
 
     public const int ATK_EMPTY = 1;//空手攻击力
     public const float POWER_SPEED_EMPTY = 1;//空手蓄力速度
@@ -1172,7 +1198,8 @@ public static class IConst
     public const string KEY_BEST_TRIAL = "besttrial"; // 试炼塔最好层数
     public const string KEY_TRANSFER_ACTIVED = "transfer_actived";
     public const string KEY_GOLD = "gold";  // 金币数
-
+    public const string KEY_SKILL_UNLOCKED = "skillunlock";//已解锁技能
+    public const string KEY_SKILL_USE = "skilluse";//分配的技能
     public const string KEY_ITEM_USED = "itemused";
     internal static readonly string KEY_KILL_RECORD = "killrecord";
     internal static readonly string KEY_CHEST_OPENED = "checsopened";

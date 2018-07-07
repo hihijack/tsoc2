@@ -322,11 +322,13 @@ public class IActor : MonoBehaviour {
             //应用格挡
             dmgData.ApplyParry(parryPercentPhy, parryPercentFire, parryPercentLighting, parryPercentPoison, parryPercentFrozen);
             isParry = true;
+
+            CommonCPU.Inst.PlayerAudio("parry");
         }
 
         bool isDs = false;// 是否致命一击
         // 致命一击
-        if (dmgData.enableDS && Tools.IsHitOdds(Prop.DeadlyStrike)) {
+        if (dmgData.enableDS && (Tools.IsHitOdds(Prop.DeadlyStrike) || target._BattleState == EBattleState.Uncontrol)) {
             dmgData.ApplyDS(Prop.DeadlyStrikeDamage);
             isDs = true;
         }
@@ -378,10 +380,23 @@ public class IActor : MonoBehaviour {
                     strParryDesc = string.Format("(格挡{0})", damParry);
                 }
                 UIManager.Inst.ShowDSDamageTxt(totalDmg.ToString() + strParryDesc);
+                GameManager.commonCPU.CreateEffect("hiteff3", target.transform.position, Color.white, -1f, false);
+                GameManager.commonCPU.CreateEffect("blood", target.transform.position, Color.white, -1f, false);
+                CommonCPU.Inst.PlayerAudio("MetalMediumChopFlesh3");
             }
             else
             {
                 UIManager.Inst.ShowDamageTxt(totalDmg, dmgData.GetEleDmgType(), damParry);
+                GameManager.commonCPU.CreateEffect("blood", target.transform.position, Color.white, -1f, false);
+                if (dmgData.power > 0)
+                {
+                    CommonCPU.Inst.PlayerAudio("song210");
+                }
+                else
+                {
+                    CommonCPU.Inst.PlayerAudio("song210_2");
+                }
+                //Debug.Break();//######
             }
         }
         else
@@ -594,6 +609,8 @@ public class IActor : MonoBehaviour {
 
     }
 
+    int lastWalkSoundIndex = 1;
+
     /// <summary>
     /// 移动向一个格子
     /// </summary>
@@ -624,6 +641,8 @@ public class IActor : MonoBehaviour {
 
             iTween.MoveTo(gameObject, iTween.Hash("position", mgNext.transform.position, "time", timePerGrid, "easetype", iTween.EaseType.linear, "oncomplete", "OnMoveEnd", "oncompletetarget", gameObject));
 
+            //走路音效
+            CommonCPU.Inst.PlayerAudio("walk1");
         }
 
         if (GameManager.gameView._RoundLogicState != GameRoundLogicState.Battle)

@@ -1,0 +1,312 @@
+fileFormatVersion: 2
+guid: 3dba45e2236a7ac4c9527199655951f2
+timeCreated: 1521713967
+licenseType: Pro
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: man_f_0
+    21300002: chest_1_f_0
+    21300004: helm_1_f_0
+    21300006: glove_1_f_0
+    21300008: shoot_1_f_0
+    21300010: blade_1_1_f_0
+    21300012: blade_1_2_f_0
+    21300014: shield_0_2_f_0
+    21300016: axe_0_1_f_0
+    21300018: axe_0_2_f_0
+    21300020: twohand_1_1_f_0
+    21300022: katana_slant_1_f_0
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: 0
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 32
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: man_f_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -4, y: 16}
+        - {x: -13, y: 3}
+        - {x: -13, y: -7}
+        - {x: -11, y: -16}
+        - {x: 11, y: -16}
+        - {x: 13, y: -7}
+        - {x: 13, y: 3}
+        - {x: 3, y: 16}
+    - name: chest_1_f_0
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 9, y: 6}
+        - {x: 4, y: 10}
+        - {x: -5, y: 10}
+        - {x: -10, y: 5}
+        - {x: -10, y: -3}
+        - {x: -8, y: -14}
+        - {x: 8, y: -14}
+        - {x: 10, y: -7}
+        - {x: 10, y: 3}
+    - name: helm_1_f_0
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -4, y: 16}
+        - {x: -7, y: 12}
+        - {x: -7, y: 6}
+        - {x: 7, y: 6}
+        - {x: 7, y: 13}
+        - {x: 5, y: 16}
+    - name: glove_1_f_0
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -10, y: 3}
+        - {x: -13, y: -1}
+        - {x: -13, y: -4}
+        - {x: -12, y: -7}
+        - {x: -8, y: -7}
+        - {x: -2, y: -5}
+        - {x: -2, y: 1}
+        - {x: -6, y: 3}
+      - - {x: 5, y: 3}
+        - {x: 2, y: 2}
+        - {x: 2, y: -2}
+        - {x: 5, y: -7}
+        - {x: 11, y: -7}
+        - {x: 13, y: -6}
+        - {x: 13, y: 0}
+        - {x: 10, y: 3}
+    - name: shoot_1_f_0
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -6, y: -9}
+        - {x: -10, y: -13}
+        - {x: -10, y: -15}
+        - {x: -9, y: -16}
+        - {x: -2, y: -16}
+        - {x: -1, y: -15}
+        - {x: 0, y: -11}
+        - {x: -2, y: -9}
+      - - {x: 1, y: -9}
+        - {x: 0, y: -11}
+        - {x: 0, y: -15}
+        - {x: 2, y: -16}
+        - {x: 9, y: -16}
+        - {x: 10, y: -15}
+        - {x: 10, y: -13}
+        - {x: 6, y: -9}
+    - name: blade_1_1_f_0
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -14, y: -4}
+        - {x: -12, y: -9}
+        - {x: -6, y: -9}
+        - {x: -5, y: -8}
+        - {x: -5, y: 7}
+        - {x: -6, y: 14}
+        - {x: -7, y: 16}
+        - {x: -10, y: 16}
+        - {x: -14, y: 14}
+    - name: blade_1_2_f_0
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 10, y: 16}
+        - {x: 6, y: 16}
+        - {x: 4, y: 10}
+        - {x: 4, y: -7}
+        - {x: 7, y: -9}
+        - {x: 12, y: -9}
+        - {x: 13, y: -8}
+        - {x: 13, y: 14}
+    - name: shield_0_2_f_0
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 5, y: 6}
+        - {x: 2, y: 2}
+        - {x: 2, y: -3}
+        - {x: 4, y: -7}
+        - {x: 10, y: -7}
+        - {x: 14, y: -3}
+        - {x: 14, y: 2}
+        - {x: 10, y: 6}
+    - name: axe_0_1_f_0
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -16, y: 16}
+        - {x: -16, y: -12}
+        - {x: -5, y: -12}
+        - {x: -2, y: -4}
+        - {x: -2, y: 15}
+        - {x: -3, y: 16}
+    - name: axe_0_2_f_0
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 2, y: 16}
+        - {x: 2, y: 0}
+        - {x: 6, y: -12}
+        - {x: 13, y: -12}
+        - {x: 15, y: -10}
+        - {x: 16, y: -1}
+        - {x: 16, y: 16}
+    - name: twohand_1_1_f_0
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -15, y: 1}
+        - {x: -14, y: -6}
+        - {x: -12, y: -9}
+        - {x: -9, y: -9}
+        - {x: -4, y: -6}
+        - {x: -4, y: 2}
+        - {x: -5, y: 14}
+        - {x: -6, y: 16}
+        - {x: -15, y: 16}
+    - name: katana_slant_1_f_0
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 480
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -16, y: 16}
+        - {x: -16, y: 7}
+        - {x: -14, y: -1}
+        - {x: -12, y: -5}
+        - {x: -8, y: -10}
+        - {x: -7, y: -10}
+        - {x: -4, y: -9}
+        - {x: -4, y: -2}
+        - {x: -8, y: 16}
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

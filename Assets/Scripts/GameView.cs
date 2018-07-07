@@ -818,9 +818,9 @@ public class GameView : MonoBehaviour {
            //eiManager.MoveAEquipItemToEquip(ei, EEquipPart.Hand1);
            //UpdateOnChangeEquip(ei, true);
 
-            EquipItem ei = eiManager.GenerateAEquipItem(7, EEquipItemQLevel.Normal);
-            eiManager.MoveAEquipItemToEquip(ei, EEquipPart.Pants);
-            UpdateOnChangeEquip(ei, true);
+            //EquipItem ei = eiManager.GenerateAEquipItem(7, EEquipItemQLevel.Normal);
+            //eiManager.MoveAEquipItemToEquip(ei, EEquipPart.Pants);
+            //UpdateOnChangeEquip(ei, true);
         }
        else
        {
@@ -2168,9 +2168,6 @@ public class GameView : MonoBehaviour {
                 case EEquipItemProperty.Weight:
                     Hero.Inst.Prop.LoadBase -= eiw.val;
                     break;
-                case EEquipItemProperty.ArmPercent:
-                    Hero.Inst.Prop.DefIncrease(1 / (1 + eiw.val * 0.01f));
-                    break;
                 default:
                     break;
             }
@@ -2800,6 +2797,12 @@ public class GameView : MonoBehaviour {
             Hero.Inst.Prop.Vigor = Hero.Inst.Prop.VigorMax;
             UIManager.Inst.uiMain.RefreshHeroVigor();
         }
+        else
+        {
+            CommonCPU.Inst.PlayerAudio("tomap");
+        }
+       
+
 
         // 任务检查
         if (_MHero._CurMainMission != null && _MHero._CurMainMission.targetType == EMissionType.IntoMap
@@ -2899,7 +2902,34 @@ public class GameView : MonoBehaviour {
             //使用结束
             gItemToUse = null;
         }
+        else if (ei.baseData.type == EEquipItemType.Skill)
+        {
+            //技能石头
+            OnUseItem_SkillStone(ei);
+            //使用结束
+            gItemToUse = null;
+        }
         return true;
+    }
+
+    /// <summary>
+    /// 使用技能石
+    /// </summary>
+    /// <param name="ei"></param>
+    private void OnUseItem_SkillStone(EquipItem ei)
+    {
+        int skillId = ei.baseData.GetIntData("id");
+        SkillBD skill = GameDatas.GetSkillBD(skillId);
+        //解锁技能
+        CommonCPU.Inst.SaveSkillUnlock(skillId);
+        if (UIManager.Inst.gUISkill != null)
+        {
+            UIManager.Inst.gUISkill.RefreshUnlockASkill(skill);
+        }
+        //提示
+        UIManager.Inst.GeneralTip("技能解锁:" + skill.name, Color.yellow);
+        // 移除数量
+        RedeceEiCount(ei, 1);
     }
 
     private void OnUseItem_FireWpon(EquipItem ei)

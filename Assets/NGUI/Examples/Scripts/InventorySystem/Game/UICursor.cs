@@ -111,4 +111,15 @@ public class UICursor : MonoBehaviour
 			instance.Update();
 		}
 	}
+
+    static public void Set(UIAtlas atlas, string sprite, int w, int h)
+    {
+        if (instance != null && instance.mSprite)
+        {
+            instance.mSprite.atlas = atlas;
+            instance.mSprite.spriteName = sprite;
+            instance.mSprite.SetDimensions(w, h);
+            instance.Update();
+        }
+    }
 }

@@ -57,6 +57,26 @@ public class UIManager: MonoBehaviour {
         txtTipCursor = Tools.GetComponentInChildByPath<UILabel>(UICursor.instance.gameObject, "TxtTip");
     }
 
+    UISkillInfo mUISkillInfo;
+    internal void HideSkillInfo()
+    {
+        if (mUISkillInfo != null)
+        {
+            mUISkillInfo.vctl.SetVisible(false);
+        }
+    }
+
+    internal void ShowSkillInfo(SkillBD data, Vector2 uiPos)
+    {
+        if (mUISkillInfo == null)
+        {
+            GameObject gobjEquipItemInfo = Tools.AddNGUIChild(g_UIRootDlg, IPath.UI + "ui_skillinfo");
+            mUISkillInfo = gobjEquipItemInfo.GetComponent<UISkillInfo>();
+        }
+        mUISkillInfo.vctl.SetVisible(true);
+        mUISkillInfo.Refresh(data, uiPos);
+    }
+
     public void ShowCursorTip(string tip, Color color)
     {
         txtTipCursor.text = tip;
@@ -517,32 +537,46 @@ public class UIManager: MonoBehaviour {
 #endregion
 
 #region 技能
-    UISkills gUISkill = null;
+    public UISkillsNew gUISkill = null;
     void ShowUISkill()
     {
-        CloseAllUISecond();
-        
-        gUISkill = Tools.AddNGUIChild(g_UIRootSecond, IPath.UI + "ui_skills").GetComponent<UISkills>();
-        gUISkill.Init();
+        CloseUIBag();
+        CloseNPCWords();
+        CloseUINPCMutual();
+        CloseUIMission();
+
+        if (gUISkill == null)
+        {
+            gUISkill = Tools.AddNGUIChild(g_UIRootSecond, IPath.UI + "ui_skillsnew").GetComponent<UISkillsNew>();
+            gUISkill.Init();
+        }
+
+        gUISkill.vCtl.SetVisible(true);
     }
 
     public void CloseUISkill()
     {
         if (gUISkill != null)
         {
-            DestroyObject(gUISkill.gameObject);
+            gUISkill.vCtl.SetVisible(false);
         }
     }
 
     public void ToggleUI_Skill()
     {
-        if (gUISkill == null)
+        bool showing = false;
+        if (gUISkill != null && gUISkill.vCtl.showing)
         {
-            ShowUISkill();
+            showing = true;
+        }
+
+        if (showing)
+        {
+            CloseUISkill();
         }
         else
         {
-            CloseUISkill();
+            ShowUISkill();
         }
     }
 #endregion

@@ -129,12 +129,27 @@ public static class GameDatas {
 
         if (GameManager.dba != null)
         {
-            SqliteDataReader sdr = GameManager.dba.ExecuteQuery("select * from " + DBTableNames.TABLE_ITEMBASE + " where id =" + id);
-            if (sdr.Read())
+            if (id < 1000)
             {
-                eibd = new EquipItemBaseData(sdr);
-                sdr.Close();
+                //装备
+                SqliteDataReader sdr = GameManager.dba.ExecuteQuery("select * from " + DBTableNames.TABLE_ITEMBASE + " where id =" + id);
+                if (sdr.Read())
+                {
+                    eibd = new EquipItemBaseData(sdr);
+                    sdr.Close();
+                }
             }
+            else if (id >= 1000)
+            {
+                //材料道具
+                SqliteDataReader sdr = GameManager.dba.ExecuteQuery("select * from " + DBTableNames.TABLE_ITEMOTHER + " where id =" + id);
+                if (sdr.Read())
+                {
+                    eibd = new EquipItemBaseData(sdr, DBTableNames.TABLE_ITEMOTHER);
+                    sdr.Close();
+                }
+            }
+            
         }
         else
         {

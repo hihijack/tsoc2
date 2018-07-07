@@ -41,7 +41,7 @@ public class UIEquipItemOperControll : MonoBehaviour
                         UIManager.Inst.HideEquipItemInfo();
                         curDropItem = this;
                         curSprite.alpha = 0.5f;
-                        UICursor.Set(curSprite.atlas, curSprite.spriteName);
+                        UICursor.Set(curSprite.atlas, curSprite.spriteName, 84, 84);
                         //背包中，显示可以装备格子
                         UIHeroBag uiBag = UIManager.Inst.GetUIBag();
                         if (uiBag != null)

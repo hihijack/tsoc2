@@ -10,5 +10,7 @@ public static class IPath
     public static string Weapons = "Prefabs/EquipItems/Weapons/";
     public static string Maps = "Prefabs/Maps/";
     public static string MapItems = "Prefabs/MapItem/";
+    internal static readonly string Audio = "Audio/";
+    internal static readonly string AudioMon = "Monsters/";
 }
 

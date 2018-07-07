@@ -38,6 +38,8 @@ public class UIHeroInfo : MonoBehaviour {
     public UIButton btnAddSta;
     public UIButton btnAddEnd;
 
+    public UILabel txtDodgeCost;
+
     GameView gameView;
 
     public void Init(GameView gameView) 
@@ -71,7 +73,7 @@ public class UIHeroInfo : MonoBehaviour {
         RefreshAgiAndProp();
         RefreshTenAndProp();
         RefreshStaAndProp();
-        RefreshMoveSpeed();
+        RefreshLoad();
         RefreshEndAndProp();
         txtResFire.text = Hero.Inst.Prop.ResFire.ToString();
         txtResPoision.text = Hero.Inst.Prop.ResPoision.ToString();
@@ -139,10 +141,11 @@ public class UIHeroInfo : MonoBehaviour {
         txtIAS.text = Hero.Inst.Prop.IAS.ToString("0.00") + "次/秒";
     }
 
-    void RefreshMoveSpeed()
+    void RefreshLoad()
     {
         txtLoad.text = Hero.Inst.Prop.Load.ToString();
         //txtMoveSpeed.text = Hero.Inst.Prop.MoveSpeed.ToString();
+        txtDodgeCost.text = Hero.Inst.GetVigorCostDodge().ToString();
     }
 
     void RefreshTenAndProp()

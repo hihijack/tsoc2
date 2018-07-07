@@ -38,7 +38,7 @@ TextureImporter:
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -48,7 +48,7 @@ TextureImporter:
   bumpmap:
     convertToNormalMap: 0
     externalNormalMap: 0
-    heightScale: .25
+    heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
   grayScaleToAlpha: 0
@@ -68,11 +68,12 @@ TextureImporter:
   lightmap: 0
   rGBM: 0
   compressionQuality: 50
+  allowsAlphaSplitting: 0
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
-  spritePivot: {x: .5, y: .5}
+  spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaIsTransparency: 1
@@ -88,8 +89,9 @@ TextureImporter:
         width: 22
         height: 5
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_1
       rect:
         serializedVersion: 2
@@ -98,8 +100,9 @@ TextureImporter:
         width: 32
         height: 5
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_2
       rect:
         serializedVersion: 2
@@ -108,8 +111,9 @@ TextureImporter:
         width: 48
         height: 5
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_3
       rect:
         serializedVersion: 2
@@ -118,8 +122,9 @@ TextureImporter:
         width: 64
         height: 5
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_4
       rect:
         serializedVersion: 2
@@ -128,8 +133,9 @@ TextureImporter:
         width: 61
         height: 3
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_5
       rect:
         serializedVersion: 2
@@ -138,8 +144,9 @@ TextureImporter:
         width: 46
         height: 3
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_6
       rect:
         serializedVersion: 2
@@ -148,8 +155,9 @@ TextureImporter:
         width: 37
         height: 3
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_7
       rect:
         serializedVersion: 2
@@ -160,6 +168,7 @@ TextureImporter:
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_8
       rect:
         serializedVersion: 2
@@ -170,6 +179,16 @@ TextureImporter:
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -32, y: 32}
+        - {x: -32, y: 27}
+        - {x: -29, y: 22}
+        - {x: -10, y: 4}
+        - {x: -5, y: 0}
+        - {x: 0, y: 0}
+        - {x: 0, y: 7}
+        - {x: -2, y: 12}
+        - {x: -27, y: 32}
     - name: effects_9
       rect:
         serializedVersion: 2
@@ -180,6 +199,16 @@ TextureImporter:
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -48, y: 48}
+        - {x: -48, y: 41}
+        - {x: -46, y: 36}
+        - {x: -10, y: 4}
+        - {x: -5, y: 0}
+        - {x: 0, y: 0}
+        - {x: 0, y: 8}
+        - {x: -1, y: 13}
+        - {x: -42, y: 48}
     - name: effects_10
       rect:
         serializedVersion: 2
@@ -190,6 +219,20 @@ TextureImporter:
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -3, y: 4}
+        - {x: -4, y: 1}
+        - {x: -3, y: 0}
+        - {x: 0, y: 0}
+        - {x: 0, y: 3}
+        - {x: -1, y: 4}
+      - - {x: -47, y: 47}
+        - {x: -47, y: 39}
+        - {x: -6, y: 3}
+        - {x: -3, y: 3}
+        - {x: -3, y: 6}
+        - {x: -22, y: 33}
+        - {x: -41, y: 47}
     - name: effects_11
       rect:
         serializedVersion: 2
@@ -200,6 +243,20 @@ TextureImporter:
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -15, y: 12}
+        - {x: -9, y: 6}
+        - {x: -6, y: 7}
+        - {x: -6, y: 9}
+        - {x: -12, y: 15}
+        - {x: -14, y: 15}
+      - - {x: -40, y: 33}
+        - {x: -19, y: 15}
+        - {x: -15, y: 15}
+        - {x: -15, y: 18}
+        - {x: -36, y: 46}
+        - {x: -46, y: 46}
+        - {x: -46, y: 41}
     - name: effects_12
       rect:
         serializedVersion: 2
@@ -210,6 +267,20 @@ TextureImporter:
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -3, y: 4}
+        - {x: -4, y: 1}
+        - {x: -3, y: 0}
+        - {x: 0, y: 0}
+        - {x: 0, y: 3}
+        - {x: -1, y: 4}
+      - - {x: -22, y: 18}
+        - {x: -18, y: 18}
+        - {x: -18, y: 23}
+        - {x: -22, y: 34}
+        - {x: -29, y: 36}
+        - {x: -36, y: 36}
+        - {x: -36, y: 31}
     - name: effects_13
       rect:
         serializedVersion: 2
@@ -220,6 +291,7 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_14
       rect:
         serializedVersion: 2
@@ -230,6 +302,7 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_15
       rect:
         serializedVersion: 2
@@ -240,6 +313,7 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_16
       rect:
         serializedVersion: 2
@@ -250,6 +324,14 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 0, y: 0}
+        - {x: 0, y: -3}
+        - {x: 5, y: -4}
+        - {x: 32, y: -46}
+        - {x: 45, y: -46}
+        - {x: 45, y: -13}
+        - {x: 19, y: 0}
     - name: effects_17
       rect:
         serializedVersion: 2
@@ -260,6 +342,15 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 20, y: 0}
+        - {x: 0, y: 0}
+        - {x: 0, y: -5}
+        - {x: 15, y: -62}
+        - {x: 42, y: -62}
+        - {x: 45, y: -60}
+        - {x: 45, y: -25}
+        - {x: 43, y: -14}
     - name: effects_18
       rect:
         serializedVersion: 2
@@ -270,6 +361,7 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_19
       rect:
         serializedVersion: 2
@@ -280,6 +372,7 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_20
       rect:
         serializedVersion: 2
@@ -290,6 +383,7 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_21
       rect:
         serializedVersion: 2
@@ -300,6 +394,7 @@ TextureImporter:
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_22
       rect:
         serializedVersion: 2
@@ -308,8 +403,9 @@ TextureImporter:
         width: 13
         height: 5
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_23
       rect:
         serializedVersion: 2
@@ -318,8 +414,9 @@ TextureImporter:
         width: 29
         height: 21
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_24
       rect:
         serializedVersion: 2
@@ -328,8 +425,9 @@ TextureImporter:
         width: 41
         height: 30
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_25
       rect:
         serializedVersion: 2
@@ -338,8 +436,16 @@ TextureImporter:
         width: 45
         height: 46
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 9.5, y: 23}
+        - {x: -22.5, y: -18}
+        - {x: -22.5, y: -23}
+        - {x: -4.5, y: -23}
+        - {x: 19.5, y: -9}
+        - {x: 22.5, y: 3}
+        - {x: 22.5, y: 23}
     - name: effects_26
       rect:
         serializedVersion: 2
@@ -348,8 +454,19 @@ TextureImporter:
         width: 45
         height: 62
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 19.5, y: 31}
+        - {x: -3.5, y: 31}
+        - {x: -5.5, y: 30}
+        - {x: -22.5, y: -23}
+        - {x: -22.5, y: -31}
+        - {x: -4.5, y: -31}
+        - {x: 0.5, y: -30}
+        - {x: 20.5, y: -17}
+        - {x: 22.5, y: -8}
+        - {x: 22.5, y: 29}
     - name: effects_27
       rect:
         serializedVersion: 2
@@ -358,8 +475,9 @@ TextureImporter:
         width: 23
         height: 52
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_28
       rect:
         serializedVersion: 2
@@ -368,8 +486,9 @@ TextureImporter:
         width: 23
         height: 45
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_29
       rect:
         serializedVersion: 2
@@ -378,8 +497,9 @@ TextureImporter:
         width: 22
         height: 24
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     - name: effects_30
       rect:
         serializedVersion: 2
@@ -388,8 +508,10 @@ TextureImporter:
         width: 22
         height: 16
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+    outline: []
   spritePackingTag: 
   userData: 
   assetBundleName: 

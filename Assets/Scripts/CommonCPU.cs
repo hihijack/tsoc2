@@ -20,17 +20,20 @@ public class CommonCPU : MonoBehaviour
     public void SaveSkills()
     {
         string strData = "";
-        ISkill[] skills = GameManager.hero.GetComponents<ISkill>();
-        for (int i = 0; i < skills.Length; i++)
+        for (int i = 0; i < Hero.Inst.mSkills.Length; i++)
         {
-            ISkill skill = skills[i];
-            strData = strData + skill.GetBaseData().id + "_" + skill._Level + "&";
+            ISkill skill = Hero.Inst.mSkills[i];
+            if (skill != null)
+            {
+                strData = strData + skill.GetBaseData().id + "_" + skill._Level + "&";
+            }
+            else
+            {
+                strData = strData + "0_0&";
+            }
         }
 
         PlayerPrefs.SetString(IConst.KEY_SKILLS, strData);
-
-        
-        
     }
 
     // 保存未分配的技能点
@@ -39,7 +42,24 @@ public class CommonCPU : MonoBehaviour
         PlayerPrefs.SetInt(IConst.KEY_SKILLPOINT_NEEDALLOT, GameManager.hero._SkillNeedAllot);
     }
 
- 
+    public void SaveSkillUnlock(int skillid)
+    {
+        string skills = GetSavedSkillUnlock();
+        skills = skills + skillid + "&";
+        PlayerPrefs.SetString(IConst.KEY_SKILL_UNLOCKED, skills);
+    }
+
+    public string GetSavedSkillUnlock()
+    {
+        string r = "";
+        if (PlayerPrefs.HasKey(IConst.KEY_SKILL_UNLOCKED))
+        {
+            r = PlayerPrefs.GetString(IConst.KEY_SKILL_UNLOCKED);
+        }
+        return r;
+    }
+
+     
 
     /// <summary>
     /// 读取玩家技能配置
@@ -58,7 +78,7 @@ public class CommonCPU : MonoBehaviour
                     string[] strsTemp = strSkillNode.Split('_');
                     int skillId = int.Parse(strsTemp[0]);
                     int level = int.Parse(strsTemp[1]);
-                    GameManager.hero.SetBattleSkillLevel(skillId, level);
+                    GameManager.hero.SetBattleSkillLevel(skillId, level, i);
                 }
             }
         }
@@ -218,6 +238,14 @@ public class CommonCPU : MonoBehaviour
         }
         gl.lifeTime = dur;
 
+    }
+
+    public void PlayerAudio(string res)
+    {
+        if (!string.IsNullOrEmpty(res))
+        {
+            NGUITools.PlaySound(Resources.Load<AudioClip>(IPath.Audio + res));
+        }
     }
 
     public void CreateEffAtGobj(string effName, GameObject target, Vector3 offset, Color color, float dur)

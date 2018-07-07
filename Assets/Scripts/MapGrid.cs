@@ -17,6 +17,11 @@ public class MapGrid : MonoBehaviour {
     public int x;
     public int y;
 
+    /// <summary>
+    /// 光照等级：0暗，1：50%，2：100%
+    /// </summary>
+    public int lightLevel;
+
 	public EGridType g_Type;
 	public EGridType Type
 	{

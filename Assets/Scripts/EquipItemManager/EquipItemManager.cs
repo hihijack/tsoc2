@@ -642,7 +642,7 @@ public class EquipItemManager
         //移动速度
         if (ei.baseData.movespeed > 0)
         {
-            desc.Append("速度:" + ei.baseData.movespeed);
+            desc.Append("速度:" + ei.baseData.movespeed + "\n");
         }
         // 显示魔法属性
         string strProp = "";

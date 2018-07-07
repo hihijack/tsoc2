@@ -678,6 +678,9 @@ public class Enermy : IActor {
         {
             GameView.Inst.SaveKillRecord(guid);
         }
+
+        //音效
+        CommonCPU.Inst.PlayerAudio(IPath.AudioMon +  monsterBD.soundDie);
     }
 
     /// <summary>
@@ -715,7 +718,7 @@ public class Enermy : IActor {
     public override void OnHurted(IActor target, DmgData dmgData)
     {
         ShankColor(Color.red);
-
+      
         if (dmgData.force > 0)
         {
             _lastHurtWithForce = Time.time;
@@ -759,7 +762,7 @@ public class Enermy : IActor {
     private float GetUCtrlTimeByFore(int force)
     {
         float r = 0f;
-        r = force * 0.8f;
+        r = force * 1.5f;
         return r;
     }
 
@@ -1233,6 +1236,9 @@ public class Enermy : IActor {
             }
         }
         GameView.Inst.AddToEnermysFindTargetInCurRound(this);
+
+        //音效
+        CommonCPU.Inst.PlayerAudio(IPath.AudioMon + monsterBD.soundFind);
     }
 
     /// <summary>
